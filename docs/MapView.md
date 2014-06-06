@@ -27,6 +27,16 @@ Changes the center of the map to the given geographical coordinates (Latitude, L
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
+MapView.getFinalPosition()
+--------------------------
+Get the destination center position of the map.
+
+
+
+**Returns**
+
+*LatLng*,  Position in geographical coordinates (Latitude, Longitude)
+
 MapView.setZoom(zoom, \[transition\], \[callback\])
 ---------------------------------------------------
 Set the zoom-level.
@@ -40,22 +50,6 @@ Set the zoom-level.
 **[transition]**:  *Transitionable*,  Famo.us transitionable object.
 
 **[callback]**:  *Function*,  callback to call after transition completes.
-
-MapView.getFinalPosition()
---------------------------
-Get the destination center position of the map.
-
-
-
-**Returns**
-
-*LatLng*,  Position in geographical coordinates (Latitude, Longitude)
-
-MapView.halt()
---------------
-Halts any pending transitions.
-
-
 
 MapView.setMarkerPosition(marker, position, \[transition\], \[callback\], \[cache\])
 ------------------------------------------------------------------------------------
@@ -106,6 +100,22 @@ Get the geographical coordinates for a given position in pixels, relative to the
 **Returns**
 
 *LatLng*,  Position in geographical coordinates (Latitude, Longitude).
+
+MapView.halt()
+--------------
+Halts any pending transitions.
+
+
+
+MapView.isActive()
+------------------
+Is there at least one action pending completion?
+
+
+
+**Returns**
+
+*Bool*,  True when there are active transitions running.
 
 MapView.positionFromPoint(point)
 --------------------------------

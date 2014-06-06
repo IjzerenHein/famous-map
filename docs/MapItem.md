@@ -32,12 +32,6 @@ the specified location.
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
-MapItem.halt()
---------------
-Halts any pending transitions.
-
-
-
 MapItem.getPosition()
 ---------------------
 Get the current position.
@@ -58,8 +52,24 @@ Get the destination position.
 
 *LatLng*,  Position in geographical coordinates (Latitude, Longitude)
 
-MapItem.show(renderable, \[transition\], \[callback\])
-------------------------------------------------------
+MapItem.halt()
+--------------
+Halts any pending transitions.
+
+
+
+MapItem.isActive()
+------------------
+Is there at least one action pending completion?
+
+
+
+**Returns**
+
+*Bool*,  True when there are active transitions running.
+
+MapItem.show(renderable, \[transition\], \[callback\], \[baseRotation\])
+------------------------------------------------------------------------
 Displays the targeted renderable with a transition and an optional callback toexecute afterwards.
 
 
@@ -71,6 +81,8 @@ Displays the targeted renderable with a transition and an optional callback toex
 **[transition]**:  *Transition*,  Overwrites the default transition in to display the passed-in renderable.
 
 **[callback]**:  *Function*,  Executes after transitioning in the renderable.
+
+**[baseRotation]**:  *Number*,  Base-rotation in radians to apply to the renderable.
 
 MapItem.hide(\[transition\], \[callback\])
 ------------------------------------------
