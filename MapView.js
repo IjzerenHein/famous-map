@@ -108,6 +108,7 @@ define(function (require, exports, module) {
         if (this.map) { return; }
         var elm = document.getElementById(this.mapId);
         if (!elm) { throw 'mapView could not locate DOM-element with id: ' + this.mapId; }
+        this._domElement = elm;
         
         // Create map
         var map = new google.maps.Map(elm, this.options.mapOptions);
@@ -130,25 +131,24 @@ define(function (require, exports, module) {
      * @private
      */
     MapView.prototype._updateTimer = function () {
-        var isActive = this._currentLat.isActive() || this._currentLng.isActive() || this._currentZoom.isActive();
         if (this._timer) {
             
             // Stop timer if no more transitions exist
-            if (!isActive) {
+            if (!this.isActive()) {
                 Timer.clear(this._timer);
                 this._timer = null;
             }
         } else {
             
             // Start timer when transitions have ben added
-            if (isActive) {
+            if (this.isActive()) {
                 this._timer = Timer.every(function () {
                     this._updateMap();
                 }.bind(this));
             }
         }
     };
-    
+
     /**
      * Updates the map accordingly to the added transitions.
      * 
@@ -157,19 +157,21 @@ define(function (require, exports, module) {
      */
     MapView.prototype._updateMap = function () {
         
-        // Pan map
+        // Get position & zoom
         var position = new google.maps.LatLng(
             this._currentLat.get(),
             this._currentLng.get()
         );
-        this.map.panTo(position);
-        
-        // Zoom map
         var zoom = Math.round(this._currentZoom.get());
-        if (zoom !== this.map.getZoom()) {
-            this.map.setZoom(zoom);
-        }
         
+        //this.map.setCenter(position);
+        // Set new map position and zoom
+        this.map.setOptions({
+            center: position,
+            zoom: zoom
+        });
+  
+        // Stop animation timer when all animations are finished
         this._updateTimer();
     };
     
@@ -204,6 +206,16 @@ define(function (require, exports, module) {
         // Start the timer
         this._updateTimer();
     };
+
+    /**
+     * Get the destination center position of the map.
+     *
+     * @method getFinalPosition
+     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
+     */
+    MapView.prototype.getFinalPosition = function () {
+        return this._finalPosition;
+    };
     
     /**
      * Set the zoom-level.
@@ -226,32 +238,6 @@ define(function (require, exports, module) {
         this._updateTimer();
     };
     
-    /**
-     * Get the destination center position of the map.
-     *
-     * @method getFinalPosition
-     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
-     */
-    MapView.prototype.getFinalPosition = function () {
-        return this._finalPosition;
-    };
-
-    /**
-     * Halts any pending transitions.
-     *
-     * @method halt
-     */
-    MapView.prototype.halt = function () {
-        this._currentLat.halt();
-        this._currentLng.halt();
-        this._currentZoom.halt();
-        
-        this._finalPosition = this.map.getCenter();
-        this._finalZoom = this.map.getZoom();
-        
-        this._updateTimer();
-    };
-        
     /**
      * Set the marker position, with the option to use a transition.
      *
@@ -343,6 +329,34 @@ define(function (require, exports, module) {
         var worldPoint = new google.maps.Point((point.x / scale) + bottomLeft.x, (point.y / scale) + topRight.y);
         var position = this.map.getProjection().fromPointToLatLng(worldPoint);
         return position;
+    };
+    
+    /**
+     * Halts any pending transitions.
+     *
+     * @method halt
+     */
+    MapView.prototype.halt = function () {
+        this._currentLat.halt();
+        this._currentLng.halt();
+        this._currentZoom.halt();
+        
+        this._finalPosition = this.map.getCenter();
+        this._finalZoom = this.map.getZoom();
+        
+        this._updateTimer();
+    };
+    
+    /**
+     * Is there at least one action pending completion?
+     *
+     * @method isActive
+     * @return {Bool} True when there are active transitions running.
+     */
+    MapView.prototype.isActive = function () {
+        return this._currentLat.isActive() ||
+                this._currentLng.isActive() ||
+                this._currentZoom.isActive();
     };
     
     // WORK IN PROGRESS

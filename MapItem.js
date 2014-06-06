@@ -33,6 +33,7 @@ define(function (require, exports, module) {
 
     // import dependencies
     var Modifier = require('famous/core/Modifier');
+    var RenderNode = require('famous/core/RenderNode');
     var View = require('famous/core/View');
     var Timer = require('famous/utilities/Timer');
     var Transform = require('famous/core/Transform');
@@ -52,9 +53,11 @@ define(function (require, exports, module) {
         // Initialize
         this.mapView = mapView;
         this._isVisible = false;
-        this._currentLng = new Transitionable();
-        this._currentLat = new Transitionable();
-        this._currentRotation = new Transitionable();
+        this._finalPosition = this.options.position;
+        this._finalRotation = this.options.rotation;
+        this._currentLng = new Transitionable(this._finalPosition ? this._finalPosition.lng() : 0);
+        this._currentLat = new Transitionable(this._finalPosition ? this._finalPosition.lat() : 0);
+        this._currentRotation = new Transitionable(this._finalRotation ? this._finalRotation.get() : 0);
         this._currentScale = new Transitionable();
             
         // Create root-modifier
@@ -68,17 +71,78 @@ define(function (require, exports, module) {
         this.add(this.modifier).add(this.renderController);
         
         // On every render-cycle update the position relative to the map
-        Timer.every(this._updatePosition.bind(this), 0);
+        Timer.every(this._update.bind(this), 0);
     }
     MapItem.prototype = Object.create(View.prototype);
     MapItem.prototype.constructor = MapItem;
 
     MapItem.DEFAULT_OPTIONS = {
-        zoomFactor: 0.1, // set to 0 if you don't want any zooming
+        zoomScaleFactor: 0.0, // factor by which the image is scaled when zooming in (zoom-level 0  is the base)
         zoomInTransition: { duration: 500, curve: Easing.outBack },
         zoomOutTransition: { duration: 500, curve: Easing.outBack },
         moveTransition: { duration: 500, curve: Easing.outBack },
         rotateTransition: { duration: 500, curve: Easing.inBack }
+    };
+
+    /**
+     * @private
+     * @method _update
+     */
+    MapItem.prototype._update = function () {
+        if (!this._isVisible) { return; }
+        if (!this._finalPosition) { return; }
+
+        // Calculate scale and start/stop scaling
+        if (this.options.zoomScaleFactor && this.mapView.getMap()) {
+            
+            // When the map is zoomed in/out, restart the scale transition
+            var scaleFactor = (this.mapView.getMap().getZoom() *  this.options.zoomScaleFactor) + 1.0;
+            if (this._finalScale) {
+                if (this._finalScale !== scaleFactor) {
+                    this._finalScale = scaleFactor;
+                    this._currentScale.halt();
+                    if (this._currentScale.get() < scaleFactor) {
+                        this._currentScale.set(scaleFactor, this.options.zoomInTransition);
+                    } else {
+                        this._currentScale.set(scaleFactor, this.options.zoomOutTransition);
+                    }
+                }
+            } else {
+                this._finalScale = scaleFactor;
+                this._currentScale.reset(this._finalScale);
+            }
+        }
+        
+        // Check whether any transitions are active or the map has moved
+        var transform;
+        var point = this.mapView.pointFromPosition(this.getPosition());
+        if (!this.isActive() && this._currentPoint && this._currentPoint.equals(point)) {
+            // No changes detected
+            return;
+        }
+        
+        // Calculate scale
+        if (this._finalScale) {
+            var scale = Transform.scale(this._currentScale.get(), this._currentScale.get(), 1.0);
+            transform = transform ? Transform.multiply(scale, transform) : scale;
+        }
+        
+        // Calculate rotation
+        if (this._finalRotation) {
+            var rotation = this._currentRotation.get();
+            var rotate = Transform.rotateZ(rotation);
+            transform = transform ? Transform.multiply(rotate, transform) : rotate;
+        }
+
+        // Calculate position
+        this._currentPoint = point;
+        var translate = Transform.translate(point.x, point.y, 1.0);
+        transform = transform ? Transform.multiply(translate, transform) : translate;
+        
+        // Apply transformation
+        if (transform) {
+            this.modifier.transformFrom(transform);
+        }
     };
 
     /**
@@ -122,19 +186,20 @@ define(function (require, exports, module) {
         
         // setPosition must be called first (2 points are required to calculate the rotation)
         if (!this._finalPosition) { return; }
+        if (!this._finalRotation) { this._finalRotation = 0; }
         
         // Calculate new angle in radians
-        var x = this._currentLng.get() - position.lng();
-        var y = this._currentLat.get() - position.lat();
-        var angle = Math.atan2(x, y);
+        var x = this._finalPosition.lng() - position.lng();
+        var y = this._finalPosition.lat() - position.lat();
+        var angle = Math.atan2(x, y) + (Math.PI / 2.0);
 
         // Adjust the current-rotation transitionable, so that the
         // rotation occurs in the most optimal direction.
-        if (Math.abs(this._currentRotation.get() - angle) > Math.PI) {
-            if (this._currentRotation.get() > angle) {
-                this._currentRotation.reset(this._currentRotation.get() - (2 * Math.PI));
+        if (Math.abs(this._finalRotation - angle) > Math.PI) {
+            if (this._finalRotation > angle) {
+                angle += (2 * Math.PI);
             } else {
-                this._currentRotation.reset(this._currentRotation.get() + (2 * Math.PI));
+                angle -= (2 * Math.PI);
             }
         }
 
@@ -142,7 +207,7 @@ define(function (require, exports, module) {
         // considered 100% duration, but a smaller takes less time.
         transition = transition || this.options.rotateTransition;
         if (transition.duration) {
-            var distance = Math.abs(this._currentRotation.get() - angle);
+            var distance = Math.abs(this._finalRotation - angle);
             var factor = 4.0; // minimal duration is 1/4 = 25%, 75% is dependent on distance
             transition = {
                 curve: transition.curve,
@@ -153,75 +218,11 @@ define(function (require, exports, module) {
         // Add rotation to the pending set of transitions
         this._finalRotation = angle;
         this._currentRotation.set(angle, transition, callback);
-        this._currentLng.set(this._currentLng.get(), transition);
-        this._currentLat.set(this._currentLat.get(), transition);
+        this._currentLng.set(this._finalPosition.lng(), transition);
+        this._currentLat.set(this._finalPosition.lat(), transition);
     };
 
-    /**
-     * Halts any pending transitions.
-     *
-     * @method halt
-     */
-    MapItem.prototype.halt = function () {
-        this._currentLng.halt();
-        this._currentLat.halt();
-        this._currentRotation.halt();
-    };
     
-    /**
-     * @private
-     * @method _updatePosition
-     */
-    MapItem.prototype._updatePosition = function () {
-        if (!this._isVisible) { return; }
-        var transform;
-
-        // Calculate scale
-        if (this.options.zoomFactor && this.mapView.getMap()) {
-            
-            // When the map is zoomed in/out, restart the scale transition
-            var scale = (this.mapView.getMap().getZoom() *  this.options.zoomFactor) + 1.0;
-            if (this._finalScale) {
-                if (this._finalScale !== scale) {
-                    this._finalScale = scale;
-                    this._currentScale.halt();
-                    if (this._currentScale.get() < scale) {
-                        this._currentScale.set(scale, this.options.zoomInTransition);
-                    } else {
-                        this._currentScale.set(scale, this.options.zoomOutTransition);
-                    }
-                }
-            } else {
-                this._finalScale = scale;
-                this._currentScale.reset(this._finalScale);
-            }
-            
-            // Apply scale transformation
-            var scaleTransform = Transform.scale(this._currentScale.get(), this._currentScale.get(), 1.0);
-            transform = transform ? Transform.multiply(scaleTransform, transform) : scaleTransform;
-        }
-        
-        // Calculate rotation
-        if (this._finalRotation) {
-            var rotation = this._currentRotation.get();
-            var rotate = Transform.rotateZ(rotation);
-            transform = transform ? Transform.multiply(rotate, transform) : rotate;
-        }
-
-        // Calculate position
-        if (this._finalPosition) {
-            var position = this.getPosition();
-            var point = this.mapView.pointFromPosition(position);
-            var translate = Transform.translate(point.x, point.y, 1.0);
-            transform = transform ? Transform.multiply(translate, transform) : translate;
-        }
-        
-        // Apply transformation
-        if (transform) {
-            this.modifier.transformFrom(transform);
-        }
-    };
-
     /**
      * Get the current position.
      *
@@ -234,7 +235,7 @@ define(function (require, exports, module) {
             this._currentLng.get()
         );
     };
-    
+     
     /**
      * Get the destination position.
      *
@@ -246,17 +247,60 @@ define(function (require, exports, module) {
     };
     
     /**
+     * Halts any pending transitions.
+     *
+     * @method halt
+     */
+    MapItem.prototype.halt = function () {
+        this._currentLng.halt();
+        this._currentLat.halt();
+        this._currentRotation.halt();
+        this._currentScale.halt();
+        
+        this._finalPosition = this.getPosition();
+        this._finalRotation = this._currentRotation.get();
+        this._finalScale = (this.mapView.getMap().getZoom() *  this.options.zoomScaleFactor) + 1.0;
+        
+        this._update();
+    };
+
+    /**
+     * Is there at least one action pending completion?
+     *
+     * @method isActive
+     * @return {Bool} True when there are active transitions running.
+     */
+    MapItem.prototype.isActive = function () {
+        return this._currentLat.isActive() ||
+                this._currentLng.isActive() ||
+                this._currentRotation.isActive() ||
+                this._currentScale.isActive();
+    };
+
+    /**
      * Displays the targeted renderable with a transition and an optional callback toexecute afterwards.
      *
      * @method show
      * @param {Object} renderable The renderable you want to show.
      * @param {Transition} [transition] Overwrites the default transition in to display the passed-in renderable.
      * @param {Function} [callback] Executes after transitioning in the renderable.
+     * @param {Number} [baseRotation] Base-rotation in radians to apply to the renderable.
      */
-    MapItem.prototype.show = function (renderable, transition, callback) {
-        if (this._isVisible) { return; }
+    MapItem.prototype.show = function (renderable, transition, callback, baseRotation) {
         this._isVisible = true;
         transition = transition || this.options.inTransition;
+        
+        // When a base-rotation is specified, apply that statically in the form
+        // of a modifier.
+        if (baseRotation) {
+            var rotationNode = new RenderNode(new Modifier({
+                transform: Transform.rotateZ(baseRotation)
+            }));
+            rotationNode.add(renderable);
+            renderable = rotationNode;
+        }
+        
+        // Show the renderable
         this.renderController.show(renderable, transition, callback);
     };
 
