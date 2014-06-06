@@ -1,0 +1,34 @@
+.fps, .info {
+    font-family: Helvetica
+}
+
+.fps {
+    z-index: 1000;
+    background-color: rgba(0, 0, 0, 0.5);
+    line-height: 50px;
+    text-align: center;
+    color: white;
+    font-size: 28px;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 1.0);
+    border-radius: 0px 0px 0px 10px;
+}
+
+.car {
+    z-index: 50;
+}
+    
+.info {
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.7);
+    border-radius: 20px 20px;
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    font-weight: bold;
+    text-shadow: 0px 1px 2px rgba(0, 0, 0, 1.0);
+    padding: 26px 20px 20px 20px;
+}
+
+.pins {
+    z-index: 10;
+}
