@@ -1,0 +1,17 @@
+{
+  "name": "famous-map",
+  "version": "0.0.1",
+  "homepage": "https://github.com/IjzerenHein/famous-map",
+  "authors": [
+    "IjzerenHein <hrutjes@gmail.com>"
+  ],
+  "description": "Famo.us map-view for google-maps V3 api",
+  "main": "mapView.js",
+  "keywords": [
+    "famo.us",
+    "famous",
+    "javascript",
+    "google.maps"
+  ],
+  "license": "MIT"
+}

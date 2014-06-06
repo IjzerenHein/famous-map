@@ -1,0 +1,12 @@
+[submodule "examples/lib/famous"]
+	path = examples/lib/famous
+	url = https://github.com/Famous/famous.git
+[submodule "examples/lib/requirejs"]
+	path = examples/lib/requirejs
+	url = https://github.com/jrburke/requirejs.git
+[submodule "examples/lib/almond"]
+	path = examples/lib/almond
+	url = https://github.com/jrburke/almond.git
+[submodule "examples/lib/polyfills"]
+	path = examples/lib/polyfills
+	url = https://github.com/Famous/polyfills.git
