@@ -1,19 +1,58 @@
-famous-map
+# famous-map
 ==========
 
 Google Maps (V3) view for famo.us
 
 
+## Demo
+
+TODO
+
+
+## Installation
+
+### Download famous-map
+
+Clone repository:
+
+	https://github.com/IjzerenHein/famous-map.git
+	
+Bower:
+
+	TODO
+
+### requireConfig.js
+
+Tell require-js where to find 'famous-map':
+
+	/*globals require*/
+	require.config({
+    	shim: {
+
+    	},
+    	paths: {
+			'famous-map': '../famous-map',
+        	famous: '../lib/famous',
+	        requirejs: '../lib/requirejs/require',
+    	    almond: '../lib/almond/almond',
+        	'famous-polyfills': '../lib/polyfills/index'
+	    }
+	});
+	require(['example']);
+	
 ## Usage
 
-In your html file, include google maps:
+### html
+
+Include google maps:
 
     <head>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     </head>
 
+### famo.us code:
 
-In your code, include
+Create a MapView and wait for the 'load' event:
 
     var MapView = require('famous-map/MapView');
 
@@ -38,7 +77,7 @@ In your code, include
         });
     }.bind(this));
 
-## Documentation
+## API reference
 
 |Class|Description|
 |---|---|
