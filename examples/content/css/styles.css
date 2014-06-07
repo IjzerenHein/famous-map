@@ -29,6 +29,6 @@
     padding: 26px 20px 20px 20px;
 }
 
-.pins {
+.pins, .saucer {
     z-index: 10;
 }
