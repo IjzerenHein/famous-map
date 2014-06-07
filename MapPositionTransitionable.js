@@ -55,6 +55,18 @@ define(function (require, exports, module) {
     };
     
     /**
+     * Cancel all transitions and reset to a geographical position.
+     *
+     * @method reset
+     * @param {LatLng} position
+     */
+    MapPositionTransitionable.prototype.reset = function reset(position) {
+        var latlng = [position.lat(), position.lng()];
+        this.position.reset(latlng);
+        this._final = position;
+    };
+        
+    /**
      * Set the geographical position by adding it to the queue of transition.
      *
      * @method set

@@ -39,7 +39,6 @@ define(function (require) {
     var Easing = require('famous/transitions/Easing');
     var Timer = require('famous/utilities/Timer');
     var MapView = require('famous-map/MapView');
-    var Map = require('famous-map/MapItem');
     var MapItemModifier = require('famous-map/MapItemModifier');
     var MapItemStateModifier = require('famous-map/MapItemStateModifier');
 
@@ -52,7 +51,6 @@ define(function (require) {
     // Create map-view
     var mapView = _createMapView(mainContext);
     
-
     // Wait for the map to load and initialize
     mapView.on('load', function () {
 
@@ -65,9 +63,17 @@ define(function (require) {
 
         // Transitions are chained. The following example first pans to the position twice
         // and then zooms in. Use '.halt' to cancel the transitions and start new ones.
-        mapView.panToPosition(new google.maps.LatLng(51.8721795, 5.7101037), { duration: 4000, curve: Easing.outQuad });
-        mapView.panToPosition(new google.maps.LatLng(51.4400867, 5.4782571));
-        mapView.setZoom(14);
+        mapView.setPosition(
+            new google.maps.LatLng(51.8721795, 5.7101037),
+            { duration: 4000, curve: Easing.outQuad }
+        );
+        mapView.setPosition(
+            new google.maps.LatLng(51.4400867, 5.4782571),
+            { duration: 4000, curve: Easing.outQuad },
+            function () {
+                mapView.setZoom(14, {duration: 2000 });
+            }
+        );
         
         // Homer is taking a road-trip
         var i, j, trip = [

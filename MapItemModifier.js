@@ -32,7 +32,6 @@ define(function (require, exports, module) {
     'use strict';
 
     // import dependencies
-    var Entity = require('famous/core/Entity');
     var Transform = require('famous/core/Transform');
 
     /**
@@ -42,15 +41,9 @@ define(function (require, exports, module) {
      * @param {Object} options Options.
      */
     function MapItemModifier(options) {
-        this._rotateTowardsGetter = null;
         
         this.mapView = options.mapView;
-        
-        this._position = options.position;
-        this._offset = options.offset;
-        this._zoomScale = options.zoomScale;
-        this._zoomBase = options.zoomBase;
-        
+                
         this._output = {
             transform: Transform.identity,
             opacity: 1,
@@ -59,6 +52,12 @@ define(function (require, exports, module) {
             size: null,
             target: null
         };
+        
+        this._position = options.position;
+        this._offset = options.offset;
+        this._zoomScale = options.zoomScale;
+        this._zoomBase = options.zoomBase;
+        this._rotateTowardsGetter = null;
         
         if (options.rotateTowards) { this.rotateTowardsFrom(options.rotateTowards); }
     }

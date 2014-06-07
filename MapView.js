@@ -35,9 +35,9 @@ define(function (require, exports, module) {
     // import dependencies
     var Surface = require('famous/core/Surface');
     var View = require('famous/core/View');
-    var Timer = require('famous/utilities/Timer');
-    var Transitionable = require('famous/transitions/Transitionable');
     var Easing = require('famous/transitions/Easing');
+    var Transitionable = require('famous/transitions/Transitionable');
+    var MapPositionTransitionable = require('./MapPositionTransitionable');
     
     /**
      * A view containing a google-map
@@ -51,8 +51,8 @@ define(function (require, exports, module) {
         
         // Initialize
         this.map = null;
-        this._finalPosition = this.options.mapOptions.center;
-        this._finalZoom = this.options.mapOptions.zoom;
+        this._position = new MapPositionTransitionable(this.options.mapOptions.center);
+        this._zoom = new Transitionable(this.options.mapOptions.zoom);
         
         // When a specific dom-id is specified, use that
         if (this.options.mapOptions && this.options.mapOptions.id) {
@@ -71,16 +71,6 @@ define(function (require, exports, module) {
             });
             this.add(surface);
         }
-        
-        // Create transitionables
-        this._currentLat = new Transitionable(this._finalPosition.lat());
-        this._currentLng = new Transitionable(this._finalPosition.lng());
-        this._currentZoom = new Transitionable(this._finalZoom);
-        
-        // Initialize the map after rendering has completed.
-        // For some reason, this needs to be after the second
-        // render-cycle... ?
-        Timer.after(this._initMap.bind(this), 2);
     }
     MapView.prototype = Object.create(View.prototype);
     MapView.prototype.constructor = MapView;
@@ -104,75 +94,22 @@ define(function (require, exports, module) {
      */
     MapView.prototype._initMap = function () {
 
-        // Check init pre-requisites and find DOM element
-        if (this.map) { return; }
+        // Try to find DOM element
         var elm = document.getElementById(this.mapId);
-        if (!elm) { throw 'mapView could not locate DOM-element with id: ' + this.mapId; }
-        this._domElement = elm;
+        if (!elm) { return; }
         
         // Create map
-        var map = new google.maps.Map(elm, this.options.mapOptions);
+        this.map = new google.maps.Map(elm, this.options.mapOptions);
 
         // Listen for the first occurance of 'projection_changed', to ensure the map is full
         // initialized.
-        var func = map.addListener('projection_changed', function () {
+        var func = this.map.addListener('projection_changed', function () {
             google.maps.event.removeListener(func);
             
             // Finalize initialisation
-            this.map = map;
+            this._initComplete = true;
             this._eventOutput.emit('load', this);
         }.bind(this));
-    };
-
-    /**
-     * Starts- or stops the timer dependent on whether any transitions are active.
-     * 
-     * @method _updateTimer
-     * @private
-     */
-    MapView.prototype._updateTimer = function () {
-        if (this._timer) {
-            
-            // Stop timer if no more transitions exist
-            if (!this.isActive()) {
-                Timer.clear(this._timer);
-                this._timer = null;
-            }
-        } else {
-            
-            // Start timer when transitions have ben added
-            if (this.isActive()) {
-                this._timer = Timer.every(function () {
-                    this._updateMap();
-                }.bind(this));
-            }
-        }
-    };
-
-    /**
-     * Updates the map accordingly to the added transitions.
-     * 
-     * @method _updateMap
-     * @private
-     */
-    MapView.prototype._updateMap = function () {
-        
-        // Get position & zoom
-        var position = new google.maps.LatLng(
-            this._currentLat.get(),
-            this._currentLng.get()
-        );
-        var zoom = Math.round(this._currentZoom.get());
-        
-        //this.map.setCenter(position);
-        // Set new map position and zoom
-        this.map.setOptions({
-            center: position,
-            zoom: zoom
-        });
-  
-        // Stop animation timer when all animations are finished
-        this._updateTimer();
     };
     
     /**
@@ -187,26 +124,30 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Changes the center of the map to the given geographical coordinates (Latitude, Longitude).
+     * Set the center of the map to the given geographical coordinates (Latitude, Longitude).
      *
-     * @method panToPosition
+     * @method setPosition
+     * @chainable
      * @param {LatLng} position Position in geographical coordinates (Latitude, Longitude).
      * @param {Transitionable} [transition] Famo.us transitionable object.
      * @param {Function} [callback] callback to call after transition completes.
      */
-    MapView.prototype.panToPosition = function (position, transition, callback) {
-        
-        // Set new position
-        this._finalPosition = position;
-        transition = transition || this.options.moveTransition;
-        this._currentLng.set(this._finalPosition.lng(), transition, callback);
-        this._currentLat.set(this._finalPosition.lat(), transition);
-        this._currentZoom.set(this._finalZoom, transition);
-        
-        // Start the timer
-        this._updateTimer();
+    MapView.prototype.setPosition = function (position, transition, callback) {
+        this._position.set(position, transition, callback);
+        return this;
     };
 
+    /**
+     * Get the current center position of the map.
+     *
+     * @method getPosition
+     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
+     */
+    MapView.prototype.getPosition = function () {
+        //return this._position.get();
+        return this.map.getCenter();
+    };
+    
     /**
      * Get the destination center position of the map.
      *
@@ -214,28 +155,21 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
      */
     MapView.prototype.getFinalPosition = function () {
-        return this._finalPosition;
+        return this._position.getFinal();
     };
     
     /**
      * Set the zoom-level.
      *
      * @method setZoom
+     * @chainable
      * @param {Number} zoom Zoom-level for the map (0 = zoomed-out), must be a whole number.
      * @param {Transitionable} [transition] Famo.us transitionable object.
      * @param {Function} [callback] callback to call after transition completes.
      */
     MapView.prototype.setZoom = function (zoom, transition, callback) {
-        
-        // Set new position
-        this._finalZoom = zoom;
-        transition = transition || this.options.zoomTransition;
-        this._currentLng.set(this._finalPosition.lng(), transition);
-        this._currentLat.set(this._finalPosition.lat(), transition);
-        this._currentZoom.set(this._finalZoom, transition, callback);
-        
-        // Start the timer
-        this._updateTimer();
+        this._zoom.set(zoom, transition, callback);
+        return this;
     };
     
     /**
@@ -248,67 +182,6 @@ define(function (require, exports, module) {
      */
     MapView.prototype.rotationFromPositions = function (start, end) {
         return Math.atan2(start.lng() - end.lng(), start.lat() - end.lat()) + (Math.PI / 2.0);
-    };
-    
-    /**
-     * Set the marker position, with the option to use a transition.
-     *
-     * @method setMarkerPosition
-     * @param {Marker} marker Marker for which to update the position.
-     * @param {LatLng} position Position in geographical coordinates (Latitude, Longitude).
-     * @param {Transitionable} [transition] Famo.us transitionable object.
-     * @param {Function} [callback] callback to call after transition completes.
-     * @param {Object} [cache] cache to use when making transitions.
-     * @return {Object} Cache object. Re-suply this to setMarkerPosition to ensure previous transitions are cancelled, prior to starting a new one.
-     */
-    MapView.prototype.setMarkerPosition = function (marker, position, transition, callback, cache) {
-        
-        // When no transition specified, do it immediately
-        if (!transition) {
-            marker.setPosition(position);
-            if (callback) {
-                callback(this, marker);
-            }
-            return null;
-        }
-        
-        // Create/re-use transitionables
-        var transitionables;
-        if (cache) {
-            transitionables = cache;
-            transitionables.lat.reset(marker.getPosition().lat());
-            transitionables.lng.reset(marker.getPosition().lng());
-        } else {
-            transitionables = {
-                lat: new Transitionable(marker.getPosition().lat()),
-                lng: new Transitionable(marker.getPosition().lng())
-            };
-        }
-        
-        // Start animation
-        var timer = Timer.every(function () {
-            var newPosition = new google.maps.LatLng(
-                transitionables.lat.get(),
-                transitionables.lng.get()
-            );
-            marker.setPosition(newPosition);
-        }, 0);
-        
-        // Create transition
-        transitionables.lat.set(position.lat(), transition, function () {
-            
-            // Completion handler
-            if (timer) {
-                Timer.clear(timer);
-                timer = null;
-            }
-            if (callback) {
-                callback(this);
-            }
-        }.bind(this));
-        transitionables.lng.set(position.lng(), transition);
-        
-        return transitionables;
     };
 
     /**
@@ -349,14 +222,8 @@ define(function (require, exports, module) {
      * @method halt
      */
     MapView.prototype.halt = function () {
-        this._currentLat.halt();
-        this._currentLng.halt();
-        this._currentZoom.halt();
-        
-        this._finalPosition = this.map.getCenter();
-        this._finalZoom = this.map.getZoom();
-        
-        this._updateTimer();
+        this._position.halt();
+        this._zoom.halt();
     };
     
     /**
@@ -366,55 +233,48 @@ define(function (require, exports, module) {
      * @return {Bool} True when there are active transitions running.
      */
     MapView.prototype.isActive = function () {
-        return this._currentLat.isActive() ||
-                this._currentLng.isActive() ||
-                this._currentZoom.isActive();
+        return this._position.isActive() || this._zoom.isActive();
     };
     
-    // WORK IN PROGRESS
     /**
-     * Get the geographical coordinates for a given x/y point in pixels (relative to the left-top of the container).
+     * Renders the view.
      *
-     * @method positionFromPoint
-     * @param {Point} point X/Y point in pixels relative to the left-top of the mapView.
-     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude).
+     * @method render
      */
-    /*MapView.prototype.getZoomForBounds = function (bounds, maxWidth, maxHeight) {
+    MapView.prototype.render = function render() {
         
-        // Calculate max- width/height in pixels
-        var topRight = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getNorthEast());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getSouthWest());
-        var scale = Math.pow(2, this.map.getZoom());
-        if (!maxWidth) { maxWidth = (topRight.x - bottomLeft.x) * scale; }
-        if (!maxHeight) { maxHeight = (bottomLeft.y - topRight.y) * scale; }
+        // Init the map (once)
+        if (!this.map) { this._initMap(); }
         
-        
-        var zoom = this.map.getZoom();
-        topRight = this.map.getProjection().fromLatLngToPoint(bounds.getNorthEast());
-        bottomLeft = this.map.getProjection().fromLatLngToPoint(bounds.getSouthWest());
-        var width = (topRight.x - bottomLeft.x) * scale;
-        var height = (bottomLeft.y - topRight.y) * scale;
-        
-        if ((width < maxWidth) && (height < maxHeight)) {
-            do {
-                zoom++;
-                scale = Math.pow(2, zoom);
-                width = (topRight.x - bottomLeft.x) * scale;
-                height = (bottomLeft.y - topRight.y) * scale;
-            } while ((width < maxWidth) && (height < maxHeight));
-            zoom--;
-        } else {
-            do {
-                zoom--;
-                scale = Math.pow(2, zoom);
-                width = (topRight.x - bottomLeft.x) * scale;
-                height = (bottomLeft.y - topRight.y) * scale;
-            } while ((width > maxWidth) && (height > maxHeight));
-            zoom++;
+        // Get/set center and zoom
+        if (this._initComplete) {
+            var options;
+            if (this._position.isActive()) {
+                options = {
+                    center: this._position.get()
+                };
+            } else {
+                this._position.reset(this.map.getCenter());
+            }
+            if (this._zoom.isActive()) {
+                if (options) {
+                    options.zoom = Math.round(this._zoom.get());
+                } else {
+                    options = {
+                        zoom: Math.round(this._zoom.get())
+                    };
+                }
+            } else {
+                this._zoom.reset(this.map.getZoom());
+            }
+            if (options) {
+                this.map.setOptions(options);
+            }
         }
-        console.log('width: ' + width + ', height: ' + height + ', zoom: ' + zoom);
-        return zoom;
-    };*/
+        
+        // Call super
+        return this._node.render();
+    };
 
     module.exports = MapView;
 });
