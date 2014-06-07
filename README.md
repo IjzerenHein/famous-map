@@ -68,10 +68,10 @@ Create a MapView and wait for the 'load' event:
     mapView.on('load', function () {
     
         // After init, pan across the globe using a transition
-        mapView.setPosition({
+        mapView.setPosition(
             new google.maps.LatLng(51.4484855, 5.451478),
             { duration: 5000 }
-        });
+        );
     }.bind(this));
 
 ## API reference
