@@ -1,7 +1,7 @@
 # famous-map
 ==========
 
-Google Maps (V3) view for famo.us
+Google Maps (V3) support for famo.us
 
 
 ## Demo
@@ -23,19 +23,14 @@ Bower:
 
 ### requireConfig.js
 
-Tell require-js where to find 'famous-map':
+Add famous-map to require-js path configuration:Tell 
 
 	/*globals require*/
 	require.config({
-    	shim: {
-
-    	},
     	paths: {
+    		...
 			'famous-map': '../famous-map',
-        	famous: '../lib/famous',
-	        requirejs: '../lib/requirejs/require',
-    	    almond: '../lib/almond/almond',
-        	'famous-polyfills': '../lib/polyfills/index'
+			...
 	    }
 	});
 	require(['example']);
@@ -59,19 +54,21 @@ Create a MapView and wait for the 'load' event:
     // Create google-maps view with options.
     // Options: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var mapView = new MapView({
-        zoom: 3,
-        center: new google.maps.LatLng(51.4484855, 5.451478),
-        disableDefaultUI: true,
-        disableDoubleClickZoom: true,
-        mapTypeId: google.maps.MapTypeId.TERRAIN
+    	mapOptions: {
+	        zoom: 3,
+    	    center: new google.maps.LatLng(51.4484855, 5.451478),
+        	disableDefaultUI: true,
+	        disableDoubleClickZoom: true,
+    	    mapTypeId: google.maps.MapTypeId.TERRAIN
+    	}
     });
     this.add(mapView);
     
     // Wait for the map to load and initialize
-    mapView.on('load', function() {
+    mapView.on('load', function () {
     
-        // As an example, pan across the globe using a transition
-        mapView.panToLocation({
+        // After init, pan across the globe using a transition
+        mapView.setPosition({
             new google.maps.LatLng(51.4484855, 5.451478),
             { duration: 5000 }
         });
@@ -82,7 +79,9 @@ Create a MapView and wait for the 'load' event:
 |Class|Description|
 |---|---|
 |[MapView](docs/MapView.md)|View class which encapsulates a google-maps V3 map.|
-|[MapItem](docs/MapItem.md)|Allows famo.us renderables to be placed as markers on the map.|
+|[MapItemModifier](docs/MapItemModifier.md)|Stateless modifier which positions a renderable based on a geographical position {LatLng}.|
+|[MapItemStateModifier](docs/MapItemStateModifier.md)|Modifier which positions a renderable based on a geographical position {LatLng}, using transitions.|
+|[MapPositionTransitionable](docs/MapPositionTransitionable.md)|Transitionable for geographical coordinates {LatLng}.
 
 
 
