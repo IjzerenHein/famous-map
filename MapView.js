@@ -239,6 +239,18 @@ define(function (require, exports, module) {
     };
     
     /**
+     * Calculates the rotation-angle between two given positions.
+     *
+     * @method rotationFromPositions
+     * @param {LatLng} start Start position.
+     * @param {LatLng} start End position.
+     * @param {Number} Rotation in radians.
+     */
+    MapView.prototype.rotationFromPositions = function (start, end) {
+        return Math.atan2(start.lng() - end.lng(), start.lat() - end.lat()) + (Math.PI / 2.0);
+    };
+    
+    /**
      * Set the marker position, with the option to use a transition.
      *
      * @method setMarkerPosition
