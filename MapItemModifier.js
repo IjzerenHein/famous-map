@@ -204,9 +204,9 @@ define(function (require, exports, module) {
                 var scaling;
                 if (this._zoomScale) {
                     if (this._zoomScale instanceof Function) {
-                        scaling = this._zoomScale(this, this.mapView.getMap().getZoom());
+                        scaling = this._zoomScale(this._zoomBase, this.mapView.getZoom());
                     } else {
-                        var zoom = Math.round(this.mapView.getMap().getZoom() - this._zoomBase);
+                        var zoom = this.mapView.getZoom() - this._zoomBase;
                         if (zoom < 0) {
                             scaling = 1 / (this._zoomScale * (Math.abs(zoom) + 1));
                         } else {
@@ -214,7 +214,7 @@ define(function (require, exports, module) {
                         }
                     }
                 } else {
-                    scaling = Math.pow(2, this.mapView.getMap().getZoom() - this._zoomBase);
+                    scaling = Math.pow(2, this.mapView.getZoom() - this._zoomBase);
                 }
                 var scale = Transform.scale(scaling, scaling, 1.0);
                 transform = transform ? Transform.multiply(scale, transform) : scale;

@@ -144,8 +144,7 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
      */
     MapView.prototype.getPosition = function () {
-        //return this._position.get();
-        return this.map.getCenter();
+        return this._position.get();
     };
     
     /**
@@ -170,6 +169,16 @@ define(function (require, exports, module) {
     MapView.prototype.setZoom = function (zoom, transition, callback) {
         this._zoom.set(zoom, transition, callback);
         return this;
+    };
+    
+    /**
+     * Get the current zoom- factor.
+     *
+     * @method getZoom
+     * @return {Number} Current zoom- factor
+     */
+    MapView.prototype.getZoom = function () {
+        return this._zoom.get();
     };
     
     /**
