@@ -1,4 +1,4 @@
-# famous-map
+famous-map
 ==========
 
 Google Maps (V3) support for famo.us
@@ -62,7 +62,7 @@ Example of how to create a MapView:
 ## Documentation
 
 To access the underlying google.maps.Map object, use MapView.getMap(). The Map-object
-is only safely accessible after the 'loadl' event, because the DOM-object must first be created and google-maps need to load.
+is only safely accessible after the 'load' event, because the DOM-object must first be created and google-maps need to load.
 
 	mapView.on('load', function () {
 		var map = mapView.getMap();
@@ -72,7 +72,7 @@ is only safely accessible after the 'loadl' event, because the DOM-object must f
 ##### Panning & zooming the map using transitions
 
 To pan the map using famo.us transitions, use MapView.setPosition().
-Position transitions are chained, so you can paths that the map will follow.
+Transitions are chained, so you can create paths that the map will follow.
 Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap().setZoom() to use the standard Google Maps zoom behavior.
 
 	mapView.setPosition(
@@ -81,14 +81,14 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 		function () {
 			mapView.getMap().setZoom(7)
 		}
-	)
+	);
 	mapView.setPosition(
 		new google.maps.LatLng(51.4484855, 5.451478),
 		{ duration: 5000 },
 		function () {
 			mapView.setZoom(3, { duration: 10000} )
 		}
-	)
+	);
 
 ##### Placing a renderable to a static position on the map
 
@@ -111,25 +111,25 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 
 ##### Enable auto-scaling when the map is zoomed in or out
 
-To enable auto-scaling set zoomBase to the zoom-level you wish the item to be displayed in its true size. This would mean that at zoom-level 4, its size will 1/4 of its original size:
+To enable auto-scaling set zoomBase to the zoom-level you wish the item to be displayed in its true size. In this example where zoomBase is set to 5, this would mean that at zoom-level 4 its size will 1/4 of its original size:
 
 	var mapItemModifier = new MapItemModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5
 	});
 
-To use a different zooming strategy, use zoomFactor. ZoomFactor can be set to either a number or a getter function:
+To use a different zooming strategy, use zoomScale. ZoomScale can be set to either a number or a getter function:
 
 	var mapItemModifier = new MapItemModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5,
-		zoomFactor: 0.5
+		zoomScale: 0.5
 	});
 	
 	var mapItemModifier = new MapItemModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5,
-		zoomFactor: function (baseZoom, currentZoom) {
+		zoomScale: function (baseZoom, currentZoom) {
 			var zoom = currentZoom - baseZoom;
             if (zoom < 0) {
             	return 1 / (2 * (Math.abs(zoom) + 1));
