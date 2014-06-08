@@ -9,21 +9,13 @@ Google Maps (V3) support for famo.us
 TODO
 
 
-## Installation
+## Getting started
 
-### Download famous-map
-
-Clone repository:
+Download or clone the famous-map repository:
 
 	https://github.com/IjzerenHein/famous-map.git
-	
-Bower:
 
-	TODO
-
-### requireConfig.js
-
-Add famous-map to require-js path configuration:Tell 
+And add it to requireConfig.js:
 
 	/*globals require*/
 	require.config({
@@ -35,30 +27,20 @@ Add famous-map to require-js path configuration:Tell
 	});
 	require(['example']);
 	
-## Usage
-
-### html
-
-Include google maps:
+Include google-maps in the html file:
 
     <head>
         <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
     </head>
 
-### famo.us code:
-
-Create a MapView and wait for the 'load' event:
+Example of how to create a MapView:
 
     var MapView = require('famous-map/MapView');
 
-    // Create google-maps view with options.
-    // Options: https://developers.google.com/maps/documentation/javascript/reference#MapOptions
     var mapView = new MapView({
     	mapOptions: {
 	        zoom: 3,
     	    center: new google.maps.LatLng(51.4484855, 5.451478),
-        	disableDefaultUI: true,
-	        disableDoubleClickZoom: true,
     	    mapTypeId: google.maps.MapTypeId.TERRAIN
     	}
     });
@@ -67,14 +49,97 @@ Create a MapView and wait for the 'load' event:
     // Wait for the map to load and initialize
     mapView.on('load', function () {
     
-        // After init, pan across the globe using a transition
+        // Move across the globe and zoom-in when done
         mapView.setPosition(
             new google.maps.LatLng(51.4484855, 5.451478),
-            { duration: 5000 }
+            { duration: 5000 },
+            function () {
+        		mapView.setZoom(7);
+           	}
         );
     }.bind(this));
 
-## API reference
+## Documentation
+
+To access the underlying google.maps.Map object, use MapView.getMap(). The Map-object
+is only safely accessible after the 'loadl' event, because the DOM-object must first be created and google-maps need to load.
+
+	mapView.on('load', function () {
+		var map = mapView.getMap();
+		...
+	});
+
+##### Panning & zooming the map using transitions
+
+To pan the map using famo.us transitions, use MapView.setPosition().
+Position transitions are chained, so you can paths that the map will follow.
+Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap().setZoom() to use the standard Google Maps zoom behavior.
+
+	mapView.setPosition(
+		new google.maps.LatLng(51.4484855, 5.451478),
+		{ duration: 5000, curve: Easing.outBack },
+		function () {
+			mapView.getMap().setZoom(7)
+		}
+	)
+	mapView.setPosition(
+		new google.maps.LatLng(51.4484855, 5.451478),
+		{ duration: 5000 },
+		function () {
+			mapView.setZoom(3, { duration: 10000} )
+		}
+	)
+
+##### Placing a renderable to a static position on the map
+
+	MapItemModifier = require('famous-map/MapItemModifier');
+	
+	var surface = new Surface({
+		size: [50, 50],
+		properties: {
+			backgroundColor: 'white'
+		}
+	});
+	var modifier = new Modifier({
+		align: [0, 0],
+        origin: [0.5, 0.5]
+	});
+	var mapItemModifier = new MapItemModifier({
+		position: new google.maps.LatLng(51.4484855, 5.451478)
+	});
+	this.add(mapItemModifier).add(modifier).add(surface);
+
+##### Enable auto-scaling when the map is zoomed in or out
+
+To enable auto-scaling set zoomBase to the zoom-level you wish the item to be displayed in its true size. This would mean that at zoom-level 4, its size will 1/4 of its original size:
+
+	var mapItemModifier = new MapItemModifier({
+		position: new google.maps.LatLng(51.4484855, 5.451478),
+		zoomBase: 5
+	});
+
+To use a different zooming strategy, use zoomFactor. ZoomFactor can be set to either a number or a getter function:
+
+	var mapItemModifier = new MapItemModifier({
+		position: new google.maps.LatLng(51.4484855, 5.451478),
+		zoomBase: 5,
+		zoomFactor: 0.5
+	});
+	
+	var mapItemModifier = new MapItemModifier({
+		position: new google.maps.LatLng(51.4484855, 5.451478),
+		zoomBase: 5,
+		zoomFactor: function (baseZoom, currentZoom) {
+			var zoom = currentZoom - baseZoom;
+            if (zoom < 0) {
+            	return 1 / (2 * (Math.abs(zoom) + 1));
+            } else {
+            	return 1 + (2 * zoom);
+            }
+		}
+	});
+
+##### API reference
 
 |Class|Description|
 |---|---|
