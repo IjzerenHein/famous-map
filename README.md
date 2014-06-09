@@ -11,23 +11,24 @@ Famous-map adds support for adding google-maps to the famo.us render-tree. Addit
 TODO
 
 
+## Installation
+
+Install using bower:
+	
+	bower install famous-map
+	
 ## Getting started
 
-Download or clone the famous-map repository:
-
-	https://github.com/IjzerenHein/famous-map.git
-
-Add it to requireConfig.js if you like:
+Add famous-map to requireConfig.js so its easier to include:
 
 	/*globals require*/
 	require.config({
     	paths: {
     		...
-			'famous-map': '../famous-map',
+			'famous-map': 'bower_components/famous-map',
 			...
 	    }
 	});
-	require(['example']);
 	
 Include google-maps in the html file:
 
@@ -94,7 +95,7 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 
 ##### Placing a renderable to a static position on the map
 
-	MapItemModifier = require('famous-map/MapItemModifier');
+	MapModifier = require('famous-map/MapModifier');
 	
 	var surface = new Surface({
 		size: [50, 50],
@@ -106,29 +107,29 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 		align: [0, 0],
         origin: [0.5, 0.5]
 	});
-	var mapItemModifier = new MapItemModifier({
+	var mapModifier = new MapModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478)
 	});
-	this.add(mapItemModifier).add(modifier).add(surface);
+	this.add(mapModifier).add(modifier).add(surface);
 
 ##### Enable auto-scaling when the map is zoomed in or out
 
-To enable auto-scaling set zoomBase to the zoom-level you wish the item to be displayed in its true size. In this example where zoomBase is set to 5, this would mean that at zoom-level 4 its size will 1/4 of its original size:
+To enable auto-scaling set zoomBase to the zoom-level you wish the renderables to be displayed in its true size. In this example where zoomBase is set to 5, this would mean that at zoom-level 4 its size will 1/4 of its original size:
 
-	var mapItemModifier = new MapItemModifier({
+	var mapModifier = new MapModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5
 	});
 
 To use a different zooming strategy, use zoomScale. ZoomScale can be set to either a number or a getter function:
 
-	var mapItemModifier = new MapItemModifier({
+	var mapModifier = new MapModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5,
 		zoomScale: 0.5
 	});
 	
-	var mapItemModifier = new MapItemModifier({
+	var mapModifier = new MapModifier({
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5,
 		zoomScale: function (baseZoom, currentZoom) {
@@ -146,8 +147,8 @@ To use a different zooming strategy, use zoomScale. ZoomScale can be set to eith
 |Class|Description|
 |---|---|
 |[MapView](docs/MapView.md)|View class which encapsulates a google-maps V3 map.|
-|[MapItemModifier](docs/MapItemModifier.md)|Stateless modifier which positions a renderable based on a geographical position {LatLng}.|
-|[MapItemStateModifier](docs/MapItemStateModifier.md)|Modifier which positions a renderable based on a geographical position {LatLng}, using transitions.|
+|[MapModifier](docs/MapModifier.md)|Stateless modifier which positions a renderable based on a geographical position {LatLng}.|
+|[MapStateModifier](docs/MapStateModifier.md)|Modifier which positions a renderable based on a geographical position {LatLng}, using transitions.|
 |[MapPositionTransitionable](docs/MapPositionTransitionable.md)|Transitionable for geographical coordinates {LatLng}.
 
 ## Contact

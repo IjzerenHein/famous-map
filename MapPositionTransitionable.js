@@ -27,7 +27,15 @@
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
 /*global define, google*/
 
-/* globals define */
+/**
+ * @title MapPositionTransitionable
+ * 
+ * The MapPositionTransitionable makes it possible to transition between two geographical
+ * positions. Currently, only standard transition definitions are supported (see `Transitionable`), but in the future more interesting
+ * transitions may be added.
+ *
+ * This class is used internally by `MapView` and `MapStateModifier`.
+ */
 define(function (require, exports, module) {
     'use strict';
 
@@ -36,8 +44,10 @@ define(function (require, exports, module) {
 
     /**
      * @class MapPositionTransitionable
+     *
+     * @method
      * @constructor
-     * @param {LatLng} [position] Position;
+     * @param {LatLng} [position] Default geopgraphical position
      */
     function MapPositionTransitionable(position) {
         this.position = new Transitionable([0, 0]);
@@ -70,12 +80,10 @@ define(function (require, exports, module) {
      * Set the geographical position by adding it to the queue of transition.
      *
      * @method set
-     * @chainable
      *
      * @param {LatLng} position
-     * @param {Object} [transition[ Transition definition
+     * @param {Object} [transition] Transition definition
      * @param {Function} [callback] Callback
-     * @return {MapPositionTransitionable}
      */
     MapPositionTransitionable.prototype.set = function set(position, transition, callback) {
         var latlng = [position.lat(), position.lng()];
@@ -113,7 +121,7 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Determine if the MapPositionTransitionable is currently transitioning
+     * Determine if the transitionable is currently transitioning
      *
      * @method isActive
      * @return {Boolean}

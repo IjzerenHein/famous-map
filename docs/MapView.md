@@ -1,75 +1,83 @@
+MapView
+=======
+MapView encapsulates a Google maps view so it can be used with famo.us.
+
+Additionally it adds methods to set the position and zoom-factor of the map using transitions.
+Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map, much like google-maps markers.
+
+
 class MapView
 -------------
 **Methods**
 
 MapView.getMap()
 ----------------
-Gets the internal map-object. This object may not yet have been initialized.
-The object is guarenteed to be valid after the 'load' event has been emited.
+Get the internal map-object. This object may not yet have been initialized, the map is only
+guarenteed to be valid after the 'load' event has been emited.
 
 
 
 **Returns**
 
-*Map*,  Map object.
+*Map*,  Google-maps Map object.
 
 MapView.setPosition(position, \[transition\], \[callback\])
 -----------------------------------------------------------
-Set the center of the map to the given geographical coordinates (Latitude, Longitude).
+Set the center of the map to the given geographical coordinates.
 
 
 
 **Parameters**
 
-**position**:  *LatLng*,  Position in geographical coordinates (Latitude, Longitude).
+**position**:  *LatLng*,  Position in geographical coordinates.
 
-**[transition]**:  *Transitionable*,  Famo.us transitionable object.
+**[transition]**:  *Transitionable*,  Transitionable.
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
 MapView.getPosition()
 ---------------------
-Get the current center position of the map.
+Get the current center position of the map, in geographical coordinates.
 
 
 
 **Returns**
 
-*LatLng*,  Position in geographical coordinates (Latitude, Longitude)
+*LatLng*,  Position in geographical coordinates.
 
 MapView.getFinalPosition()
 --------------------------
-Get the destination center position of the map.
+Get the destination center position of the map, in geographical coordinates.
 
 
 
 **Returns**
 
-*LatLng*,  Position in geographical coordinates (Latitude, Longitude)
+*LatLng*,  Position in geographical coordinates.
 
 MapView.setZoom(zoom, \[transition\], \[callback\])
 ---------------------------------------------------
-Set the zoom-level.
+Set the zoom-level of the map.
 
 
 
 **Parameters**
 
-**zoom**:  *Number*,  Zoom-level for the map (0 = zoomed-out), must be a whole number.
+**zoom**:  *Number*,  Zoom-level for the map.
 
-**[transition]**:  *Transitionable*,  Famo.us transitionable object.
+**[transition]**:  *Transitionable*,  Transitionable.
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
 MapView.getZoom()
 -----------------
-Get the current zoom- factor.
+Get the current zoom-level of the map.
 
 
 
 **Returns**
 
-*Number*,  Current zoom- factor
+*Number*,  Zoom-level.
 
 MapView.rotationFromPositions(start, end)
 -----------------------------------------
@@ -89,13 +97,13 @@ Calculates the rotation-angle between two given positions.
 
 MapView.pointFromPosition(Position)
 -----------------------------------
-Get the position in pixels, relative to the left-top of the container, for the given geographical position.
+Get the position in pixels (relative to the left-top of the container) for the given geographical position.
 
 
 
 **Parameters**
 
-**Position**:  *LatLng*,  in geographical coordinates (Latitude, Longitude).
+**Position**:  *LatLng*,  in geographical coordinates.
 
 **Returns**
 
@@ -103,7 +111,7 @@ Get the position in pixels, relative to the left-top of the container, for the g
 
 MapView.positionFromPoint(point)
 --------------------------------
-Get the geographical coordinates for a given position in pixels, relative to the left-top of the container.
+Get the geographical coordinates for a given position in pixels (relative to the left-top of the container).
 
 
 
@@ -113,7 +121,7 @@ Get the geographical coordinates for a given position in pixels, relative to the
 
 **Returns**
 
-*LatLng*,  Position in geographical coordinates (Latitude, Longitude).
+*LatLng*,  Position in geographical coordinates.
 
 MapView.halt()
 --------------

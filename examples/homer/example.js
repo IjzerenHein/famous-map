@@ -39,8 +39,8 @@ define(function (require) {
     var Easing = require('famous/transitions/Easing');
     var Timer = require('famous/utilities/Timer');
     var MapView = require('famous-map/MapView');
-    var MapItemModifier = require('famous-map/MapItemModifier');
-    var MapItemStateModifier = require('famous-map/MapItemStateModifier');
+    var MapModifier = require('famous-map/MapModifier');
+    var MapStateModifier = require('famous-map/MapStateModifier');
 
     // create the main context
     var mainContext = Engine.createContext();
@@ -187,7 +187,7 @@ define(function (require) {
         var rotation = new Modifier({
             transform: Transform.rotateZ(Math.PI / 2)
         });
-        var modifier = new MapItemModifier({
+        var modifier = new MapModifier({
             mapView: mapView,
             position: new google.maps.LatLng(51.4367399, 5.4812397),
             rotateTowards: homer,
@@ -214,7 +214,7 @@ define(function (require) {
             origin: [0.5, 0.5],
             transform: Transform.rotateZ((Math.PI / 180) * -11)
         });
-        var modifier = new MapItemStateModifier({
+        var modifier = new MapStateModifier({
             mapView: mapView,
             position: new google.maps.LatLng(52.3747158, 4.8986166)
         });
@@ -227,7 +227,7 @@ define(function (require) {
      * @private
      */
     function _createMarge(context, mapView, homer) {
-        var modifier = new MapItemModifier({
+        var modifier = new MapModifier({
             mapView: mapView,
             position: new google.maps.LatLng(51.8538331, 5.3576616)
         });
@@ -256,7 +256,7 @@ define(function (require) {
         });
         var surface = new Surface({
             size: [200, 160],
-            content: 'Move the map by hand and see how MapItems stick to the map.',
+            content: 'Move the map by hand and see how renderables stick to the map.',
             classes: ['info']
         });
         context.add(modifier).add(surface);
@@ -268,7 +268,7 @@ define(function (require) {
      * @private
      */
     function _createPins(context, mapView) {
-        var modifier = new MapItemModifier({
+        var modifier = new MapModifier({
             mapView: mapView,
             position: new google.maps.LatLng(51.4452133, 5.4806269),
             zoomBase: 14,
@@ -292,7 +292,7 @@ define(function (require) {
      * @private
      */
     function _createSaucer(context, mapView) {
-        var modifier = new MapItemModifier({
+        var modifier = new MapModifier({
             mapView: mapView,
             position: new google.maps.LatLng(51.443569, 5.446869),
             zoomBase: 14,

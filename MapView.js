@@ -27,7 +27,14 @@
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
 /*global define, google*/
 
-/* globals define */
+/**
+ * @title MapView
+ * 
+ * MapView encapsulates a Google maps view so it can be used with famo.us.
+ *
+ * Additionally it adds methods to set the position and zoom-factor of the map using transitions.
+ * Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map, much like google-maps markers.
+ */
 var _globalMapViewId = 1;
 define(function (require, exports, module) {
     'use strict';
@@ -35,7 +42,6 @@ define(function (require, exports, module) {
     // import dependencies
     var Surface = require('famous/core/Surface');
     var View = require('famous/core/View');
-    var Easing = require('famous/transitions/Easing');
     var Transitionable = require('famous/transitions/Transitionable');
     var MapPositionTransitionable = require('./MapPositionTransitionable');
     
@@ -44,7 +50,7 @@ define(function (require, exports, module) {
      *
      * @class MapView
      * @constructor
-     * @param {Object} [options] Configuration options.
+     * @param {Object} options Options.
      */
     function MapView() {
         View.apply(this, arguments);
@@ -76,8 +82,6 @@ define(function (require, exports, module) {
     MapView.prototype.constructor = MapView;
     
     MapView.DEFAULT_OPTIONS = {
-        moveTransition: { duration: 500, curve: Easing.outQuad },
-        zoomTransition: { duration: 500, curve: Easing.inOutSine },
         mapOptions: {
             zoom: 10,
             center: new google.maps.LatLng(51.4400867, 5.4782571),
@@ -88,9 +92,11 @@ define(function (require, exports, module) {
     };
     
     /**
-     * Initializes the map (happens after the DOM element has been created
+     * Initializes the map (happens after the DOM element has been created).
+     
      * @method _initMap
      * @private
+     * @ignore
      */
     MapView.prototype._initMap = function () {
 
@@ -113,23 +119,22 @@ define(function (require, exports, module) {
     };
     
     /**
-     * Gets the internal map-object. This object may not yet have been initialized.
-     * The object is guarenteed to be valid after the 'load' event has been emited.
+     * Get the internal map-object. This object may not yet have been initialized, the map is only
+     * guarenteed to be valid after the 'load' event has been emited.
      *
      * @method getMap
-     * @return {Map} Map object.
+     * @return {Map} Google-maps Map object.
      */
     MapView.prototype.getMap = function () {
         return this.map;
     };
 
     /**
-     * Set the center of the map to the given geographical coordinates (Latitude, Longitude).
+     * Set the center of the map to the given geographical coordinates.
      *
      * @method setPosition
-     * @chainable
-     * @param {LatLng} position Position in geographical coordinates (Latitude, Longitude).
-     * @param {Transitionable} [transition] Famo.us transitionable object.
+     * @param {LatLng} position Position in geographical coordinates.
+     * @param {Transitionable} [transition] Transitionable.
      * @param {Function} [callback] callback to call after transition completes.
      */
     MapView.prototype.setPosition = function (position, transition, callback) {
@@ -138,32 +143,31 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Get the current center position of the map.
+     * Get the current center position of the map, in geographical coordinates.
      *
      * @method getPosition
-     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
+     * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.getPosition = function () {
         return this._position.get();
     };
     
     /**
-     * Get the destination center position of the map.
+     * Get the destination center position of the map, in geographical coordinates.
      *
      * @method getFinalPosition
-     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude)
+     * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.getFinalPosition = function () {
         return this._position.getFinal();
     };
     
     /**
-     * Set the zoom-level.
+     * Set the zoom-level of the map.
      *
      * @method setZoom
-     * @chainable
-     * @param {Number} zoom Zoom-level for the map (0 = zoomed-out), must be a whole number.
-     * @param {Transitionable} [transition] Famo.us transitionable object.
+     * @param {Number} zoom Zoom-level for the map.
+     * @param {Transitionable} [transition] Transitionable.
      * @param {Function} [callback] callback to call after transition completes.
      */
     MapView.prototype.setZoom = function (zoom, transition, callback) {
@@ -172,10 +176,10 @@ define(function (require, exports, module) {
     };
     
     /**
-     * Get the current zoom- factor.
+     * Get the current zoom-level of the map.
      *
      * @method getZoom
-     * @return {Number} Current zoom- factor
+     * @return {Number} Zoom-level.
      */
     MapView.prototype.getZoom = function () {
         return this._zoom.get();
@@ -194,10 +198,10 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Get the position in pixels, relative to the left-top of the container, for the given geographical position.
+     * Get the position in pixels (relative to the left-top of the container) for the given geographical position.
      *
      * @method pointFromPosition
-     * @param {LatLng} Position in geographical coordinates (Latitude, Longitude).
+     * @param {LatLng} Position in geographical coordinates.
      * @return {Point} Position in pixels, relative to the left-top of the mapView.
      */
     MapView.prototype.pointFromPosition = function (position) {
@@ -210,11 +214,11 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Get the geographical coordinates for a given position in pixels, relative to the left-top of the container.
+     * Get the geographical coordinates for a given position in pixels (relative to the left-top of the container).
      *
      * @method positionFromPoint
      * @param {Point} point Position in pixels, relative to the left-top of the mapView.
-     * @return {LatLng} Position in geographical coordinates (Latitude, Longitude).
+     * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.positionFromPoint = function (point) {
         var topRight = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getNorthEast());
@@ -250,6 +254,7 @@ define(function (require, exports, module) {
      *
      * @method render
      * @private
+     * @ignore
      */
     MapView.prototype.render = function render() {
         

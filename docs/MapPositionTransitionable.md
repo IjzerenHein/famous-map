@@ -1,6 +1,21 @@
+MapPositionTransitionable
+=========================
+The MapPositionTransitionable makes it possible to transition between two geographical
+positions. Currently, only standard transition definitions are supported (see `Transitionable`), but in the future more interesting
+transitions may be added.
+
+This class is used internally by `MapView` and `MapStateModifier`.
+
+
 class MapPositionTransitionable
 -------------------------------
 **Methods**
+
+MapPositionTransitionable.MapPositionTransitionable(\[position\])
+-----------------------------------------------------------------
+**Parameters**
+
+**[position]**:  *LatLng*,  Default geopgraphical position
 
 MapPositionTransitionable.setDefaultTransition(transition)
 ----------------------------------------------------------
@@ -23,7 +38,7 @@ Cancel all transitions and reset to a geographical position.
 **position**:  *LatLng*,  
 
 
-MapPositionTransitionable.set(position, \[transition\[, \[callback\])
+MapPositionTransitionable.set(position, \[transition\], \[callback\])
 ---------------------------------------------------------------------
 Set the geographical position by adding it to the queue of transition.
 
@@ -35,7 +50,7 @@ Set the geographical position by adding it to the queue of transition.
 **position**:  *LatLng*,  
 
 
-**[transition[**:  *Object*,  Transition definition
+**[transition]**:  *Object*,  Transition definition
 
 **[callback]**:  *Function*,  Callback
 
@@ -53,7 +68,7 @@ Get the destination geographical position.
 
 MapPositionTransitionable.isActive()
 ------------------------------------
-Determine if the MapPositionTransitionable is currently transitioning
+Determine if the transitionable is currently transitioning
 
 
 
