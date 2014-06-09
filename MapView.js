@@ -186,8 +186,8 @@ define(function (require, exports, module) {
      *
      * @method rotationFromPositions
      * @param {LatLng} start Start position.
-     * @param {LatLng} start End position.
-     * @param {Number} Rotation in radians.
+     * @param {LatLng} end End position.
+     * @return {Number} Rotation in radians.
      */
     MapView.prototype.rotationFromPositions = function (start, end) {
         return Math.atan2(start.lng() - end.lng(), start.lat() - end.lat()) + (Math.PI / 2.0);
@@ -249,6 +249,7 @@ define(function (require, exports, module) {
      * Renders the view.
      *
      * @method render
+     * @private
      */
     MapView.prototype.render = function render() {
         

@@ -1,7 +1,9 @@
 famous-map
 ==========
 
-Google Maps (V3) support for famo.us
+Google maps component for Famo.us.
+
+Famous-map adds support for adding google-maps to the famo.us render-tree. Additionally, famous transitions are supported for panning the map. Modifiers can be used to sync the position of renderables with a geographical location.
 
 
 ## Demo
@@ -15,7 +17,7 @@ Download or clone the famous-map repository:
 
 	https://github.com/IjzerenHein/famous-map.git
 
-And add it to requireConfig.js:
+Add it to requireConfig.js if you like:
 
 	/*globals require*/
 	require.config({
@@ -148,14 +150,9 @@ To use a different zooming strategy, use zoomScale. ZoomScale can be set to eith
 |[MapItemStateModifier](docs/MapItemStateModifier.md)|Modifier which positions a renderable based on a geographical position {LatLng}, using transitions.|
 |[MapPositionTransitionable](docs/MapPositionTransitionable.md)|Transitionable for geographical coordinates {LatLng}.
 
+## Contact
+- 	@IjzerenHein
+- 	http://www.gloey.nl
+- 	hrutjes@gmail.com
 
-
-## License
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
+© 2014 - Hein Rutjes

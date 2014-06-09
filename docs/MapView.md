@@ -13,9 +13,9 @@ The object is guarenteed to be valid after the 'load' event has been emited.
 
 *Map*,  Map object.
 
-MapView.panToPosition(position, \[transition\], \[callback\])
--------------------------------------------------------------
-Changes the center of the map to the given geographical coordinates (Latitude, Longitude).
+MapView.setPosition(position, \[transition\], \[callback\])
+-----------------------------------------------------------
+Set the center of the map to the given geographical coordinates (Latitude, Longitude).
 
 
 
@@ -26,6 +26,16 @@ Changes the center of the map to the given geographical coordinates (Latitude, L
 **[transition]**:  *Transitionable*,  Famo.us transitionable object.
 
 **[callback]**:  *Function*,  callback to call after transition completes.
+
+MapView.getPosition()
+---------------------
+Get the current center position of the map.
+
+
+
+**Returns**
+
+*LatLng*,  Position in geographical coordinates (Latitude, Longitude)
 
 MapView.getFinalPosition()
 --------------------------
@@ -51,27 +61,31 @@ Set the zoom-level.
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
-MapView.setMarkerPosition(marker, position, \[transition\], \[callback\], \[cache\])
-------------------------------------------------------------------------------------
-Set the marker position, with the option to use a transition.
+MapView.getZoom()
+-----------------
+Get the current zoom- factor.
+
+
+
+**Returns**
+
+*Number*,  Current zoom- factor
+
+MapView.rotationFromPositions(start, end)
+-----------------------------------------
+Calculates the rotation-angle between two given positions.
 
 
 
 **Parameters**
 
-**marker**:  *Marker*,  Marker for which to update the position.
+**start**:  *LatLng*,  Start position.
 
-**position**:  *LatLng*,  Position in geographical coordinates (Latitude, Longitude).
-
-**[transition]**:  *Transitionable*,  Famo.us transitionable object.
-
-**[callback]**:  *Function*,  callback to call after transition completes.
-
-**[cache]**:  *Object*,  cache to use when making transitions.
+**end**:  *LatLng*,  End position.
 
 **Returns**
 
-*Object*,  Cache object. Re-suply this to setMarkerPosition to ensure previous transitions are cancelled, prior to starting a new one.
+*Number*,  Rotation in radians.
 
 MapView.pointFromPosition(Position)
 -----------------------------------
@@ -117,17 +131,9 @@ Is there at least one action pending completion?
 
 *Bool*,  True when there are active transitions running.
 
-MapView.positionFromPoint(point)
---------------------------------
-Get the geographical coordinates for a given x/y point in pixels (relative to the left-top of the container).
+MapView.render()
+----------------
+Renders the view.
 
 
-
-**Parameters**
-
-**point**:  *Point*,  X/Y point in pixels relative to the left-top of the mapView.
-
-**Returns**
-
-*LatLng*,  Position in geographical coordinates (Latitude, Longitude).
 

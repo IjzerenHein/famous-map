@@ -49,7 +49,7 @@ module.exports = function(grunt) {
           contentsTitle: 'Example Documentation',
           contentsFile: 'readme.md',
         },
-        src: ['./MapView.js', './MapItem.js'],
+        src: ['./Map*.js'],
         dest: 'docs'
       },
       /*publish: {
