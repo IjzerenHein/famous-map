@@ -1,12 +1,37 @@
 {
+  "name": "famous-map",
+  "version": "0.0.1",
+  "homepage": "https://github.com/IjzerenHein/famous-map",
+  "author": {
+    "name": "Hein Rutjes <hrutjes@gmail.com>"
+  },
+  "description": "Google maps component for Famo.us",
+  "main": "mapView.js",
+  "keywords": [
+    "famo.us",
+    "famous",
+    "famousmap",
+    "google.maps",
+    "map"
+  ],
+  "licenses": [
+    {
+      "type": "MIT",
+      "url": "https://github.com/IjzerenHein/famous-map/blob/master/LICENSE"
+    }
+  ],
+  "readmeFilename": "README.md",
+  "bugs": {
+    "url": "https://github.com/IjzerenHein/famous-map/issues"
+  },
   "engines": {
     "node": ">= 0.10.0"
   },
   "devDependencies": {
-    "grunt": "~0.4.2",
-    "grunt-contrib-jshint": "~0.7.2",
-    "grunt-contrib-watch": "~0.5.3",
-    "grunt-contrib-qunit": "~0.3.0",
-    "grunt-jsdox": "~0.1.4"
+    "grunt": "latest",
+    "grunt-contrib-jshint": "latest",
+    "grunt-contrib-watch": "latest",
+    "grunt-contrib-qunit": "latest",
+    "grunt-jsdox": "latest"
   }
 }

@@ -3,15 +3,28 @@
   "version": "0.0.1",
   "homepage": "https://github.com/IjzerenHein/famous-map",
   "authors": [
-    "IjzerenHein <hrutjes@gmail.com>"
+    "Hein Rutjes <hrutjes@gmail.com>"
   ],
-  "description": "Famo.us map-view for google-maps V3 api",
+  "description": "Google maps component for Famo.us",
   "main": "mapView.js",
   "keywords": [
     "famo.us",
     "famous",
-    "javascript",
-    "google.maps"
+    "famousmap",
+    "google.maps",
+    "map"
   ],
-  "license": "MIT"
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "tests",
+    "examples",
+    "docs"
+  ],
+  "dependencies": {
+    "requirejs": "~2.1.11",
+    "famous": "~0.2.0"
+  }
 }
