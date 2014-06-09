@@ -21,7 +21,9 @@
     "bower_components",
     "tests",
     "examples",
-    "docs"
+    "docs",
+    "TODO.md",
+    "Gruntfile.js"
   ],
   "dependencies": {
     "requirejs": "~2.1.11",
