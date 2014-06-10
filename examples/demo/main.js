@@ -32,6 +32,7 @@ define(function (require) {
     
     // import dependencies
     var Engine = require('famous/core/Engine');
+    var FastClick = require('famous/inputs/FastClick');
     var Modifier = require('famous/core/Modifier');
     var Surface = require('famous/core/Surface');
     var ImageSurface = require('famous/surfaces/ImageSurface');
@@ -135,7 +136,7 @@ define(function (require) {
                 name: 'Philips Stadium',
                 position: new google.maps.LatLng(51.4416315, 5.467244),
                 image: 'images/stadium.png',
-                infoImage: 'http://www.gbsportstours.com/uploads/media/philips.jpg'
+                infoImage: 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Ventilating_corner_seats_of_Philips_Stadion.JPG/1024px-Ventilating_corner_seats_of_Philips_Stadion.JPG'
             }
         ];
         function _panToLandmark(e) {
