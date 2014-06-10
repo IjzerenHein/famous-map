@@ -77,12 +77,13 @@ define(function (require, exports, module) {
             target: null
         };
         
-        this._position = options.position;
+        this._positionGetter = null;
+        this._rotateTowardsGetter = null;
         this._offset = options.offset;
         this._zoomScale = options.zoomScale;
         this._zoomBase = options.zoomBase;
-        this._rotateTowardsGetter = null;
-        
+                
+        if (options.position) { this.positionFrom(options.position); }
         if (options.rotateTowards) { this.rotateTowardsFrom(options.rotateTowards); }
     }
     
@@ -93,7 +94,17 @@ define(function (require, exports, module) {
      * @param {LatLng} position Position in geographical coordinates.
      */
     MapModifier.prototype.positionFrom = function (position) {
-        this._position = position;
+        if (!position) {
+            this._positionGetter = null;
+            this._position = null;
+        } else if (position instanceof Function) {
+            this._positionGetter = position;
+        } else if (position instanceof Object && position.getPosition) {
+            this._positionGetter = position.getPosition.bind(position);
+        } else {
+            this._positionGetter = null;
+            this._position = position;
+        }
         return this;
     };
     
@@ -164,7 +175,7 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates.
      */
     MapModifier.prototype.getPosition = function () {
-        return this._position;
+        return this._positionGetter || this._position;
     };
     
     /**
@@ -224,48 +235,48 @@ define(function (require, exports, module) {
      */
     MapModifier.prototype.modify = function modify(target) {
         var transform;
-        
-        // Move, rotate, etc... based on position
-        if (this._position) {
 
-            // Calculate scale transform
-            if (this._zoomBase) {
-                var scaling;
-                if (this._zoomScale) {
-                    if (this._zoomScale instanceof Function) {
-                        scaling = this._zoomScale(this._zoomBase, this.mapView.getZoom());
-                    } else {
-                        var zoom = this.mapView.getZoom() - this._zoomBase;
-                        if (zoom < 0) {
-                            scaling = 1 / (this._zoomScale * (Math.abs(zoom) + 1));
-                        } else {
-                            scaling = 1 + (this._zoomScale * zoom);
-                        }
-                    }
+        // Calculate scale transform
+        if (this._zoomBase) {
+            var scaling;
+            if (this._zoomScale) {
+                if (this._zoomScale instanceof Function) {
+                    scaling = this._zoomScale(this._zoomBase, this.mapView.getZoom());
                 } else {
-                    scaling = Math.pow(2, this.mapView.getZoom() - this._zoomBase);
+                    var zoom = this.mapView.getZoom() - this._zoomBase;
+                    if (zoom < 0) {
+                        scaling = 1 / (this._zoomScale * (Math.abs(zoom) + 1));
+                    } else {
+                        scaling = 1 + (this._zoomScale * zoom);
+                    }
                 }
-                var scale = Transform.scale(scaling, scaling, 1.0);
-                transform = transform ? Transform.multiply(scale, transform) : scale;
+            } else {
+                scaling = Math.pow(2, this.mapView.getZoom() - this._zoomBase);
+            }
+            var scale = Transform.scale(scaling, scaling, 1.0);
+            transform = transform ? Transform.multiply(scale, transform) : scale;
+        }
+
+        // Move, rotate, etc... based on position
+        var position = this._positionGetter ? this._positionGetter() : this._position;
+        if (position) {
+            
+            // Offset position
+            if (this._offset) {
+                position = new google.maps.LatLng(
+                    position.lat() + this._offset.lat(),
+                    position.lng() + this._offset.lng()
+                );
             }
             
             // Calculate rotation transform
             var rotateTowards = this._rotateTowardsGetter ? this._rotateTowardsGetter() : this._rotateTowards;
             if (rotateTowards) {
-                var rotation = this.mapView.rotationFromPositions(this._position, rotateTowards);
+                var rotation = this.mapView.rotationFromPositions(position, rotateTowards);
                 var rotate = Transform.rotateZ(rotation);
                 transform = transform ? Transform.multiply(rotate, transform) : rotate;
             }
-            
-            // Offset position
-            var position = this._position;
-            if (this.offset) {
-                position = new google.maps.LatLng(
-                    position.lat() + this.offset.lat(),
-                    position.lng() + this.offset.lng()
-                );
-            }
-            
+
             // Calculate translation transform
             var point = this.mapView.pointFromPosition(position);
             var translate = Transform.translate(point.x, point.y, 0);
