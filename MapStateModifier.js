@@ -119,7 +119,7 @@ define(function (require, exports, module) {
      * @param {Number} zoomBase Map zoom-level
      */
     MapStateModifier.prototype.setZoomBase = function (zoomBase) {
-        this._modifier.setZoomBase(zoomBase);
+        this._modifier.zoomBaseFrom(zoomBase);
         return this;
     };
     
@@ -132,7 +132,7 @@ define(function (require, exports, module) {
      * @param {Number,Function} zoomScale Zoom-scale factor or function.
      */
     MapStateModifier.prototype.setZoomScale = function (zoomScale) {
-        this._modifier.setZoomScale(zoomScale);
+        this._modifier.zoomScaleFrom(zoomScale);
         return this;
     };
     
@@ -143,10 +143,10 @@ define(function (require, exports, module) {
      * @param {LatLng} offset Displacement offset in geographical coordinates.
      */
     MapStateModifier.prototype.setOffset = function (offset) {
-        this._modifier.setOffset(offset);
+        this._modifier.offsetFrom(offset);
         return this;
     };
-        
+
     /**
      * Get the current geographical position.
      *
@@ -240,7 +240,7 @@ define(function (require, exports, module) {
     };
 
     /**
-     * Return render spec for this StateModifier, applying to the provided
+     * Return render spec for this MapStateModifier, applying to the provided
      *    target component.  This is similar to render() for Surfaces.
      *
      * @method modify
@@ -249,7 +249,7 @@ define(function (require, exports, module) {
      *
      * @param {Object} target (already rendered) render spec to
      *    which to apply the transform.
-     * @return {Object} render spec for this StateModifier, including the
+     * @return {Object} render spec for this MapStateModifier, including the
      *    provided target
      */
     MapStateModifier.prototype.modify = function modify(target) {
