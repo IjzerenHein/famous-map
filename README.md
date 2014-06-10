@@ -107,6 +107,7 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
         origin: [0.5, 0.5]
 	});
 	var mapModifier = new MapModifier({
+        mapView: mapView,
 		position: new google.maps.LatLng(51.4484855, 5.451478)
 	});
 	this.add(mapModifier).add(modifier).add(surface);
@@ -116,6 +117,7 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 To enable auto-scaling set zoomBase to the zoom-level you wish the renderables to be displayed in its true size. In this example where zoomBase is set to 5, this would mean that at zoom-level 4 its size will 1/4 of its original size:
 
 	var mapModifier = new MapModifier({
+        mapView: mapView,
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5
 	});
@@ -123,12 +125,14 @@ To enable auto-scaling set zoomBase to the zoom-level you wish the renderables t
 To use a different zooming strategy, use zoomScale. ZoomScale can be set to either a number or a getter function:
 
 	var mapModifier = new MapModifier({
+        mapView: mapView,
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5,
 		zoomScale: 0.5
 	});
 	
 	var mapModifier = new MapModifier({
+        mapView: mapView,
 		position: new google.maps.LatLng(51.4484855, 5.451478),
 		zoomBase: 5,
 		zoomScale: function (baseZoom, currentZoom) {
