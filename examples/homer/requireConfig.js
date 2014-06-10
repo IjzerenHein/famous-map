@@ -5,8 +5,8 @@ require.config({
     },
     paths: {
         'famous-map': '../..',
-        famous: 'bower_components/famous',
-        requirejs: 'bower_components/require'
+        famous: '../../bower_components/famous',
+        require: '../../bower_components/requirejs'
     }
 });
 require(['example']);
