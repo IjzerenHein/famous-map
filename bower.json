@@ -6,7 +6,6 @@
     "Hein Rutjes <hrutjes@gmail.com>"
   ],
   "description": "Google maps component for Famo.us",
-  "main": "mapView.js",
   "keywords": [
     "famo.us",
     "famous",
