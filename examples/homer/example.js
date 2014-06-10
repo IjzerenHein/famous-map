@@ -178,7 +178,7 @@ define(function (require) {
         var surface = new ImageSurface({
             size: [true, true],
             classes: ['arrow'],
-            content: '../content/images/arrow.png'
+            content: 'images/arrow.png'
         });
         var center = new Modifier({
             align: [0, 0],
@@ -207,7 +207,7 @@ define(function (require) {
         var surface = new ImageSurface({
             size: [80, true],
             classes: ['car'],
-            content: '../content/images/homer.png'
+            content: 'images/homer.png'
         });
         var center = new Modifier({
             align: [0, 0],
@@ -238,7 +238,7 @@ define(function (require) {
         var surface = new ImageSurface({
             size: [true, true],
             classes: ['marge'],
-            content: '../content/images/marge.png'
+            content: 'images/marge.png'
         });
         context.add(modifier).add(center).add(surface);
         return modifier;
@@ -280,7 +280,7 @@ define(function (require) {
         });
         var surface = new ImageSurface({
             size: [true, true],
-            content: '../content/images/pins.png',
+            content: 'images/pins.png',
             classes: ['pins']
         });
         context.add(modifier).add(center).add(surface);
@@ -304,7 +304,7 @@ define(function (require) {
         });
         var surface = new ImageSurface({
             size: [true, true],
-            content: '../content/images/evoluon.png',
+            content: 'images/evoluon.png',
             classes: ['saucer']
         });
         context.add(modifier).add(center).add(surface);
