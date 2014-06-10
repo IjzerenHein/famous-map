@@ -145,6 +145,7 @@ define(function (require, exports, module) {
      */
     MapView.prototype.setPosition = function (position, transition, callback) {
         this._position.set(position, transition, callback);
+        this._positionInvalidated = true;
         return this;
     };
 
@@ -178,6 +179,7 @@ define(function (require, exports, module) {
      */
     MapView.prototype.setZoom = function (zoom, transition, callback) {
         this._zoom.set(zoom, transition, callback);
+        this._zoomInvalidated = true;
         return this;
     };
     
@@ -243,6 +245,8 @@ define(function (require, exports, module) {
     MapView.prototype.halt = function () {
         this._position.halt();
         this._zoom.halt();
+        this._positionInvalidated = true;
+        this._zoomInvalidated = true;
     };
     
     /**
@@ -270,14 +274,15 @@ define(function (require, exports, module) {
         // Get/set center and zoom
         if (this._initComplete) {
             var options;
-            if (this._position.isActive()) {
+            if (this._position.isActive() || this._positionInvalidated) {
                 options = {
                     center: this._position.get()
                 };
+                this._positionInvalidated = false;
             } else {
                 this._position.reset(this.map.getCenter());
             }
-            if (this._zoom.isActive()) {
+            if (this._zoom.isActive() || this._zoomInvalidated) {
                 if (options) {
                     options.zoom = Math.round(this._zoom.get());
                 } else {
@@ -285,6 +290,7 @@ define(function (require, exports, module) {
                         zoom: Math.round(this._zoom.get())
                     };
                 }
+                this._zoomInvalidated = false;
             } else {
                 this._zoom.reset(this.map.getZoom());
             }
