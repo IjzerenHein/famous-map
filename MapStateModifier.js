@@ -37,6 +37,20 @@
  * The MapStateModifier makes it possible to use transitions to e.g. move a renderable from one geographical
  * position to another. If the renderable doesn't require transitions, the use of the lightweight 
  * and stateless `MapModifier` is strongly preferred.
+ *
+ * ### Options
+ *
+ * **mapView**: {MapView} The MapView.
+ *
+ * **[position]**: {LatLng} Initial geographical coordinates.
+ *
+ * **[offset]**: {LatLng} Displacement offset in geographical coordinates from the position.
+ *
+ * **[rotateTowards]**: {LatLng} Position to rotate the renderables towards.
+ *
+ * **[zoomBase]**: {Number} Base zoom-level at which the renderables are displayed in their true size.
+ *
+ * **[zoomScale]**: {Number, Function} Customer zoom-scaling factor or function.
  */
 define(function (require, exports, module) {
     'use strict';
@@ -63,6 +77,9 @@ define(function (require, exports, module) {
         
         if (options.position) { this.setPosition(options.position); }
         if (options.rotateTowards) { this.rotateTowards(options.rotateTowards); }
+        if (options.offset) { this.setOffset(options.offset); }
+        if (options.zoomBase) { this.setZoomBase(options.zoomBase); }
+        if (options.zoomScale) { this.setZoomBase(options.zoomScale); }
     }
 
     /**

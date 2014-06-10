@@ -36,6 +36,20 @@
  *
  * Use `MapStateModifier` if you want to use transitions, e.g. to animate a move from one geographical position
  * to another.
+ *
+ * ### Options
+ *
+ * **mapView**: {MapView} The MapView.
+ *
+ * **[position]**: {LatLng} Initial geographical coordinates.
+ *
+ * **[offset]**: {LatLng} Displacement offset in geographical coordinates from the position.
+ *
+ * **[rotateTowards]**: {LatLng, Object, Function} Position to rotate the renderables towards.
+ *
+ * **[zoomBase]**: {Number} Base zoom-level at which the renderables are displayed in their true size.
+ *
+ * **[zoomScale]**: {Number, Function} Customer zoom-scaling factor or function.
  */
 define(function (require, exports, module) {
     'use strict';

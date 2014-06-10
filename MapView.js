@@ -34,6 +34,12 @@
  *
  * Additionally it adds methods to set the position and zoom-factor of the map using transitions.
  * Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map, much like google-maps markers.
+ *
+ * ### Options
+ *
+ * **mapOptions**: Options that are passed directly to the google.maps.Map object. The options should include the 'center' and 'zoom'.
+ *
+ * **[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
  */
 var _globalMapViewId = 1;
 define(function (require, exports, module) {
@@ -61,8 +67,8 @@ define(function (require, exports, module) {
         this._zoom = new Transitionable(this.options.mapOptions.zoom);
         
         // When a specific dom-id is specified, use that
-        if (this.options.mapOptions && this.options.mapOptions.id) {
-            this.mapId = this.options.mapOptions.id;
+        if (this.options.mapOptions && this.options.id) {
+            this.mapId = this.options.id;
         } else {
             
             // Otherwise generate unique id, and create the div ourselves

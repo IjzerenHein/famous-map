@@ -5,6 +5,12 @@ MapView encapsulates a Google maps view so it can be used with famo.us.
 Additionally it adds methods to set the position and zoom-factor of the map using transitions.
 Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map, much like google-maps markers.
 
+### Options
+
+**mapOptions**: Options that are passed directly to the google.maps.Map object. The options should include the 'center' and 'zoom'.
+
+**[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
+
 
 class MapView
 -------------
