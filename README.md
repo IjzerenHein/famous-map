@@ -3,12 +3,12 @@ famous-map
 
 Google maps component for Famo.us.
 
-Famous-map adds support for adding google-maps to the famo.us render-tree. Additionally, famous transitions are supported for panning the map. Modifiers can be used to sync the position of renderables with a geographical location.
+Famous-map adds support for adding google-maps to the famo.us render-tree. Additionally, famous transitions are supported for panning the map. Modifiers can be used to sync the position of renderables with a geographical position.
 
 
 ## Demo
 
-TODO
+[View the demo here](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
 
 
 ## Installation
@@ -19,9 +19,8 @@ Install using bower:
 	
 ## Getting started
 
-Add famous-map to requireConfig.js so its easier to include:
+Add famous-map to the requirejs paths config:
 
-	/*globals require*/
 	require.config({
     	paths: {
     		...
@@ -93,7 +92,7 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 		}
 	);
 
-##### Placing a renderable to a static position on the map
+##### Linking a renderable with a position on the map
 
 	MapModifier = require('famous-map/MapModifier');
 	

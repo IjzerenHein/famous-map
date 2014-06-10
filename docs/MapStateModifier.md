@@ -188,7 +188,7 @@ Is there at least one transition pending completion?
 
 MapModifier.modify(target)
 --------------------------
-Return render spec for this StateModifier, applying to the provided
+Return render spec for this MapStateModifier, applying to the provided
 target component.  This is similar to render() for Surfaces.
 
 
@@ -202,5 +202,5 @@ provided target
 
 **Returns**
 
-*Object*,  render spec for this StateModifier, including the
+*Object*,  render spec for this MapStateModifier, including the
 
