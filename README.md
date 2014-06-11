@@ -71,11 +71,10 @@ is only safely accessible after the 'load' event, because the DOM-object must fi
 		...
 	});
 
-##### Panning & zooming the map using transitions
+##### Panning the map using transitions
 
 To pan the map using famo.us transitions, use MapView.setPosition().
 Transitions are chained, so you can create paths that the map will follow.
-Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap().setZoom() to use the standard Google Maps zoom behavior.
 
 	mapView.setPosition(
 		new google.maps.LatLng(51.4484855, 5.451478),
@@ -84,15 +83,10 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 			mapView.getMap().setZoom(7)
 		}
 	);
-	mapView.setPosition(
-		new google.maps.LatLng(51.4484855, 5.451478),
-		{ duration: 5000 },
-		function () {
-			mapView.setZoom(3, { duration: 10000} )
-		}
-	);
 
-##### Linking a renderable with a position on the map
+##### Linking a renderable to a geographical coordinate on the map
+
+To place a renderable on the map like a marker, use MapModifier or MapStateModifier:
 
 	MapModifier = require('famous-map/MapModifier');
 	
@@ -111,6 +105,40 @@ Use MapView.setZoom() to zoom in and out using transitions or use MapView.getMap
 		position: new google.maps.LatLng(51.4484855, 5.451478)
 	});
 	this.add(mapModifier).add(modifier).add(surface);
+
+##### Moving a renderable across the map
+
+MapStateModifier relates to MapModifier in the same way StateModifier relates to Modifier.
+MapStateModifier makes it possible to change the position from one place to another, using
+a transitionable. Transitions are chained, so you can create paths that the renderable will follow:
+
+    MapStateModifier = require('famous-map/MapStateModifier');
+	
+	var surface = new Surface({
+		size: [50, 50],
+		properties: {
+			backgroundColor: 'white'
+		}
+	});
+	var modifier = new Modifier({
+		align: [0, 0],
+        origin: [0.5, 0.5]
+	});
+	var mapStateModifier = new MapStateModifier({
+        mapView: mapView,
+		position: new google.maps.LatLng(51.4484855, 5.451478)
+	});
+	this.add(mapStateModifier).add(modifier).add(surface);
+    
+    // Animate the renderable across the map
+    mapStateModifier.setPosition(
+        new google.maps.LatLng(52.4484855, 6.451478),
+        { duration: 5000 }
+    );
+    mapStateModifier.setPosition(
+        new google.maps.LatLng(50.4484855, 3.451478),
+        { duration: 4000 }
+    );
 
 ##### Enable auto-scaling when the map is zoomed in or out
 
