@@ -160,9 +160,7 @@ define(function (require) {
                 disableDefaultUI: false,
                 disableDoubleClickZoom: true,
                 mapTypeId: google.maps.MapTypeId.TERRAIN
-            },
-            moveTransition: { duration: 4000, curve: Easing.outQuad },
-            zoomTransition: { duration: 5000, curve: Easing.inOutSine }
+            }
         });
         context.add(mapView);
         return mapView;
