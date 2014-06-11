@@ -40,6 +40,8 @@
  * **mapOptions**: Options that are passed directly to the google.maps.Map object. The options should include the 'center' and 'zoom'.
  *
  * **[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
+ *
+ * **[zoomTransition]**: Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
  */
 var _globalMapViewId = 1;
 define(function (require, exports, module) {
@@ -48,7 +50,6 @@ define(function (require, exports, module) {
     // import dependencies
     var Surface = require('famous/core/Surface');
     var View = require('famous/core/View');
-    var Transitionable = require('famous/transitions/Transitionable');
     var MapPositionTransitionable = require('./MapPositionTransitionable');
     
     /**
@@ -64,7 +65,11 @@ define(function (require, exports, module) {
         // Initialize
         this.map = null;
         this._position = new MapPositionTransitionable(this.options.mapOptions.center);
-        this._zoom = new Transitionable(this.options.mapOptions.zoom);
+        this._zoomFinal = this.options.mapOptions.zoom;
+        this._bounds = {
+            northEast: new MapPositionTransitionable(this.options.mapOptions.center),
+            southWest: new MapPositionTransitionable(this.options.mapOptions.center)
+        };
         
         // When a specific dom-id is specified, use that
         if (this.options.mapOptions && this.options.id) {
@@ -87,6 +92,9 @@ define(function (require, exports, module) {
     MapView.prototype = Object.create(View.prototype);
     MapView.prototype.constructor = MapView;
     
+    /**
+     * @property MapView.DEFAULT_OPTIONS
+     */
     MapView.DEFAULT_OPTIONS = {
         mapOptions: {
             zoom: 10,
@@ -94,12 +102,14 @@ define(function (require, exports, module) {
             disableDefaultUI: true,
             disableDoubleClickZoom: true,
             mapTypeId: google.maps.MapTypeId.TERRAIN
-        }
+        },
+        id: null,
+        zoomTransition: {duration: 100}
     };
     
     /**
      * Initializes the map (happens after the DOM element has been created).
-     
+     *
      * @method _initMap
      * @private
      * @ignore
@@ -178,19 +188,27 @@ define(function (require, exports, module) {
      * @param {Function} [callback] callback to call after transition completes.
      */
     MapView.prototype.setZoom = function (zoom, transition, callback) {
-        this._zoom.set(zoom, transition, callback);
-        this._zoomInvalidated = true;
+        this.map.setZoom(zoom, transition, callback);
+        // TODO transitions??!?
         return this;
     };
     
     /**
      * Get the current zoom-level of the map.
+     
+     * As opposed to Map.getZoom(), this function
+     * takes into account a smooth transition between zoom-levels. E.g., when zooming from
+     * zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
+     * at 5, over time. The transition time can be set as an option.
      *
      * @method getZoom
      * @return {Number} Zoom-level.
      */
     MapView.prototype.getZoom = function () {
-        return this._zoom.get();
+        var topRight = this.map.getProjection().fromLatLngToPoint(this._bounds.northEast.get());
+        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this._bounds.southWest.get());
+        var scale = this.getSize()[0] / (topRight.x - bottomLeft.x);
+        return Math.log(scale) / Math.log(2);
     };
     
     /**
@@ -213,14 +231,14 @@ define(function (require, exports, module) {
      * @return {Point} Position in pixels, relative to the left-top of the mapView.
      */
     MapView.prototype.pointFromPosition = function (position) {
-        var topRight = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getNorthEast());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getSouthWest());
-        var scale = Math.pow(2, this.map.getZoom());
+        var topRight = this.map.getProjection().fromLatLngToPoint(this._bounds.northEast.get());
+        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this._bounds.southWest.get());
+        var scale = this.getSize()[0] / (topRight.x - bottomLeft.x);
         var worldPoint = this.map.getProjection().fromLatLngToPoint(position);
         var point = new google.maps.Point((worldPoint.x - bottomLeft.x) * scale, (worldPoint.y - topRight.y) * scale);
         return point;
     };
-
+    
     /**
      * Get the geographical coordinates for a given position in pixels (relative to the left-top of the container).
      *
@@ -229,14 +247,30 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.positionFromPoint = function (point) {
-        var topRight = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getNorthEast());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getSouthWest());
-        var scale = Math.pow(2, this.map.getZoom());
+        var topRight = this.map.getProjection().fromLatLngToPoint(this._bounds.northEast.get());
+        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this._bounds.southWest.get());
+        var scale = this.getSize()[0] / (topRight.x - bottomLeft.x);
         var worldPoint = new google.maps.Point((point.x / scale) + bottomLeft.x, (point.y / scale) + topRight.y);
         var position = this.map.getProjection().fromPointToLatLng(worldPoint);
         return position;
     };
     
+    /**
+     * Get the size of the map-view in pixels.
+     *
+     * @method getSize
+     * @return {Array.Number} Size of the mapView.
+     */
+    MapView.prototype.getSize = function () {
+        var topRight = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getNorthEast());
+        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getSouthWest());
+        var scale = Math.pow(2, this.map.getZoom());
+        return [
+            (topRight.x - bottomLeft.x) * scale,
+            (bottomLeft.y - topRight.y) * scale
+        ];
+    };
+        
     /**
      * Halts any pending transitions.
      *
@@ -244,9 +278,7 @@ define(function (require, exports, module) {
      */
     MapView.prototype.halt = function () {
         this._position.halt();
-        this._zoom.halt();
         this._positionInvalidated = true;
-        this._zoomInvalidated = true;
     };
     
     /**
@@ -256,7 +288,7 @@ define(function (require, exports, module) {
      * @return {Bool} True when there are active transitions running.
      */
     MapView.prototype.isActive = function () {
-        return this._position.isActive() || this._zoom.isActive();
+        return this._position.isActive();
     };
     
     /**
@@ -270,10 +302,24 @@ define(function (require, exports, module) {
         
         // Init the map (once)
         if (!this.map) { this._initMap(); }
-        
-        // Get/set center and zoom
         if (this._initComplete) {
+            
+            // When the zoom-level is changed by google-maps, start a transition
+            // that runs alongside.
             var options;
+            var zoom = this.map.getZoom();
+            if (zoom !== this._zoomFinal) {
+                this._bounds.northEast.halt();
+                this._bounds.southWest.halt();
+                this._bounds.northEast.set(this.map.getBounds().getNorthEast(), this.options.zoomTransition);
+                this._bounds.southWest.set(this.map.getBounds().getSouthWest(), this.options.zoomTransition);
+                this._zoomFinal = zoom;
+            } else if (!this._bounds.northEast.isActive()) {
+                this._bounds.northEast.reset(this.map.getBounds().getNorthEast());
+                this._bounds.southWest.reset(this.map.getBounds().getSouthWest());
+            }
+
+            // Get/set map center
             if (this._position.isActive() || this._positionInvalidated) {
                 options = {
                     center: this._position.get()
@@ -281,18 +327,6 @@ define(function (require, exports, module) {
                 this._positionInvalidated = false;
             } else {
                 this._position.reset(this.map.getCenter());
-            }
-            if (this._zoom.isActive() || this._zoomInvalidated) {
-                if (options) {
-                    options.zoom = Math.round(this._zoom.get());
-                } else {
-                    options = {
-                        zoom: Math.round(this._zoom.get())
-                    };
-                }
-                this._zoomInvalidated = false;
-            } else {
-                this._zoom.reset(this.map.getZoom());
             }
             if (options) {
                 this.map.setOptions(options);
