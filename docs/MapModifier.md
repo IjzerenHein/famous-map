@@ -40,7 +40,7 @@ Set the geographical position of the renderables.
 
 **Parameters**
 
-**position**:  *LatLng*,  Position in geographical coordinates.
+**position**:  *LatLng, Function, Object*,  Position in geographical coordinates.
 
 MapModifier.rotateTowardsFrom(position)
 ---------------------------------------
@@ -57,7 +57,7 @@ To change the base rotation, add a rotation-transform to the renderable, like th
 
 MapModifier.zoomBaseFrom(zoomBase)
 ----------------------------------
-Set the base zoom-level. When set, auto-zooming is effecitvely enabled.
+Set the base zoom-level. When set, auto-zooming is effectively enabled.
 The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
 
 

@@ -11,6 +11,8 @@ Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map
 
 **[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
 
+**[zoomTransition]**: Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
+
 
 class MapView
 -------------
@@ -79,6 +81,11 @@ MapView.getZoom()
 -----------------
 Get the current zoom-level of the map.
 
+As opposed to Map.getZoom(), this function
+takes into account a smooth transition between zoom-levels. E.g., when zooming from
+zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
+at 5, over time. The transition time can be set as an option.
+
 
 
 **Returns**
@@ -128,6 +135,16 @@ Get the geographical coordinates for a given position in pixels (relative to the
 **Returns**
 
 *LatLng*,  Position in geographical coordinates.
+
+MapView.getSize()
+-----------------
+Get the size of the map-view in pixels.
+
+
+
+**Returns**
+
+*Array.Number*,  Size of the mapView.
 
 MapView.halt()
 --------------

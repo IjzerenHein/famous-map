@@ -60,7 +60,7 @@ define(function (require, exports, module) {
     var MapPositionTransitionable = require('./MapPositionTransitionable');
 
     /**
-     * @class MapModifier
+     * @class MapStateModifier
      *
      * @method constructor
      * @constructor
@@ -112,7 +112,7 @@ define(function (require, exports, module) {
     };
     
     /**
-     * Set the base zoom-level. When set, auto-zooming is effecitvely enabled.
+     * Set the base zoom-level. When set, auto-zooming is effectively enabled.
      * The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
      *
      * @method setZoomBase

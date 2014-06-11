@@ -23,18 +23,18 @@ and stateless `MapModifier` is strongly preferred.
 **[zoomScale]**: {Number, Function} Customer zoom-scaling factor or function.
 
 
-class MapModifier
------------------
+class MapStateModifier
+----------------------
 **Methods**
 
-MapModifier.constructor(options)
---------------------------------
+MapStateModifier.constructor(options)
+-------------------------------------
 **Parameters**
 
 **options**:  *Object*,  Options.
 
-MapModifier.setPosition(position, \[transition\], \[callback\])
----------------------------------------------------------------
+MapStateModifier.setPosition(position, \[transition\], \[callback\])
+--------------------------------------------------------------------
 Set the geographical position of the renderables, by adding the new position to the chain of transitions.
 
 
@@ -47,8 +47,8 @@ Set the geographical position of the renderables, by adding the new position to 
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
-MapModifier.rotateTowards(position, \[transition\], \[callback\])
------------------------------------------------------------------
+MapStateModifier.rotateTowards(position, \[transition\], \[callback\])
+----------------------------------------------------------------------
 Set the destination geographical position to rotate the renderables towards, by adding them.
 to the chain of transitions.
 The child renderables are assumed to be rotated to the right by default.
@@ -65,9 +65,9 @@ To change the base rotation, add a rotation-transform to the renderable, like th
 
 **[callback]**:  *Function*,  callback to call after transition completes.
 
-MapModifier.setZoomBase(zoomBase)
----------------------------------
-Set the base zoom-level. When set, auto-zooming is effecitvely enabled.
+MapStateModifier.setZoomBase(zoomBase)
+--------------------------------------
+Set the base zoom-level. When set, auto-zooming is effectively enabled.
 The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
 
 
@@ -76,8 +76,8 @@ The renderables are then displayed in their true size when the map zoom-level eq
 
 **zoomBase**:  *Number*,  Map zoom-level
 
-MapModifier.setZoomScale(zoomScale)
------------------------------------
+MapStateModifier.setZoomScale(zoomScale)
+----------------------------------------
 Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and
 decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
 a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
@@ -88,8 +88,8 @@ a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
 
 **zoomScale**:  *Number,Function*,  Zoom-scale factor or function.
 
-MapModifier.setOffset(offset)
------------------------------
+MapStateModifier.setOffset(offset)
+----------------------------------
 Set the displacement offset in geographical coordinates.
 
 
@@ -98,8 +98,8 @@ Set the displacement offset in geographical coordinates.
 
 **offset**:  *LatLng*,  Displacement offset in geographical coordinates.
 
-MapModifier.getPosition()
--------------------------
+MapStateModifier.getPosition()
+------------------------------
 Get the current geographical position.
 
 
@@ -108,8 +108,8 @@ Get the current geographical position.
 
 *LatLng*,  Position in geographical coordinates.
 
-MapModifier.getRotateTowards()
-------------------------------
+MapStateModifier.getRotateTowards()
+-----------------------------------
 Get the geographical position towards which the renderables are currently rotated.
 
 
@@ -118,8 +118,8 @@ Get the geographical position towards which the renderables are currently rotate
 
 *LatLng*,  Destination geographical position towards which renderables are rotated.
 
-MapModifier.getFinalPosition()
-------------------------------
+MapStateModifier.getFinalPosition()
+-----------------------------------
 Get the destination geographical position.
 
 
@@ -128,8 +128,8 @@ Get the destination geographical position.
 
 *LatLng*,  Position in geographical coordinates.
 
-MapModifier.getFinalRotateTowards()
------------------------------------
+MapStateModifier.getFinalRotateTowards()
+----------------------------------------
 Get the destination geographical position which the renderables should be rotated towards.
 
 
@@ -138,8 +138,8 @@ Get the destination geographical position which the renderables should be rotate
 
 *LatLng*,  Position in geographical coordinates.
 
-MapModifier.getZoomBase()
--------------------------
+MapStateModifier.getZoomBase()
+------------------------------
 Get the base zoom-level. The zoomBase indicates the zoom-level at which renderables are
 displayed in their true size.
 
@@ -149,8 +149,8 @@ displayed in their true size.
 
 *Number*,  Base zoom level
 
-MapModifier.getZoomScale()
---------------------------
+MapStateModifier.getZoomScale()
+-------------------------------
 Get the base zoom-scale. The zoomScale can be either a Number or a Function which returns
 a scale-factor.
 
@@ -160,8 +160,8 @@ a scale-factor.
 
 *Number, Function*,  Zoom-scale
 
-MapModifier.getOffset()
------------------------
+MapStateModifier.getOffset()
+----------------------------
 Get the geographical displacement offset.
 
 
@@ -170,14 +170,14 @@ Get the geographical displacement offset.
 
 *LatLng*,  Offset in geographical coordinates.
 
-MapModifier.halt()
-------------------
+MapStateModifier.halt()
+-----------------------
 Halts any pending transitions.
 
 
 
-MapModifier.isActive()
-----------------------
+MapStateModifier.isActive()
+---------------------------
 Is there at least one transition pending completion?
 
 
@@ -186,8 +186,8 @@ Is there at least one transition pending completion?
 
 *Bool*,  True when there are active transitions running.
 
-MapModifier.modify(target)
---------------------------
+MapStateModifier.modify(target)
+-------------------------------
 Return render spec for this MapStateModifier, applying to the provided
 target component.  This is similar to render() for Surfaces.
 
