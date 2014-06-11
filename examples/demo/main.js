@@ -110,7 +110,7 @@ define(function (require) {
         var compassMapModifier = new MapModifier({
             mapView: mapView,
             position: mapView,
-            zoomBase: 15,
+            zoomBase: 14,
             zoomScale: 0.5
         });
         mainContext.add(compassModifier).add(compassMapModifier).add(compass);

@@ -243,7 +243,7 @@ define(function (require, exports, module) {
                 if (this._zoomScale instanceof Function) {
                     scaling = this._zoomScale(this._zoomBase, this.mapView.getZoom());
                 } else {
-                    var zoom = this.mapView.getZoom() - this._zoomBase;
+                    var zoom = (this.mapView.getZoom() - this._zoomBase) + 1;
                     if (zoom < 0) {
                         scaling = (1 / (Math.abs(zoom) + 1)) * this._zoomScale;
                     } else {
