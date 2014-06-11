@@ -70,6 +70,7 @@ define(function (require, exports, module) {
             northEast: new MapPositionTransitionable(this.options.mapOptions.center),
             southWest: new MapPositionTransitionable(this.options.mapOptions.center)
         };
+        this._cache = {};
         
         // When a specific dom-id is specified, use that
         if (this.options.mapOptions && this.options.id) {
@@ -205,10 +206,7 @@ define(function (require, exports, module) {
      * @return {Number} Zoom-level.
      */
     MapView.prototype.getZoom = function () {
-        var topRight = this.map.getProjection().fromLatLngToPoint(this._bounds.northEast.get());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this._bounds.southWest.get());
-        var scale = this.getSize()[0] / (topRight.x - bottomLeft.x);
-        return Math.log(scale) / Math.log(2);
+        return this._cache.zoom;
     };
     
     /**
@@ -231,12 +229,11 @@ define(function (require, exports, module) {
      * @return {Point} Position in pixels, relative to the left-top of the mapView.
      */
     MapView.prototype.pointFromPosition = function (position) {
-        var topRight = this.map.getProjection().fromLatLngToPoint(this._bounds.northEast.get());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this._bounds.southWest.get());
-        var scale = this.getSize()[0] / (topRight.x - bottomLeft.x);
         var worldPoint = this.map.getProjection().fromLatLngToPoint(position);
-        var point = new google.maps.Point((worldPoint.x - bottomLeft.x) * scale, (worldPoint.y - topRight.y) * scale);
-        return point;
+        return new google.maps.Point(
+            (worldPoint.x - this._cache.bottomLeft.x) * this._cache.scale,
+            (worldPoint.y - this._cache.topRight.y) * this._cache.scale
+        );
     };
     
     /**
@@ -247,12 +244,11 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.positionFromPoint = function (point) {
-        var topRight = this.map.getProjection().fromLatLngToPoint(this._bounds.northEast.get());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this._bounds.southWest.get());
-        var scale = this.getSize()[0] / (topRight.x - bottomLeft.x);
-        var worldPoint = new google.maps.Point((point.x / scale) + bottomLeft.x, (point.y / scale) + topRight.y);
-        var position = this.map.getProjection().fromPointToLatLng(worldPoint);
-        return position;
+        var worldPoint = new google.maps.Point(
+            (point.x / this._cache.scale) + this._cache.bottomLeft.x,
+            (point.y / this._cache.scale) + this._cache.topRight.y
+        );
+        return this.map.getProjection().fromPointToLatLng(worldPoint);
     };
     
     /**
@@ -262,13 +258,7 @@ define(function (require, exports, module) {
      * @return {Array.Number} Size of the mapView.
      */
     MapView.prototype.getSize = function () {
-        var topRight = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getNorthEast());
-        var bottomLeft = this.map.getProjection().fromLatLngToPoint(this.map.getBounds().getSouthWest());
-        var scale = Math.pow(2, this.map.getZoom());
-        return [
-            (topRight.x - bottomLeft.x) * scale,
-            (bottomLeft.y - topRight.y) * scale
-        ];
+        return this._cache.size;
     };
         
     /**
@@ -292,6 +282,35 @@ define(function (require, exports, module) {
     };
     
     /**
+     * @method _updateCache
+     * @private
+     * @ignore
+     */
+    MapView.prototype._updateCache = function (zoom, northEast, southWest) {
+        
+        // Store final data
+        this._cache.finalZoom = zoom;
+        this._cache.finalScale = Math.pow(2, this._cache.finalZoom);
+        this._cache.finalNorthEast = northEast;
+        this._cache.finalSouthWest = southWest;
+        
+        // Calculate size of the MapView
+        var projection = this.map.getProjection();
+        var topRight = projection.fromLatLngToPoint(northEast);
+        var bottomLeft = projection.fromLatLngToPoint(southWest);
+        this._cache.size = [
+            (topRight.x - bottomLeft.x) * this._cache.finalScale,
+            (bottomLeft.y - topRight.y) * this._cache.finalScale
+        ];
+        
+        // Calculate current world point edges and scale
+        this._cache.topRight = projection.fromLatLngToPoint(this._bounds.northEast.get());
+        this._cache.bottomLeft = projection.fromLatLngToPoint(this._bounds.southWest.get());
+        this._cache.scale = this._cache.size[0] / (this._cache.topRight.x - this._cache.bottomLeft.x);
+        this._cache.zoom = Math.log(this._cache.scale) / Math.log(2);
+    };
+
+    /**
      * Renders the view.
      *
      * @method render
@@ -308,15 +327,29 @@ define(function (require, exports, module) {
             // that runs alongside.
             var options;
             var zoom = this.map.getZoom();
-            if (zoom !== this._zoomFinal) {
+            var bounds = this.map.getBounds();
+            var northEast = bounds.getNorthEast();
+            var southWest = bounds.getSouthWest();
+            var invalidateCache = false;
+            if (zoom !== this._cache.finalZoom) {
                 this._bounds.northEast.halt();
                 this._bounds.southWest.halt();
-                this._bounds.northEast.set(this.map.getBounds().getNorthEast(), this.options.zoomTransition);
-                this._bounds.southWest.set(this.map.getBounds().getSouthWest(), this.options.zoomTransition);
-                this._zoomFinal = zoom;
+                this._bounds.northEast.set(northEast, this.options.zoomTransition);
+                this._bounds.southWest.set(southWest, this.options.zoomTransition);
+                invalidateCache = true;
             } else if (!this._bounds.northEast.isActive()) {
-                this._bounds.northEast.reset(this.map.getBounds().getNorthEast());
-                this._bounds.southWest.reset(this.map.getBounds().getSouthWest());
+                this._bounds.northEast.reset(northEast);
+                this._bounds.southWest.reset(southWest);
+            } else {
+                invalidateCache = true;
+            }
+            
+            // Update the cache
+            if (invalidateCache || (zoom !== this._cache.finalZoom) ||
+                    !northEast.equals(this._cache.finalNorthEast) ||
+                    !southWest.equals(this._cache.finalSouthWest)) {
+                //console.log('updating cache..');
+                this._updateCache(zoom, northEast, southWest);
             }
 
             // Get/set map center

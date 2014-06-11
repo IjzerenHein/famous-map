@@ -77,6 +77,8 @@ define(function (require, exports, module) {
             target: null
         };
         
+        this._cache = {};
+        
         this._positionGetter = null;
         this._rotateTowardsGetter = null;
         this._offset = options.offset;
@@ -234,7 +236,7 @@ define(function (require, exports, module) {
      *    provided target
      */
     MapModifier.prototype.modify = function modify(target) {
-        var transform;
+        var cacheInvalidated = false;
         
         // Calculate scale transform
         if (this._zoomBase) {
@@ -253,8 +255,15 @@ define(function (require, exports, module) {
             } else {
                 scaling = Math.pow(2, this.mapView.getZoom() - this._zoomBase);
             }
-            var scale = Transform.scale(scaling, scaling, 1.0);
-            transform = transform ? Transform.multiply(scale, transform) : scale;
+            if (this._cache.scaling !== scaling) {
+                this._cache.scaling = scaling;
+                this._cache.scale = Transform.scale(scaling, scaling, 1.0);
+                cacheInvalidated = true;
+            }
+        } else if (this._cache.scale) {
+            this._cache.scale = null;
+            this._cache.scaling = null;
+            cacheInvalidated = true;
         }
 
         // Move, rotate, etc... based on position
@@ -273,18 +282,35 @@ define(function (require, exports, module) {
             var rotateTowards = this._rotateTowardsGetter ? this._rotateTowardsGetter() : this._rotateTowards;
             if (rotateTowards) {
                 var rotation = this.mapView.rotationFromPositions(position, rotateTowards);
-                var rotate = Transform.rotateZ(rotation);
-                transform = transform ? Transform.multiply(rotate, transform) : rotate;
+                if (this._cache.rotation !== rotation) {
+                    this._cache.rotation = rotation;
+                    this._cache.rotate = Transform.rotateZ(rotation);
+                    cacheInvalidated = true;
+                }
+            } else if (this._cache.rotate) {
+                this._cache.rotate = null;
+                this._cache.rotation = null;
+                cacheInvalidated = true;
             }
 
             // Calculate translation transform
             var point = this.mapView.pointFromPosition(position);
-            var translate = Transform.translate(point.x, point.y, 0);
-            transform = transform ? Transform.multiply(translate, transform) : translate;
+            if (!point.equals(this._cache.point)) {
+                this._cache.point = point;
+                this._cache.translate = Transform.translate(point.x, point.y, 0);
+                cacheInvalidated = true;
+            }
+        } else if (this._cache.translate) {
+            this._cache.point = null;
+            this._cache.translate = null;
+            cacheInvalidated = true;
         }
         
         // Update transformation matrix
-        if (transform) {
+        if (cacheInvalidated) {
+            var transform = this._cache.scale;
+            if (this._cache.rotate) { transform = transform ? Transform.multiply(this._cache.rotate, transform) : this._cache.rotate; }
+            if (this._cache.translate) { transform = transform ? Transform.multiply(this._cache.translate, transform) : this._cache.translate; }
             this._output.transform = transform;
         }
         
