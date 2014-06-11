@@ -91,7 +91,7 @@ define(function (require, exports, module) {
      * Set the geographical position of the renderables.
      *
      * @method positionFrom
-     * @param {LatLng} position Position in geographical coordinates.
+     * @param {LatLng, Function, Object} position Position in geographical coordinates.
      */
     MapModifier.prototype.positionFrom = function (position) {
         if (!position) {
@@ -133,7 +133,7 @@ define(function (require, exports, module) {
     };
     
     /**
-     * Set the base zoom-level. When set, auto-zooming is effecitvely enabled.
+     * Set the base zoom-level. When set, auto-zooming is effectively enabled.
      * The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
      *
      * @method zoomBaseFrom
@@ -235,7 +235,7 @@ define(function (require, exports, module) {
      */
     MapModifier.prototype.modify = function modify(target) {
         var transform;
-
+        
         // Calculate scale transform
         if (this._zoomBase) {
             var scaling;
@@ -245,9 +245,9 @@ define(function (require, exports, module) {
                 } else {
                     var zoom = this.mapView.getZoom() - this._zoomBase;
                     if (zoom < 0) {
-                        scaling = 1 / (this._zoomScale * (Math.abs(zoom) + 1));
+                        scaling = (1 / (Math.abs(zoom) + 1)) * this._zoomScale;
                     } else {
-                        scaling = 1 + (this._zoomScale * zoom);
+                        scaling = (1 + zoom) * this._zoomScale;
                     }
                 }
             } else {
