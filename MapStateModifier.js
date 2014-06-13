@@ -78,8 +78,8 @@ define(function (require, exports, module) {
         if (options.position) { this.setPosition(options.position); }
         if (options.rotateTowards) { this.rotateTowards(options.rotateTowards); }
         if (options.offset) { this.setOffset(options.offset); }
-        if (options.zoomBase) { this.setZoomBase(options.zoomBase); }
-        if (options.zoomScale) { this.setZoomBase(options.zoomScale); }
+        if (options.zoomBase !== undefined) { this.setZoomBase(options.zoomBase); }
+        if (options.zoomScale) { this.setZoomScale(options.zoomScale); }
     }
 
     /**
@@ -254,7 +254,7 @@ define(function (require, exports, module) {
      */
     MapStateModifier.prototype.modify = function modify(target) {
         this._modifier.positionFrom(this._positionState.get());
-        this._modifier.rotateTowardsFrom(this._rotateTowardsState.get());
+        this._modifier.rotateTowardsFrom(this._rotateTowardsState.getFinal());
         return this._modifier.modify(target);
     };
     
