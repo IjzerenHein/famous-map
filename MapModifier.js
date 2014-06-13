@@ -56,6 +56,7 @@ define(function (require, exports, module) {
 
     // import dependencies
     var Transform = require('famous/core/Transform');
+    var MapUtility = require('./MapUtility');
 
     /**
      * @class MapModifier
@@ -281,7 +282,7 @@ define(function (require, exports, module) {
             // Calculate rotation transform
             var rotateTowards = this._rotateTowardsGetter ? this._rotateTowardsGetter() : this._rotateTowards;
             if (rotateTowards) {
-                var rotation = this.mapView.rotationFromPositions(position, rotateTowards);
+                var rotation = MapUtility.rotationFromPositions(position, rotateTowards);
                 if (this._cache.rotation !== rotation) {
                     this._cache.rotation = rotation;
                     this._cache.rotate = Transform.rotateZ(rotation);
