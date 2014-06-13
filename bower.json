@@ -1,6 +1,6 @@
 {
   "name": "famous-map",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "homepage": "https://github.com/IjzerenHein/famous-map",
   "authors": [
     "Hein Rutjes <hrutjes@gmail.com>"
@@ -21,7 +21,6 @@
     "tests",
     "examples",
     "docs",
-    "TODO.md",
     "Gruntfile.js"
   ],
   "dependencies": {
