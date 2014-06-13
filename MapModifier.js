@@ -240,7 +240,7 @@ define(function (require, exports, module) {
         var cacheInvalidated = false;
         
         // Calculate scale transform
-        if (this._zoomBase) {
+        if (this._zoomBase !== undefined) {
             var scaling;
             if (this._zoomScale) {
                 if (this._zoomScale instanceof Function) {
