@@ -71,7 +71,7 @@ define(function (require) {
             new google.maps.LatLng(51.4400867, 5.4782571),
             { duration: 4000, curve: Easing.outQuad },
             function () {
-                mapView.setZoom(14, {duration: 2000 });
+                mapView.getMap().setZoom(14);
             }
         );
         
@@ -293,7 +293,7 @@ define(function (require) {
         var modifier = new MapModifier({
             mapView: mapView,
             position: new google.maps.LatLng(51.443569, 5.446869),
-            zoomBase: 14,
+            zoomBase: 15,
             zoomScale: 1
         });
         var center = new Modifier({

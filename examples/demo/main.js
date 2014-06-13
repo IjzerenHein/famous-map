@@ -243,7 +243,7 @@ define(function (require) {
             var position = roundabout[roundaboutIndex];
             travellerMapModifier.setPosition(
                 position,
-                { duration: 2000 },
+                { method: 'map-speed', speed2: 3000 }, // km/h
                 _driveRoundabout
             );
         }
