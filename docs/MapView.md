@@ -63,50 +63,17 @@ Get the destination center position of the map, in geographical coordinates.
 
 *LatLng*,  Position in geographical coordinates.
 
-MapView.setZoom(zoom, \[transition\], \[callback\])
----------------------------------------------------
-Set the zoom-level of the map.
-
-
-
-**Parameters**
-
-**zoom**:  *Number*,  Zoom-level for the map.
-
-**[transition]**:  *Transitionable*,  Transitionable.
-
-**[callback]**:  *Function*,  callback to call after transition completes.
-
 MapView.getZoom()
 -----------------
-Get the current zoom-level of the map.
-
-As opposed to Map.getZoom(), this function
-takes into account a smooth transition between zoom-levels. E.g., when zooming from
-zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
-at 5, over time. The transition time can be set as an option.
+Get the current zoom-level of the map, taking into account smooth transition between zoom-levels.
+E.g., when zooming from zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
+at 5, over time. The used zoomTransition can be set as an option.
 
 
 
 **Returns**
 
 *Number*,  Zoom-level.
-
-MapView.rotationFromPositions(start, end)
------------------------------------------
-Calculates the rotation-angle between two given positions.
-
-
-
-**Parameters**
-
-**start**:  *LatLng*,  Start position.
-
-**end**:  *LatLng*,  End position.
-
-**Returns**
-
-*Number*,  Rotation in radians.
 
 MapView.pointFromPosition(Position)
 -----------------------------------

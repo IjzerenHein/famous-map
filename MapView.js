@@ -50,7 +50,10 @@ define(function (require, exports, module) {
     // import dependencies
     var Surface = require('famous/core/Surface');
     var View = require('famous/core/View');
+    var Transitionable = require('famous/transitions/Transitionable');
     var MapPositionTransitionable = require('./MapPositionTransitionable');
+    var MapTransition = require('./MapTransition');
+    Transitionable.registerMethod('map-speed', MapTransition);
     
     /**
      * A view containing a google-map
@@ -181,44 +184,15 @@ define(function (require, exports, module) {
     };
     
     /**
-     * Set the zoom-level of the map.
-     *
-     * @method setZoom
-     * @param {Number} zoom Zoom-level for the map.
-     * @param {Transitionable} [transition] Transitionable.
-     * @param {Function} [callback] callback to call after transition completes.
-     */
-    MapView.prototype.setZoom = function (zoom, transition, callback) {
-        this.map.setZoom(zoom, transition, callback);
-        // TODO transitions??!?
-        return this;
-    };
-    
-    /**
-     * Get the current zoom-level of the map.
-     
-     * As opposed to Map.getZoom(), this function
-     * takes into account a smooth transition between zoom-levels. E.g., when zooming from
-     * zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
-     * at 5, over time. The transition time can be set as an option.
+     * Get the current zoom-level of the map, taking into account smooth transition between zoom-levels. 
+     * E.g., when zooming from zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
+     * at 5, over time. The used zoomTransition can be set as an option.
      *
      * @method getZoom
      * @return {Number} Zoom-level.
      */
     MapView.prototype.getZoom = function () {
         return this._cache.zoom;
-    };
-    
-    /**
-     * Calculates the rotation-angle between two given positions.
-     *
-     * @method rotationFromPositions
-     * @param {LatLng} start Start position.
-     * @param {LatLng} end End position.
-     * @return {Number} Rotation in radians.
-     */
-    MapView.prototype.rotationFromPositions = function (start, end) {
-        return Math.atan2(start.lng() - end.lng(), start.lat() - end.lat()) + (Math.PI / 2.0);
     };
 
     /**
