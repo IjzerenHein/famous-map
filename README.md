@@ -224,6 +224,11 @@ Famo.us prevents scrolling on mobile-devices by disabling the 'touch-event'.  Th
 
 Panning the map using MapView.setPosition() and a transition works great, but is not as smooth in all scenarios and on all devices. Panning is smoothest for smaller tile-distances. To see map panning in action at different speeds, view the [nyat-cat demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/nyan-cat/index.html).
 
+##### Zoom-levels < 3
+
+At the lower zoom-levels, renderables may not be positiond correctly. This happens when the entire worlds fits more than once on the surface. In this case, the bounding east- and west longitude cannot be determined through the google-maps API, which are required for calculating the x position. To workaround this issue, set `mapOptions.minZoom` to 3.
+
+
 ## Contact
 - 	@IjzerenHein
 - 	http://www.gloey.nl

@@ -54,7 +54,8 @@ define(function (require) {
             center: new google.maps.LatLng(51.4400867, 5.4782571),
             disableDefaultUI: false,
             disableDoubleClickZoom: true,
-            mapTypeId: google.maps.MapTypeId.TERRAIN
+            mapTypeId: google.maps.MapTypeId.TERRAIN,
+            minZoom: 3
         }
     });
     mainContext.add(mapView);
