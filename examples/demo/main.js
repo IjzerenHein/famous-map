@@ -101,7 +101,8 @@ define(function (require) {
         //
         var compass = new ImageSurface({
             size: [128, 128],
-            content: 'images/compass.png'
+            content: 'images/compass.png',
+            classes: ['compass']
         });
         var compassModifier = new Modifier({
             align: [0, 0],
@@ -110,8 +111,8 @@ define(function (require) {
         var compassMapModifier = new MapModifier({
             mapView: mapView,
             position: mapView,
-            zoomBase: 14,
-            zoomScale: 0.5
+            //zoomBase: 14,
+            //zoomScale: 0.5
         });
         mainContext.add(compassModifier).add(compassMapModifier).add(compass);
         
@@ -142,14 +143,14 @@ define(function (require) {
         function _panToLandmark(e) {
             
             // Move the center of the map to the landmark
+            var center = this.getPosition();
             mapView.halt();
             mapView.setPosition(
-                this.getPosition(),
+                new google.maps.LatLng(center.lat() - 0.006, center.lng(), true),
                 { duration: 1000, curve: Easing.outBack }
             );
             
             // Position the compass just below the landmark and make it rotate towards it
-            compassMapModifier.offsetFrom(new google.maps.LatLng(-0.006, 0));
             compassMapModifier.rotateTowardsFrom(this.getPosition());
         }
         for (i = 0; i < landmarks.length; i++) {

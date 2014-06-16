@@ -27,3 +27,7 @@ body, div {
     border-radius: 2px;
     cursor: pointer;
 }
+
+.compass {
+    pointer-events: none;
+}
