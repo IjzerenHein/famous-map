@@ -275,7 +275,8 @@ define(function (require, exports, module) {
             if (this._offset) {
                 position = new google.maps.LatLng(
                     position.lat() + this._offset.lat(),
-                    position.lng() + this._offset.lng()
+                    position.lng() + this._offset.lng(),
+                    true
                 );
             }
             

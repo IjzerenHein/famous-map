@@ -103,7 +103,8 @@ define(function (require, exports, module) {
             var latlng = this.position.get();
             return new google.maps.LatLng(
                 latlng[0],
-                latlng[1]
+                latlng[1],
+                true
             );
         } else {
             return this._final;

@@ -68,8 +68,8 @@ define(function (require, exports, module) {
         // Initialize
         this.map = null;
         this._position = new MapPositionTransitionable(this.options.mapOptions.center);
-        this._zoomFinal = this.options.mapOptions.zoom;
-        this._bounds = {
+        this._zoom = {
+            center: new MapPositionTransitionable(this.options.mapOptions.center),
             northEast: new MapPositionTransitionable(this.options.mapOptions.center),
             southWest: new MapPositionTransitionable(this.options.mapOptions.center)
         };
@@ -170,7 +170,7 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.getPosition = function () {
-        return this._position.get();
+        return this._zoom.center.get();
     };
     
     /**
@@ -278,10 +278,40 @@ define(function (require, exports, module) {
         ];
         
         // Calculate current world point edges and scale
-        this._cache.topRight = projection.fromLatLngToPoint(this._bounds.northEast.get());
-        this._cache.bottomLeft = projection.fromLatLngToPoint(this._bounds.southWest.get());
+        this._cache.topRight = projection.fromLatLngToPoint(this._zoom.northEast.get());
+        this._cache.bottomLeft = projection.fromLatLngToPoint(this._zoom.southWest.get());
         this._cache.scale = this._cache.size[0] / (this._cache.topRight.x - this._cache.bottomLeft.x);
         this._cache.zoom = Math.log(this._cache.scale) / Math.log(2);
+    };
+
+    /**
+     * map.getBounds() returns the northEast and southWest in wrapped coordinates (between -180..180).
+     * This makes it difficult to create a linear coordinate space for converting world-coordinates
+     * into pixels. This function therefore 'unwraps' the northEast and southWest coordinates using
+     * map.getCenter() (which does return unwrapped coordinates).
+     *
+     * @method _getUnwrappedBounds
+     * @private
+     * @ignore
+     */
+    MapView.prototype._getUnwrappedBounds = function (center) {
+        var bounds = this.map.getBounds();
+        var centerLng = center.lng();
+        
+        var northEast = bounds.getNorthEast();
+        var northEastLng = northEast.lng();
+        while (northEastLng < centerLng) { northEastLng += 360; };
+        while (northEastLng > (centerLng + 360)) { northEastLng -= 360; };
+        
+        var southWest = bounds.getSouthWest();
+        var southWestLng = southWest.lng();
+        while (southWestLng < (centerLng - 360)) { southWestLng += 360; };
+        while (southWestLng > centerLng ) { southWestLng -= 360; };
+
+        return {
+            southWest: new google.maps.LatLng(southWest.lat(), southWestLng, true),
+            northEast: new google.maps.LatLng(northEast.lat(), northEastLng, true)
+        };
     };
 
     /**
@@ -301,19 +331,22 @@ define(function (require, exports, module) {
             // that runs alongside.
             var options;
             var zoom = this.map.getZoom();
-            var bounds = this.map.getBounds();
-            var northEast = bounds.getNorthEast();
-            var southWest = bounds.getSouthWest();
+            var center = this.map.getCenter();
+            var bounds = this._getUnwrappedBounds(center);
+            var northEast = bounds.northEast;
+            var southWest = bounds.southWest;
             var invalidateCache = false;
             if (zoom !== this._cache.finalZoom) {
-                this._bounds.northEast.halt();
-                this._bounds.southWest.halt();
-                this._bounds.northEast.set(northEast, this.options.zoomTransition);
-                this._bounds.southWest.set(southWest, this.options.zoomTransition);
+                this._zoom.northEast.halt();
+                this._zoom.southWest.halt();
+                this._zoom.northEast.set(northEast, this.options.zoomTransition);
+                this._zoom.southWest.set(southWest, this.options.zoomTransition);
+                this._zoom.center.set(center, this.options.zoomTransition);
                 invalidateCache = true;
-            } else if (!this._bounds.northEast.isActive()) {
-                this._bounds.northEast.reset(northEast);
-                this._bounds.southWest.reset(southWest);
+            } else if (!this._zoom.northEast.isActive()) {
+                this._zoom.northEast.reset(northEast);
+                this._zoom.southWest.reset(southWest);
+                this._zoom.center.reset(center);
             } else {
                 invalidateCache = true;
             }
@@ -333,7 +366,7 @@ define(function (require, exports, module) {
                 };
                 this._positionInvalidated = false;
             } else {
-                this._position.reset(this.map.getCenter());
+                this._position.reset(center);
             }
             if (options) {
                 this.map.setOptions(options);
