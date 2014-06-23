@@ -1,17 +1,22 @@
 {
   "name": "famous-map",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "homepage": "https://github.com/IjzerenHein/famous-map",
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
-  "description": "Google maps component for Famo.us",
+  "description": "Map integration for Famo.us (google-maps & leaflet)",
   "keywords": [
     "famo.us",
     "famous",
     "famousmap",
     "google.maps",
-    "map"
+    "map",
+    "maps",
+    "leaflet",
+    "leafletjs",
+    "openstreetmap",
+    "mapbox"
   ],
   "licenses": [
     {
