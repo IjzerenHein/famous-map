@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>famous-map demo</title>
+        <title>famous-map nyan-cat demo</title>
         <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -11,10 +11,11 @@
         <script type="text/javascript" src="https://code.famo.us/lib/functionPrototypeBind.js"></script>
         <script type="text/javascript" src="https://code.famo.us/lib/classList.js"></script>
         <script type="text/javascript" src="https://code.famo.us/lib/requestAnimationFrame.js"></script>
-
-        <!-- google maps -->
-        <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false"></script>
         
+        <!-- leaflet / open street maps -->
+        <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+        <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+
         <!-- module loader -->
         <script type="text/javascript" src="https://code.famo.us/lib/require.js"></script>
 
@@ -36,6 +37,6 @@
 
     </head>
     <body>
-        <a class='provider' href='leaflet.html'>Switch to Leaflet / OSM</a>
+        <a class='provider' href='index.html'>Switch to Google Maps</a>
     </body>
 </html>

@@ -25,7 +25,7 @@
  */
 
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google*/
+/*global define, google, L*/
 
 /**
  * @title MapView
@@ -37,11 +37,21 @@
  *
  * ### Options
  *
+ * **type**: Map-type (e.g. MapView.MapType.GOOGLEMAPS, MapView.MapType.LEAFLET)
+ *
  * **mapOptions**: Options that are passed directly to the google.maps.Map object. The options should include the 'center' and 'zoom'.
  *
  * **[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
  *
  * **[zoomTransition]**: Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
+ *
+ * ### Map-types
+ *
+ * |Value|Description|
+ * |---|---|
+ * |MapType.GOOGLEMAPS (default)|Google-maps.|
+ * |MapType.LEAFLET|Leaflet.js.|
+ *
  */
 var _globalMapViewId = 1;
 define(function (require, exports, module) {
@@ -51,9 +61,18 @@ define(function (require, exports, module) {
     var Surface = require('famous/core/Surface');
     var View = require('famous/core/View');
     var Transitionable = require('famous/transitions/Transitionable');
+    var MapUtility = require('./MapUtility');
     var MapPositionTransitionable = require('./MapPositionTransitionable');
     var MapTransition = require('./MapTransition');
     Transitionable.registerMethod('map-speed', MapTransition);
+    
+    /*
+     * Map-type
+     */
+    var MapType = {
+        GOOGLEMAPS: 1,
+        LEAFLET: 2
+    };
     
     /**
      * A view containing a google-map
@@ -67,6 +86,7 @@ define(function (require, exports, module) {
         
         // Initialize
         this.map = null;
+        this.mapType = this.options.type;
         this._position = new MapPositionTransitionable(this.options.mapOptions.center);
         this._zoom = {
             center: new MapPositionTransitionable(this.options.mapOptions.center),
@@ -74,6 +94,11 @@ define(function (require, exports, module) {
             southWest: new MapPositionTransitionable(this.options.mapOptions.center)
         };
         this._cache = {};
+        
+        // Disable zoom-transitions for leaflet
+        if (this.mapType === MapType.LEAFLET) {
+            this.options.zoomTransition = {duration: 0};
+        }
         
         // When a specific dom-id is specified, use that
         if (this.options.mapOptions && this.options.id) {
@@ -95,17 +120,16 @@ define(function (require, exports, module) {
     }
     MapView.prototype = Object.create(View.prototype);
     MapView.prototype.constructor = MapView;
+    MapView.MapType = MapType;
     
     /**
      * @property MapView.DEFAULT_OPTIONS
      */
     MapView.DEFAULT_OPTIONS = {
+        type: MapType.GOOGLEMAPS,
         mapOptions: {
             zoom: 10,
-            center: new google.maps.LatLng(51.4400867, 5.4782571),
-            disableDefaultUI: true,
-            disableDoubleClickZoom: true,
-            mapTypeId: google.maps.MapTypeId.TERRAIN
+            center: {lat: 51.4400867, lng: 5.4782571}
         },
         id: null,
         zoomTransition: {duration: 100}
@@ -124,18 +148,31 @@ define(function (require, exports, module) {
         var elm = document.getElementById(this.mapId);
         if (!elm) { return; }
         
-        // Create map
-        this.map = new google.maps.Map(elm, this.options.mapOptions);
+        // Supported map-types
+        switch (this.mapType) {
+                
+        // Create google.maps.Map
+        case MapType.GOOGLEMAPS:
+            this.map = new google.maps.Map(elm, this.options.mapOptions);
 
-        // Listen for the first occurance of 'projection_changed', to ensure the map is full
-        // initialized.
-        var func = this.map.addListener('projection_changed', function () {
-            google.maps.event.removeListener(func);
-            
-            // Finalize initialisation
+            // Listen for the first occurance of 'projection_changed', to ensure the map is full
+            // initialized.
+            var func = this.map.addListener('projection_changed', function () {
+                google.maps.event.removeListener(func);
+
+                // Finalize initialisation
+                this._initComplete = true;
+                this._eventOutput.emit('load', this);
+            }.bind(this));
+            break;
+                
+        // Create leaflet Map
+        case MapType.LEAFLET:
+            this.map = L.map(elm).setView(this.options.mapOptions.center, this.options.mapOptions.zoom);
             this._initComplete = true;
             this._eventOutput.emit('load', this);
-        }.bind(this));
+            break;
+        }
     };
     
     /**
@@ -143,7 +180,7 @@ define(function (require, exports, module) {
      * guarenteed to be valid after the 'load' event has been emited.
      *
      * @method getMap
-     * @return {Map} Google-maps Map object.
+     * @return {Map} Map object.
      */
     MapView.prototype.getMap = function () {
         return this.map;
@@ -203,11 +240,21 @@ define(function (require, exports, module) {
      * @return {Point} Position in pixels, relative to the left-top of the mapView.
      */
     MapView.prototype.pointFromPosition = function (position) {
-        var worldPoint = this.map.getProjection().fromLatLngToPoint(position);
-        return new google.maps.Point(
-            (worldPoint.x - this._cache.bottomLeft.x) * this._cache.scale,
-            (worldPoint.y - this._cache.topRight.y) * this._cache.scale
-        );
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
+            if (!(position instanceof google.maps.LatLng)) {
+                position = new google.maps.LatLng(position.lat, position.lng);
+            }
+            var worldPoint = this.map.getProjection().fromLatLngToPoint(position);
+            return {
+                x: (worldPoint.x - this._cache.bottomLeft.x) * this._cache.scale,
+                y: (worldPoint.y - this._cache.topRight.y) * this._cache.scale
+            };
+        case MapType.LEAFLET:
+            // Note: smooth zooming is not yet supported for leaflet
+            var pnt = this.map.latLngToContainerPoint(position);
+            return pnt;
+        }
     };
     
     /**
@@ -218,11 +265,17 @@ define(function (require, exports, module) {
      * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.positionFromPoint = function (point) {
-        var worldPoint = new google.maps.Point(
-            (point.x / this._cache.scale) + this._cache.bottomLeft.x,
-            (point.y / this._cache.scale) + this._cache.topRight.y
-        );
-        return this.map.getProjection().fromPointToLatLng(worldPoint);
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
+            var worldPoint = new google.maps.Point(
+                (point.x / this._cache.scale) + this._cache.bottomLeft.x,
+                (point.y / this._cache.scale) + this._cache.topRight.y
+            );
+            return this.map.getProjection().fromPointToLatLng(worldPoint);
+        case MapType.LEAFLET:
+            // Note: smooth zooming is not yet supported for leaflet
+            return this.map.containerPointToLatLng(point);
+        }
     };
     
     /**
@@ -269,49 +322,98 @@ define(function (require, exports, module) {
         this._cache.finalSouthWest = southWest;
         
         // Calculate size of the MapView
-        var projection = this.map.getProjection();
-        var topRight = projection.fromLatLngToPoint(northEast);
-        var bottomLeft = projection.fromLatLngToPoint(southWest);
-        this._cache.size = [
-            (topRight.x - bottomLeft.x) * this._cache.finalScale,
-            (bottomLeft.y - topRight.y) * this._cache.finalScale
-        ];
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
+                            
+            if (!(northEast instanceof google.maps.LatLng)) { northEast = new google.maps.LatLng(MapUtility.lat(northEast), MapUtility.lng(northEast)); }
+            if (!(southWest instanceof google.maps.LatLng)) { southWest = new google.maps.LatLng(MapUtility.lat(southWest), MapUtility.lng(southWest)); }
+
+            var topRight = this.map.getProjection().fromLatLngToPoint(northEast);
+            var bottomLeft = this.map.getProjection().fromLatLngToPoint(southWest);
+            this._cache.size = [
+                (topRight.x - bottomLeft.x) * this._cache.finalScale,
+                (bottomLeft.y - topRight.y) * this._cache.finalScale
+            ];
+            break;
+        case MapType.LEAFLET:
+            var point = this.map.getSize();
+            this._cache.size = [point.x, point.y];
+            break;
+        }
         
         // Calculate current world point edges and scale
-        this._cache.topRight = projection.fromLatLngToPoint(this._zoom.northEast.get());
-        this._cache.bottomLeft = projection.fromLatLngToPoint(this._zoom.southWest.get());
-        this._cache.scale = this._cache.size[0] / (this._cache.topRight.x - this._cache.bottomLeft.x);
-        this._cache.zoom = Math.log(this._cache.scale) / Math.log(2);
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
+
+            northEast = this._zoom.northEast.get();
+            southWest = this._zoom.southWest.get();
+            if (!(northEast instanceof google.maps.LatLng)) { northEast = new google.maps.LatLng(MapUtility.lat(northEast), MapUtility.lng(northEast)); }
+            if (!(southWest instanceof google.maps.LatLng)) { southWest = new google.maps.LatLng(MapUtility.lat(southWest), MapUtility.lng(southWest)); }
+                
+            this._cache.topRight = this.map.getProjection().fromLatLngToPoint(northEast);
+            this._cache.bottomLeft = this.map.getProjection().fromLatLngToPoint(southWest);
+            this._cache.scale = this._cache.size[0] / (this._cache.topRight.x - this._cache.bottomLeft.x);
+            this._cache.zoom = Math.log(this._cache.scale) / Math.log(2);
+            break;
+        case MapType.LEAFLET:
+                
+            // Note: smooth zooming is not yet supported for leaflet
+            this._cache.zoom = zoom;
+            break;
+        }
     };
 
     /**
-     * map.getBounds() returns the northEast and southWest in wrapped coordinates (between -180..180).
-     * This makes it difficult to create a linear coordinate space for converting world-coordinates
-     * into pixels. This function therefore 'unwraps' the northEast and southWest coordinates using
-     * map.getCenter() (which does return unwrapped coordinates).
+     * Get map-information from the underlying map-provider, such as position, bounds, zoom-level...
      *
-     * @method _getUnwrappedBounds
+     * @method _getMapInfo
      * @private
      * @ignore
      */
-    MapView.prototype._getUnwrappedBounds = function (center) {
-        var bounds = this.map.getBounds();
-        var centerLng = center.lng();
+    MapView.prototype._getMapInfo = function () {
+        var bounds, northEast, southWest, center, zoom;
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
         
-        var northEast = bounds.getNorthEast();
-        var northEastLng = northEast.lng();
-        while (northEastLng < centerLng) { northEastLng += 360; };
-        while (northEastLng > (centerLng + 360)) { northEastLng -= 360; };
-        
-        var southWest = bounds.getSouthWest();
-        var southWestLng = southWest.lng();
-        while (southWestLng < (centerLng - 360)) { southWestLng += 360; };
-        while (southWestLng > centerLng ) { southWestLng -= 360; };
+            // map.getBounds() returns the northEast and southWest in wrapped coordinates (between -180..180).
+            // This makes it difficult to create a linear coordinate space for converting world-coordinates
+            // into pixels. This function therefore 'unwraps' the northEast and southWest coordinates using
+            // * map.getCenter() (which does return unwrapped coordinates).
+            bounds = this.map.getBounds();
+            center = this.map.getCenter();
+            zoom = this.map.getZoom();
+                
+            var centerLng = MapUtility.lng(center);
 
-        return {
-            southWest: new google.maps.LatLng(southWest.lat(), southWestLng, true),
-            northEast: new google.maps.LatLng(northEast.lat(), northEastLng, true)
-        };
+            northEast = bounds.getNorthEast();
+            var northEastLng = northEast.lng();
+            while (northEastLng < centerLng) { northEastLng += 360; }
+            while (northEastLng > (centerLng + 360)) { northEastLng -= 360; }
+
+            southWest = bounds.getSouthWest();
+            var southWestLng = southWest.lng();
+            while (southWestLng < (centerLng - 360)) { southWestLng += 360; }
+            while (southWestLng > centerLng) { southWestLng -= 360; }
+
+            return {
+                zoom: zoom,
+                center: {lat: center.lat(), lng: center.lng()},
+                southWest: {lat: southWest.lat(), lng: southWestLng},
+                northEast: {lat: northEast.lat(), lng: northEastLng}
+            };
+        case MapType.LEAFLET:
+            bounds = this.map.getBounds();
+            southWest = bounds.getSouthWest();
+            northEast = bounds.getNorthEast();
+            center = this.map.getCenter();
+            zoom = this.map.getZoom();
+            return {
+                zoom: zoom,
+                center: {lat: center.lat, lng: center.lng},
+                southWest: {lat: southWest.lat, lng: southWest.lng},
+                northEast: {lat: northEast.lat, lng: northEast.lng}
+            };
+        }
     };
 
     /**
@@ -327,36 +429,34 @@ define(function (require, exports, module) {
         if (!this.map) { this._initMap(); }
         if (this._initComplete) {
             
-            // When the zoom-level is changed by google-maps, start a transition
+            // When the zoom-level is changed by the map, start a transition
             // that runs alongside.
             var options;
-            var zoom = this.map.getZoom();
-            var center = this.map.getCenter();
-            var bounds = this._getUnwrappedBounds(center);
-            var northEast = bounds.northEast;
-            var southWest = bounds.southWest;
+            var info = this._getMapInfo();
             var invalidateCache = false;
-            if (zoom !== this._cache.finalZoom) {
+            if (info.zoom !== this._cache.finalZoom) {
                 this._zoom.northEast.halt();
                 this._zoom.southWest.halt();
-                this._zoom.northEast.set(northEast, this.options.zoomTransition);
-                this._zoom.southWest.set(southWest, this.options.zoomTransition);
-                this._zoom.center.set(center, this.options.zoomTransition);
+                this._zoom.center.halt();
+                this._zoom.northEast.set(info.northEast, this.options.zoomTransition);
+                this._zoom.southWest.set(info.southWest, this.options.zoomTransition);
+                this._zoom.center.set(info.center, this.options.zoomTransition);
                 invalidateCache = true;
             } else if (!this._zoom.northEast.isActive()) {
-                this._zoom.northEast.reset(northEast);
-                this._zoom.southWest.reset(southWest);
-                this._zoom.center.reset(center);
+                this._zoom.northEast.reset(info.northEast);
+                this._zoom.southWest.reset(info.southWest);
+                this._zoom.center.reset(info.center);
             } else {
+                this._zoom.northEast.get(); // ensure that .get() always gets called to ensure that isActive() works
                 invalidateCache = true;
             }
             
             // Update the cache
-            if (invalidateCache || (zoom !== this._cache.finalZoom) ||
-                    !northEast.equals(this._cache.finalNorthEast) ||
-                    !southWest.equals(this._cache.finalSouthWest)) {
+            if (invalidateCache || (info.zoom !== this._cache.finalZoom) ||
+                    !MapUtility.equals(info.northEast, this._cache.finalNorthEast) ||
+                    !MapUtility.equals(info.southWest, this._cache.finalSouthWest)) {
                 //console.log('updating cache..');
-                this._updateCache(zoom, northEast, southWest);
+                this._updateCache(info.zoom, info.northEast, info.southWest);
             }
 
             // Get/set map center
@@ -366,10 +466,17 @@ define(function (require, exports, module) {
                 };
                 this._positionInvalidated = false;
             } else {
-                this._position.reset(center);
+                this._position.reset(info.center);
             }
             if (options) {
-                this.map.setOptions(options);
+                switch (this.mapType) {
+                case MapType.GOOGLEMAPS:
+                    this.map.setOptions(options);
+                    break;
+                case MapType.LEAFLET:
+                    this.map.panTo(options.center, {animate: false});
+                    break;
+                }
             }
         }
         

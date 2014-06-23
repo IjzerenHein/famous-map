@@ -25,7 +25,7 @@
  */
 
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google*/
+/*global define*/
 
 /**
  * @title MapPositionTransitionable
@@ -41,6 +41,7 @@ define(function (require, exports, module) {
 
     // import dependencies
     var Transitionable = require('famous/transitions/Transitionable');
+    var MapUtility = require('./MapUtility');
 
     /**
      * @class MapPositionTransitionable
@@ -71,7 +72,7 @@ define(function (require, exports, module) {
      * @param {LatLng} position
      */
     MapPositionTransitionable.prototype.reset = function reset(position) {
-        var latlng = [position.lat(), position.lng()];
+        var latlng = [MapUtility.lat(position), MapUtility.lng(position)];
         this.position.reset(latlng);
         this._final = position;
     };
@@ -86,7 +87,7 @@ define(function (require, exports, module) {
      * @param {Function} [callback] Callback
      */
     MapPositionTransitionable.prototype.set = function set(position, transition, callback) {
-        var latlng = [position.lat(), position.lng()];
+        var latlng = [MapUtility.lat(position), MapUtility.lng(position)];
         this.position.set(latlng, transition, callback);
         this._final = position;
         return this;
@@ -101,11 +102,10 @@ define(function (require, exports, module) {
     MapPositionTransitionable.prototype.get = function get() {
         if (this.isActive()) {
             var latlng = this.position.get();
-            return new google.maps.LatLng(
-                latlng[0],
-                latlng[1],
-                true
-            );
+            return {
+                lat: latlng[0],
+                lng: latlng[1]
+            };
         } else {
             return this._final;
         }

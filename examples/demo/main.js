@@ -25,7 +25,7 @@
  */
 
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google*/
+/*global define, google, L*/
 
 define(function (require) {
     'use strict';
@@ -38,26 +38,61 @@ define(function (require) {
     var ImageSurface = require('famous/surfaces/ImageSurface');
     var Transform = require('famous/core/Transform');
     var Easing = require('famous/transitions/Easing');
+    
     var MapView = require('famous-map/MapView');
     var MapModifier = require('famous-map/MapModifier');
     var MapStateModifier = require('famous-map/MapStateModifier');
+    var MapUtility = require('famous-map/MapUtility');
+    var MapPositionTransitionable = require('famous-map/MapPositionTransitionable');
+    var MapTransition = require('famous-map/MapTransition');
+
 
     // create the main context
     var mainContext = Engine.createContext();
+    
+    // Determine map-type
+    var mapType;
+    try {
+        var l = L;
+        mapType = MapView.MapType.LEAFLET;
+    } catch (err) {
+        mapType = MapView.MapType.GOOGLEMAPS;
+    }
 
     //
     // Create map-view
     //
-    var mapView = new MapView({
-        mapOptions: {
-            zoom: 14,
-            center: new google.maps.LatLng(51.4400867, 5.4782571),
-            disableDefaultUI: false,
-            disableDoubleClickZoom: true,
-            mapTypeId: google.maps.MapTypeId.TERRAIN,
-            minZoom: 3
-        }
-    });
+    var zoom = 14;
+    var center = {lat: 51.4400867, lng: 5.4782571};
+    var mapView;
+    switch (mapType) {
+    case MapView.MapType.LEAFLET:
+        
+        // Create leaflet map-view
+        mapView = new MapView({
+            type: mapType,
+            mapOptions: {
+                zoom: zoom,
+                center: center
+            }
+        });
+        break;
+    case MapView.MapType.GOOGLEMAPS:
+        
+        // Create google-maps map-view
+        mapView = new MapView({
+            type: mapType,
+            mapOptions: {
+                zoom: zoom,
+                center: center,
+                disableDefaultUI: false,
+                disableDoubleClickZoom: true,
+                mapTypeId: google.maps.MapTypeId.TERRAIN,
+                minZoom: 3
+            }
+        });
+        break;
+    }
     mainContext.add(mapView);
     
     //
@@ -97,6 +132,14 @@ define(function (require) {
     //
     mapView.on('load', function () {
 
+        // Add Leaflet tile-layer
+        if (mapType === MapView.MapType.LEAFLET) {
+            L.tileLayer('http://{s}.tiles.mapbox.com/v3/ijzerenhein.iil33fn1/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+                //maxZoom: 18
+            }).addTo(mapView.getMap());
+        }
+        
         //
         // Create compass
         //
@@ -112,8 +155,7 @@ define(function (require) {
         var compassMapModifier = new MapModifier({
             mapView: mapView,
             position: mapView,
-            //zoomBase: 14,
-            //zoomScale: 0.5
+            //zoomBase: 14
         });
         mainContext.add(compassModifier).add(compassMapModifier).add(compass);
         
@@ -124,19 +166,19 @@ define(function (require) {
         var i, landmarks = [
             {
                 name: 'Yellow pins',
-                position: new google.maps.LatLng(51.4452133, 5.4806269),
+                position: {lat: 51.4452133, lng: 5.4806269},
                 image: 'images/pins.png',
                 infoImage: 'http://upload.wikimedia.org/wikipedia/commons/b/b1/FlyingPins.jpg'
             },
             {
                 name: 'Evoluon',
-                position: new google.maps.LatLng(51.443569, 5.446869),
+                position: {lat: 51.443569, lng: 5.446869},
                 image: 'images/evoluon.png',
                 infoImage: 'http://www.eindhovenfotos.nl/evoluo6.jpg'
             },
             {
                 name: 'Philips Stadium',
-                position: new google.maps.LatLng(51.4416315, 5.467244),
+                position: {lat: 51.4416315, lng: 5.467244},
                 image: 'images/stadium.png',
                 infoImage: 'http://upload.wikimedia.org/wikipedia/commons/thumb/3/38/Ventilating_corner_seats_of_Philips_Stadion.JPG/1024px-Ventilating_corner_seats_of_Philips_Stadion.JPG'
             }
@@ -147,7 +189,7 @@ define(function (require) {
             var center = this.getPosition();
             mapView.halt();
             mapView.setPosition(
-                new google.maps.LatLng(center.lat() - 0.006, center.lng(), true),
+                {lat: MapUtility.lat(center) - 0.006, lng: MapUtility.lng(center)},
                 { duration: 1000, curve: Easing.outBack }
             );
             
@@ -205,18 +247,18 @@ define(function (require) {
         // Create a traveller which drives around
         // 
         var roundabout = [
-            new google.maps.LatLng(51.4347897, 5.452068),
-            new google.maps.LatLng(51.4470413, 5.4474332),
-            new google.maps.LatLng(51.4520125, 5.4643767),
-            new google.maps.LatLng(51.4529585, 5.4733755),
-            new google.maps.LatLng(51.4524705, 5.4941894),
-            new google.maps.LatLng(51.4471025, 5.5004336),
-            new google.maps.LatLng(51.4383345, 5.5051329),
-            new google.maps.LatLng(51.4284487, 5.5016138),
-            new google.maps.LatLng(51.4237288, 5.4911202),
-            new google.maps.LatLng(51.4250333, 5.474351),
-            new google.maps.LatLng(51.4286323, 5.4603713),
-            new google.maps.LatLng(51.4315555, 5.4541915)
+            {lat: 51.4347897, lng: 5.452068},
+            {lat: 51.4470413, lng: 5.4474332},
+            {lat: 51.4520125, lng: 5.4643767},
+            {lat: 51.4529585, lng: 5.4733755},
+            {lat: 51.4524705, lng: 5.4941894},
+            {lat: 51.4471025, lng: 5.5004336},
+            {lat: 51.4383345, lng: 5.5051329},
+            {lat: 51.4284487, lng: 5.5016138},
+            {lat: 51.4237288, lng: 5.4911202},
+            {lat: 51.4250333, lng: 5.474351},
+            {lat: 51.4286323, lng: 5.4603713},
+            {lat: 51.4315555, lng: 5.4541915}
         ];
         var traveller = new ImageSurface({
             size: [48, 48],

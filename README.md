@@ -1,9 +1,12 @@
 famous-map
 ==========
 
-Google maps component for Famo.us.
+Map component for Famo.us, supporting the following map-providers:
 
-Famous-map adds support for adding google-maps to the famo.us render-tree. Additionally, famous transitions are supported for panning the map. Modifiers can be used to sync the position of renderables with a geographical position.
+- [Google Maps](https://developers.google.com/maps/documentation)
+- [Leaflet.js](http://leafletjs.com) (OpenStreetMap)
+
+Famous-map makes it possible for adding a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
 
 
 ## Demo
@@ -11,14 +14,12 @@ Famous-map adds support for adding google-maps to the famo.us render-tree. Addit
 [View the demo here](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
 
 
-## Installation
+## Getting started
 
 Install using bower:
 	
 	bower install famous-map
 	
-## Getting started
-
 Add famous-map to the requirejs paths config:
 
 ```javascript
@@ -31,6 +32,8 @@ require.config({
 });
 ```
 
+### Google Maps
+
 Include google-maps in the html file:
 
 ```html
@@ -39,15 +42,16 @@ Include google-maps in the html file:
 </head>
 ```
 
-Example of how to create a MapView:
+Create a google-maps view:
 
 ```javascript
 var MapView = require('famous-map/MapView');
 
 var mapView = new MapView({
+	type: MapView.MapType.GOOGLEMAPS,
     mapOptions: {
         zoom: 3,
-        center: new google.maps.LatLng(51.4484855, 5.451478),
+        center: {lat: 51.4484855, lng: 5.451478},
         mapTypeId: google.maps.MapTypeId.TERRAIN
     }
 });
@@ -58,7 +62,7 @@ mapView.on('load', function () {
 
     // Move across the globe and zoom-in when done
     mapView.setPosition(
-        new google.maps.LatLng(51.4484855, 5.451478),
+        {lat: 51.4484855, lng: 5.451478},
         { duration: 5000 },
         function () {
             mapView.getMap().setZoom(7);
@@ -67,10 +71,45 @@ mapView.on('load', function () {
 }.bind(this));
 ```
 
+### Leaflet
+
+Include leaflet in the html file:
+
+```html
+<head>
+	<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet-0.7.3/leaflet.js"></script>
+</head>
+```
+
+Create a leaflet map:
+
+```javascript
+var MapView = require('famous-map/MapView');
+
+var mapView = new MapView({
+	type: MapView.MapType.LEAFLET,
+    mapOptions: {
+        zoom: 3,
+        center: {lat: 51.4484855, lng: 5.451478}
+    }
+});
+this.add(mapView);
+
+// Wait for the map to load and initialize
+mapView.on('load', function () {
+
+    // Add tile-layer (get your own at mapbox.com)
+    L.tileLayer('http://{s}.tiles.mapbox.com/v3/yourmapid/{z}/{x}/{y}.png', {
+		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+	}).addTo(mapView.getMap());
+}.bind(this));
+```
+
 ## Documentation
 
-To access the underlying google.maps.Map object, use MapView.getMap(). The Map-object
-is only safely accessible after the 'load' event, because the DOM-object must first be created and google-maps need to load.
+To access the underlying map object, use MapView.getMap(). The Map-object
+is only safely accessible after the 'load' event, because the DOM-object must first be created and the map needs to load.
 
 ```javascript
 mapView.on('load', function () {
@@ -86,8 +125,8 @@ Transitions are chained, so you can create paths that the map will follow.
 
 ```javascript
 mapView.setPosition(
-    new google.maps.LatLng(51.4484855, 5.451478),
-    { duration: 5000, curve: Easing.outBack },
+    {lat: 51.4484855, lng: 5.451478},
+    {duration: 5000, curve: Easing.outBack},
     function () {
         mapView.getMap().setZoom(7)
     }
@@ -113,16 +152,14 @@ var modifier = new Modifier({
 });
 var mapModifier = new MapModifier({
     mapView: mapView,
-    position: new google.maps.LatLng(51.4484855, 5.451478)
+    position: {lat: 51.4484855, lng: 5.451478}
 });
 this.add(mapModifier).add(modifier).add(surface);
 ```
 
 ##### Moving a renderable across the map
 
-MapStateModifier relates to MapModifier in the same way StateModifier relates to Modifier.
-MapStateModifier makes it possible to change the position from one place to another, using
-a transitionable. Transitions are chained, so you can create paths that the renderable will follow:
+MapStateModifier relates to MapModifier in the same way StateModifier relates to Modifier. MapStateModifier makes it possible to change the position from one place to another, using a transitionable. Transitions are chained, so you can create paths that the renderable will follow:
 
 ```javascript
 MapStateModifier = require('famous-map/MapStateModifier');
@@ -139,18 +176,18 @@ var modifier = new Modifier({
 });
 var mapStateModifier = new MapStateModifier({
     mapView: mapView,
-    position: new google.maps.LatLng(51.4484855, 5.451478)
+    position: {lat: 51.4484855, lng: 5.451478}
 });
 this.add(mapStateModifier).add(modifier).add(surface);
 
 // Animate the renderable across the map
 mapStateModifier.setPosition(
-    new google.maps.LatLng(52.4484855, 6.451478),
-    { method: 'map-speed', speed: 200 } // 200 km/h
+    {lat: 52.4484855, lng: 6.451478},
+    {method: 'map-speed', speed: 200} // 200 km/h
 );
 mapStateModifier.setPosition(
-    new google.maps.LatLng(50.4484855, 3.451478),
-    { duration: 4000 }
+    {lat: 50.4484855, lng: 3.451478},
+    {duration: 4000}
 );
 ```
 
@@ -161,7 +198,7 @@ To enable auto-scaling set zoomBase to the zoom-level you wish the renderables t
 ```javascript
 var mapModifier = new MapModifier({
     mapView: mapView,
-    position: new google.maps.LatLng(51.4484855, 5.451478),
+    position: {lat: 51.4484855, lng: 5.451478},
     zoomBase: 5
 });
 ```
@@ -171,14 +208,14 @@ To use a different zooming strategy, use zoomScale. ZoomScale can be set to eith
 ```javascript
 var mapModifier = new MapModifier({
     mapView: mapView,
-    position: new google.maps.LatLng(51.4484855, 5.451478),
+    position: {lat: 51.4484855, lng: 5.451478},
     zoomBase: 5,
     zoomScale: 0.5
 });
 
 var mapModifier = new MapModifier({
     mapView: mapView,
-    position: new google.maps.LatLng(51.4484855, 5.451478),
+    position: {lat: 51.4484855, lng: 5.451478},
     zoomBase: 5,
     zoomScale: function (baseZoom, currentZoom) {
         var zoom = currentZoom - baseZoom;
@@ -195,7 +232,7 @@ var mapModifier = new MapModifier({
 
 |Class|Description|
 |---|---|
-|[MapView](docs/MapView.md)|View class which encapsulates a google-maps V3 map.|
+|[MapView](docs/MapView.md)|View class which encapsulates a maps object.|
 |[MapModifier](docs/MapModifier.md)|Stateless modifier which positions a renderable based on a geographical position {LatLng}.|
 |[MapStateModifier](docs/MapStateModifier.md)|Modifier which positions a renderable based on a geographical position {LatLng}, using transitions.|
 |[MapUtility](docs/MapUtility.md)|General purpose utility functions.
@@ -224,10 +261,17 @@ Famo.us prevents scrolling on mobile-devices by disabling the 'touch-event'.  Th
 
 Panning the map using MapView.setPosition() and a transition works great, but is not as smooth in all scenarios and on all devices. Panning is smoothest for smaller tile-distances. To see map panning in action at different speeds, view the [nyat-cat demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/nyan-cat/index.html).
 
-##### Zoom-levels < 3
+##### Google-Maps and Zoom-levels < 3
 
-At the lower zoom-levels, renderables may not be positiond correctly. This happens when the entire worlds fits more than once on the surface. In this case, the bounding east- and west longitude cannot be determined through the google-maps API, which are required for calculating the x position. To workaround this issue, set `mapOptions.minZoom` to 3.
+At the lower zoom-levels, renderables may not be positiond correctly using Google Maps. This happens when the entire worlds fits more than once on the surface. In this case, the bounding east- and west longitude cannot be determined through the google-maps API, which are required for calculating the x position. To workaround this issue, set `mapOptions.minZoom` to 3.
 
+##### Renderables lag and Leaflet
+
+The leaflet-API returns the position and zoom-level **after** animations have occured. This causes a small lag in the position of renderables when panning the map. When zooming the map, the renderables are re-positioned after the zoom and smooth zooming is therefore not possible and disabled.
+
+## Contribute
+
+Feel free to contribute to this project in any way. The easiest way to support this project is by giving it a star.
 
 ## Contact
 - 	@IjzerenHein

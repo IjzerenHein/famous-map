@@ -25,7 +25,7 @@
  */
 
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google*/
+/*global define, google, L*/
 
 define(function (require) {
     'use strict';
@@ -36,26 +36,61 @@ define(function (require) {
     var Surface = require('famous/core/Surface');
     var ImageSurface = require('famous/surfaces/ImageSurface');
     var Transform = require('famous/core/Transform');
-    var MapView = require('famous-map/MapView');
     var RenderController = require('famous/views/RenderController');
     var RenderNode = require('famous/core/RenderNode');
+
+    var MapView = require('famous-map/MapView');
     var MapModifier = require('famous-map/MapModifier');
+    var MapStateModifier = require('famous-map/MapStateModifier');
+    var MapUtility = require('famous-map/MapUtility');
+    var MapPositionTransitionable = require('famous-map/MapPositionTransitionable');
+    var MapTransition = require('famous-map/MapTransition');
 
     // create the main context
     var mainContext = Engine.createContext();
 
+    // Determine map-type
+    var mapType;
+    try {
+        var l = L;
+        mapType = MapView.MapType.LEAFLET;
+    } catch (err) {
+        mapType = MapView.MapType.GOOGLEMAPS;
+    }
+
     //
     // Create map-view
     //
-    var mapView = new MapView({
-        mapOptions: {
-            zoom: 10,
-            center: new google.maps.LatLng(37.30925, -122.0436444),
-            disableDefaultUI: false,
-            disableDoubleClickZoom: true,
-            mapTypeId: google.maps.MapTypeId.TERRAIN
-        }
-    });
+    var zoom = 10;
+    var center = {lat: 37.30925, lng: -122.0436444};
+    var mapView;
+    switch (mapType) {
+    case MapView.MapType.LEAFLET:
+        
+        // Create leaflet map-view
+        mapView = new MapView({
+            type: mapType,
+            mapOptions: {
+                zoom: zoom,
+                center: center
+            }
+        });
+        break;
+    case MapView.MapType.GOOGLEMAPS:
+        
+        // Create google-maps map-view
+        mapView = new MapView({
+            type: mapType,
+            mapOptions: {
+                zoom: zoom,
+                center: center,
+                disableDefaultUI: false,
+                disableDoubleClickZoom: true,
+                mapTypeId: google.maps.MapTypeId.TERRAIN
+            }
+        });
+        break;
+    }
     mainContext.add(mapView);
     
     //
@@ -94,11 +129,19 @@ define(function (require) {
     //
     mapView.on('load', function () {
 
+        // Add Leaflet tile-layer
+        if (mapType === MapView.MapType.LEAFLET) {
+            L.tileLayer('http://{s}.tiles.mapbox.com/v3/ijzerenhein.iil33fn1/{z}/{x}/{y}.png', {
+                attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+                //maxZoom: 18
+            }).addTo(mapView.getMap());
+        }
+        
         //
         // Pan the map across the world
         //
         mapView.setPosition(
-            new google.maps.LatLng(37.30925, 1000),
+            {lat: 37.30925, lng: 1000},
             { method: 'map-speed', speed: 20000 }
         );
         
@@ -118,7 +161,7 @@ define(function (require) {
         var catMapModifier = new MapModifier({
             mapView: mapView,
             position: mapView
-            //position: new google.maps.LatLng(37.30925, 1000)
+            //position: {lat: 37.30925, lng: 1000}
         });
         var catRenderController = new RenderController();
         mainContext.add(catRenderController);

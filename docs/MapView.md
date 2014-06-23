@@ -7,11 +7,21 @@ Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map
 
 ### Options
 
+**type**: Map-type (e.g. MapView.MapType.GOOGLEMAPS, MapView.MapType.LEAFLET)
+
 **mapOptions**: Options that are passed directly to the google.maps.Map object. The options should include the 'center' and 'zoom'.
 
 **[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
 
 **[zoomTransition]**: Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
+
+### Map-types
+
+|Value|Description|
+|---|---|
+|MapType.GOOGLEMAPS (default)|Google-maps.|
+|MapType.LEAFLET|Leaflet.js.|
+
 
 
 class MapView
@@ -27,7 +37,7 @@ guarenteed to be valid after the 'load' event has been emited.
 
 **Returns**
 
-*Map*,  Google-maps Map object.
+*Map*,  Map object.
 
 MapView.setPosition(position, \[transition\], \[callback\])
 -----------------------------------------------------------

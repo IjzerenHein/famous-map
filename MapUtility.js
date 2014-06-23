@@ -40,6 +40,52 @@ define(function (require, exports, module) {
      */
     var MapUtility = {};
 
+    /**
+     * Get the latitude from the position (LatLng) object.
+     *
+     * @method lat
+     * @param {LatLng} position Position
+     * @return {Number} Latitude in degrees
+     */
+    MapUtility.lat = function lat(position) {
+        if (position instanceof Array) {
+            return position[0];
+        } else if (position.lat instanceof Function) {
+            return position.lat();
+        } else {
+            return position.lat;
+        }
+    };
+    
+    /**
+     * Get the longitude from the position (LatLng) object.
+     *
+     * @method lng
+     * @param {LatLng} position Position
+     * @return {Number} Longitude in degrees
+     */
+    MapUtility.lng = function lng(position) {
+        if (position instanceof Array) {
+            return position[1];
+        } else if (position.lng instanceof Function) {
+            return position.lng();
+        } else {
+            return position.lng;
+        }
+    };
+    
+    /**
+     * Compares two positions for equality.
+     *
+     * @method equals
+     * @param {LatLng} position1 Position 1
+     * @param {LatLng} position2 Position 2
+     * @return {Boolean} Result of comparison
+     */
+    MapUtility.equals = function (position1, position2) {
+        return (MapUtility.lat(position1) === MapUtility.lat(position2)) &&
+               (MapUtility.lng(position1) === MapUtility.lng(position2));
+    };
     
     /**
      * Converts degrees into radians (radians = degrees * (Math.PI / 180)).
@@ -61,7 +107,7 @@ define(function (require, exports, module) {
      * @return {Number} Rotation in radians.
      */
     MapUtility.rotationFromPositions = function (start, end) {
-        return Math.atan2(start.lng() - end.lng(), start.lat() - end.lat()) + (Math.PI / 2.0);
+        return Math.atan2(MapUtility.lng(start) - MapUtility.lng(end), MapUtility.lat(start) - MapUtility.lat(end)) + (Math.PI / 2.0);
     };
     
     /**
@@ -76,10 +122,10 @@ define(function (require, exports, module) {
 
         // Taken from: http://www.movable-type.co.uk/scripts/latlong.html
         var R = 6371; // earths radius in km
-        var lat1 = MapUtility.radiansFromDegrees(start.lat());
-        var lat2 = MapUtility.radiansFromDegrees(end.lat());
-        var deltaLat = MapUtility.radiansFromDegrees(end.lat() - start.lat());
-        var deltaLng = MapUtility.radiansFromDegrees(end.lng() - start.lng());
+        var lat1 = MapUtility.radiansFromDegrees(MapUtility.lat(start));
+        var lat2 = MapUtility.radiansFromDegrees(MapUtility.lat(end));
+        var deltaLat = MapUtility.radiansFromDegrees(MapUtility.lat(end) - MapUtility.lat(start));
+        var deltaLng = MapUtility.radiansFromDegrees(MapUtility.lng(end) - MapUtility.lng(start));
 
         var a = Math.sin(deltaLat / 2) * Math.sin(deltaLat / 2) +
                 Math.cos(lat1) * Math.cos(lat2) *
@@ -89,7 +135,6 @@ define(function (require, exports, module) {
         var d = R * c;
         return d;
     };
-    
 
     module.exports = MapUtility;
 });

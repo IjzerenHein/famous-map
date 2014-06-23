@@ -25,7 +25,7 @@
  */
 
 /*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google*/
+/*global define*/
 
 /**
  * @title MapModifier
@@ -273,11 +273,10 @@ define(function (require, exports, module) {
             
             // Offset position
             if (this._offset) {
-                position = new google.maps.LatLng(
-                    position.lat() + this._offset.lat(),
-                    position.lng() + this._offset.lng(),
-                    true
-                );
+                position = {
+                    lat: MapUtility.lat(position) + MapUtility.lat(this._offset),
+                    lng: MapUtility.lng(position) + MapUtility.lng(this._offset)
+                };
             }
             
             // Calculate rotation transform
@@ -297,7 +296,7 @@ define(function (require, exports, module) {
 
             // Calculate translation transform
             var point = this.mapView.pointFromPosition(position);
-            if (!point.equals(this._cache.point)) {
+            if (!this._cache.point || (point.x !== this._cache.point.x) || (point.y !== this._cache.point.y)) {
                 this._cache.point = point;
                 this._cache.translate = Transform.translate(point.x, point.y, 0);
                 cacheInvalidated = true;

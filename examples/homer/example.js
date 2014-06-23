@@ -64,11 +64,11 @@ define(function (require) {
         // Transitions are chained. The following example first pans to the position twice
         // and then zooms in. Use '.halt' to cancel the transitions and start new ones.
         mapView.setPosition(
-            new google.maps.LatLng(51.8721795, 5.7101037),
+            { lat: 51.8721795, lng: 5.7101037},
             { duration: 4000, curve: Easing.outQuad }
         );
         mapView.setPosition(
-            new google.maps.LatLng(51.4400867, 5.4782571),
+            { lat:51.4400867, lng: 5.4782571},
             { duration: 4000, curve: Easing.outQuad },
             function () {
                 mapView.getMap().setZoom(14);
@@ -77,8 +77,8 @@ define(function (require) {
         
         // Homer is taking a road-trip
         var i, j, trip = [
-            new google.maps.LatLng(51.8721795, 5.7101037),
-            new google.maps.LatLng(51.4400867, 5.4782571)
+            { lat:51.8721795, lng: 5.7101037},
+            { lat: 51.4400867, lng: 5.4782571}
         ];
         homer.rotateTowards(trip[0], { duration: 200 });
         for (j = 0; j < trip.length; j++) {
@@ -91,16 +91,16 @@ define(function (require) {
         
         // Drive circles around town until homer gets tired of it
         var roundabout = [
-            new google.maps.LatLng(51.4347897, 5.452068),
-            new google.maps.LatLng(51.4470413, 5.4474332),
-            new google.maps.LatLng(51.4520125, 5.4643767),
-            new google.maps.LatLng(51.4524705, 5.4941894),
-            new google.maps.LatLng(51.4383345, 5.5051329),
-            new google.maps.LatLng(51.4284487, 5.5016138),
-            new google.maps.LatLng(51.4237288, 5.4911202),
-            new google.maps.LatLng(51.4250333, 5.474351),
-            new google.maps.LatLng(51.4286323, 5.4603713),
-            new google.maps.LatLng(51.4315555, 5.4541915)
+            {lat: 51.4347897, lng: 5.452068},
+            {lat: 51.4470413, lng: 5.4474332},
+            {lat: 51.4520125, lng: 5.4643767},
+            {lat: 51.4524705, lng: 5.4941894},
+            {lat: 51.4383345, lng: 5.5051329},
+            {lat: 51.4284487, lng: 5.5016138},
+            {lat: 51.4237288, lng: 5.4911202},
+            {lat: 51.4250333, lng: 5.474351},
+            {lat: 51.4286323, lng: 5.4603713},
+            {lat: 51.4315555, lng: 5.4541915}
         ];
         homer.rotateTowards(roundabout[0]);
         for (i = 0; i < 10; i++) {
@@ -156,7 +156,7 @@ define(function (require) {
         var mapView = new MapView({
             mapOptions: {
                 zoom: 10,
-                center: new google.maps.LatLng(52.3747158, 4.8986166),
+                center: {lat: 52.3747158, lng: 4.8986166},
                 disableDefaultUI: false,
                 disableDoubleClickZoom: true,
                 mapTypeId: google.maps.MapTypeId.TERRAIN
@@ -187,7 +187,7 @@ define(function (require) {
         });
         var modifier = new MapModifier({
             mapView: mapView,
-            position: new google.maps.LatLng(51.4367399, 5.4812397),
+            position: {lat: 51.4367399, lng: 5.4812397},
             rotateTowards: homer,
             zoomBase: 14
         });
@@ -214,7 +214,7 @@ define(function (require) {
         });
         var modifier = new MapStateModifier({
             mapView: mapView,
-            position: new google.maps.LatLng(52.3747158, 4.8986166)
+            position: {lat: 52.3747158, lng: 4.8986166}
         });
         context.add(modifier).add(center).add(surface);
         return modifier;
@@ -227,7 +227,7 @@ define(function (require) {
     function _createMarge(context, mapView, homer) {
         var modifier = new MapModifier({
             mapView: mapView,
-            position: new google.maps.LatLng(51.8538331, 5.3576616)
+            position: {lat: 51.8538331, lng: 5.3576616}
         });
         var center = new Modifier({
             align: [0, 0],
@@ -268,7 +268,7 @@ define(function (require) {
     function _createPins(context, mapView) {
         var modifier = new MapModifier({
             mapView: mapView,
-            position: new google.maps.LatLng(51.4452133, 5.4806269),
+            position: {lat: 51.4452133, lng: 5.4806269},
             zoomBase: 14,
             zoomScale: 0.5
         });
@@ -292,7 +292,7 @@ define(function (require) {
     function _createSaucer(context, mapView) {
         var modifier = new MapModifier({
             mapView: mapView,
-            position: new google.maps.LatLng(51.443569, 5.446869),
+            position: {lat: 51.443569, lng: 5.446869},
             zoomBase: 15,
             zoomScale: 1
         });

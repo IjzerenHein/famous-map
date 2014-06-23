@@ -25,7 +25,7 @@
  */
 
 /*jslint browser:true, nomen:true, vars:true, plusplus:true, devel:true*/
-/*global define, google*/
+/*global define*/
 
 /**
  * @title MapTransition
@@ -129,10 +129,7 @@ define(function (require, exports, module) {
         this._endState = _clone(state);
         this._active = true;
         this._callback = callback;
-        this._distance = MapUtility.distanceBetweenPositions(
-            new google.maps.LatLng(this._startState[0], this._startState[1]),
-            new google.maps.LatLng(this._endState[0], this._endState[1])
-        );
+        this._distance = MapUtility.distanceBetweenPositions(this._startState, this._endState);
         this._duration = (this._distance / this._speed) * (60 * 60 * 1000);
         //console.log('distance: ' + this._distance + ' km, speed: ' + transition.speed + 'km/h, duration:' + this._duration + ' ms');
     };
