@@ -71,10 +71,20 @@ module.exports = function (grunt) {
           },
         }
       }
+    },
+    exec: {
+      generate_docs: { cmd: 'mkdir docs', exitCode:[0, 1]},
+      generate_doc1: { cmd: 'jsdoc2md --index MapView.js > docs/MapView.md'},
+      generate_doc2: { cmd: 'jsdoc2md --index MapUtility.js > docs/MapUtility.md'},
+      generate_doc3: { cmd: 'jsdoc2md --index MapModifier.js > docs/MapModifier.md'},
+      generate_doc4: { cmd: 'jsdoc2md --index MapStateModifier.js > docs/MapStateModifier.md'},
+      generate_doc5: { cmd: 'jsdoc2md --index MapTransition.js > docs/MapTransition.md'},
+      generate_doc6: { cmd: 'jsdoc2md --index MapPositionTransitionable.js > docs/MapPositionTransitionable.md'}
     }
   });
 
     // These plugins provide necessary tasks.
+    grunt.loadNpmTasks('grunt-exec');
     grunt.loadNpmTasks('grunt-contrib-qunit');
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
@@ -82,5 +92,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-jsdox');
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'jsdox', 'requirejs']);
+    grunt.registerTask('default', ['jshint', 'exec', 'requirejs']);
 };

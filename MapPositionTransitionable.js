@@ -28,13 +28,7 @@
 /*global define*/
 
 /**
- * @title MapPositionTransitionable
- * 
- * The MapPositionTransitionable makes it possible to transition between two geographical
- * positions. Currently, only standard transition definitions are supported (see `Transitionable`), but in the future more interesting
- * transitions may be added.
- *
- * This class is used internally by `MapView` and `MapStateModifier`.
+ * @module
  */
 define(function (require, exports, module) {
     'use strict';
@@ -44,11 +38,15 @@ define(function (require, exports, module) {
     var MapUtility = require('./MapUtility');
 
     /**
-     * @class MapPositionTransitionable
+     * The MapPositionTransitionable makes it possible to transition between two geographical
+     * positions. Currently, only standard transition definitions are supported (see `Transitionable`), but in the future more interesting
+     * transitions may be added.
      *
-     * @method
-     * @constructor
+     * *This class is used internally by `MapView` and `MapStateModifier`.*
+     *
+     * @class
      * @param {LatLng} [position] Default geopgraphical position
+     * @alias module:MapPositionTransitionable
      */
     function MapPositionTransitionable(position) {
         this.position = new Transitionable([0, 0]);

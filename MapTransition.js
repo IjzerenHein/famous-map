@@ -28,9 +28,7 @@
 /*global define*/
 
 /**
- * @title MapTransition
- * 
- * MapTransitions can transition between geographical positions using specific speed (e.g. 50 km/h).
+ * @module
  */
 define(function (require, exports, module) {
     'use strict';
@@ -41,8 +39,8 @@ define(function (require, exports, module) {
     /**
      * MapTransitions can transition between geographical positions using specific speed (e.g. 50 km/h).
      *
-     * @class MapTransition
-     * @constructor
+     * @class
+     * @alias module:MapTransition
      */
     function MapTransition() {
         
@@ -85,7 +83,6 @@ define(function (require, exports, module) {
      *
      * @method reset
      * @param {Array.Number} state Array: [lat, lng]
-     * @ignore {Number} [velocity] Velocity
      */
     MapTransition.prototype.reset = function reset(state) {
         if (this._callback) {

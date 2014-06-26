@@ -28,30 +28,7 @@
 /*global define, google, L*/
 
 /**
- * @title MapView
- * 
- * MapView encapsulates a Google maps view so it can be used with famo.us.
- *
- * Additionally it adds methods to set the position and zoom-factor of the map using transitions.
- * Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map, much like google-maps markers.
- *
- * ### Options
- *
- * **type**: Map-type (e.g. MapView.MapType.GOOGLEMAPS, MapView.MapType.LEAFLET)
- *
- * **mapOptions**: Options that are passed directly to the google.maps.Map object. The options should include the 'center' and 'zoom'.
- *
- * **[id]**: Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
- *
- * **[zoomTransition]**: Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
- *
- * ### Map-types
- *
- * |Value|Description|
- * |---|---|
- * |MapType.GOOGLEMAPS (default)|Google-maps.|
- * |MapType.LEAFLET|Leaflet.js.|
- *
+ * @module
  */
 var _globalMapViewId = 1;
 define(function (require, exports, module) {
@@ -68,6 +45,7 @@ define(function (require, exports, module) {
     
     /*
      * Map-type
+     * @enum {Number}
      */
     var MapType = {
         GOOGLEMAPS: 1,
@@ -75,11 +53,25 @@ define(function (require, exports, module) {
     };
     
     /**
-     * A view containing a google-map
+     * MapView encapsulates a Google maps view so it can be used with famo.us.
      *
-     * @class MapView
-     * @constructor
+     * Additionally it adds methods to set the position and zoom-factor of the map using transitions.
+     * Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map, much like google-maps markers.
+     *
+     * **Map-types**
+     *
+     * |Value|Description|
+     * |---|---|
+     * |MapType.GOOGLEMAPS (default)|Google-maps.|
+     * |MapType.LEAFLET|Leaflet.js.|
+     *
+     * @class
      * @param {Object} options Options.
+     * @param {MapType} options.type Map-type (e.g. MapView.MapType.GOOGLEMAPS, MapView.MapType.LEAFLET).
+     * @param {Object} options.mapOptions Options that are passed directly to the Map object. The options should include the 'center' and 'zoom'.
+     * @param {String} [options.id] Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
+     * @param {Transition} [options.zoomTransition] Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
+     * @alias module:MapView
      */
     function MapView() {
         View.apply(this, arguments);
@@ -138,7 +130,6 @@ define(function (require, exports, module) {
     /**
      * Initializes the map (happens after the DOM element has been created).
      *
-     * @method _initMap
      * @private
      * @ignore
      */
@@ -309,7 +300,6 @@ define(function (require, exports, module) {
     };
     
     /**
-     * @method _updateCache
      * @private
      * @ignore
      */
@@ -366,7 +356,6 @@ define(function (require, exports, module) {
     /**
      * Get map-information from the underlying map-provider, such as position, bounds, zoom-level...
      *
-     * @method _getMapInfo
      * @private
      * @ignore
      */
@@ -419,7 +408,6 @@ define(function (require, exports, module) {
     /**
      * Renders the view.
      *
-     * @method render
      * @private
      * @ignore
      */

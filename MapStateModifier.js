@@ -28,30 +28,8 @@
 /*global define*/
 
 /**
- * @title MapStateModifier
- * 
- * The MapStateModifier makes it possible to link renderables to a geopgraphical position on a `MapView`.
- * Additionally it adds functionality for rotating and zooming renderables, and possibly all kinds of future 
- * map-related transformations.
- *
- * The MapStateModifier makes it possible to use transitions to e.g. move a renderable from one geographical
- * position to another. If the renderable doesn't require transitions, the use of the lightweight 
- * and stateless `MapModifier` is strongly preferred.
- *
- * ### Options
- *
- * **mapView**: {MapView} The MapView.
- *
- * **[position]**: {LatLng} Initial geographical coordinates.
- *
- * **[offset]**: {LatLng} Displacement offset in geographical coordinates from the position.
- *
- * **[rotateTowards]**: {LatLng} Position to rotate the renderables towards.
- *
- * **[zoomBase]**: {Number} Base zoom-level at which the renderables are displayed in their true size.
- *
- * **[zoomScale]**: {Number, Function} Customer zoom-scaling factor or function.
- */
+ * @module
+*/
 define(function (require, exports, module) {
     'use strict';
 
@@ -60,11 +38,19 @@ define(function (require, exports, module) {
     var MapPositionTransitionable = require('./MapPositionTransitionable');
 
     /**
-     * @class MapStateModifier
+     * The MapStateModifier makes it possible to use transitions to e.g. move a renderable from one geographical
+     * position to another. If the renderable doesn't require transitions, the use of the lightweight 
+     * and stateless `MapModifier` is strongly preferred.
      *
-     * @method constructor
-     * @constructor
+     * @class
      * @param {Object} options Options.
+     * @param {MapView} options.mapView The MapView.
+     * @param {LatLng} [options.position] Initial geographical coordinates.
+     * @param {LatLng} [options.offset] Displacement offset in geographical coordinates from the position.
+     * @param {LatLng} [options.rotateTowards] Position to rotate the renderables towards.
+     * @param {number} [options.zoomBase] Base zoom-level at which the renderables are displayed in their true size.
+     * @param {number|function} [options.zoomScale] Custom zoom-scaling factor or function.
+     * @alias module:MapStateModifier
      */
     function MapStateModifier(options) {
         this.mapView = options.mapView;
@@ -129,7 +115,7 @@ define(function (require, exports, module) {
      * a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
      *
      * @method setZoomScale
-     * @param {Number,Function} zoomScale Zoom-scale factor or function.
+     * @param {Number|Function} zoomScale Zoom-scale factor or function.
      */
     MapStateModifier.prototype.setZoomScale = function (zoomScale) {
         this._modifier.zoomScaleFrom(zoomScale);
@@ -203,7 +189,7 @@ define(function (require, exports, module) {
      * a scale-factor.
      *
      * @method getZoomScale
-     * @return {Number, Function} Zoom-scale
+     * @return {Number|Function} Zoom-scale
      */
     MapStateModifier.prototype.getZoomScale = function () {
         return this._modifier.getZoomScale();
@@ -243,7 +229,7 @@ define(function (require, exports, module) {
      * Return render spec for this MapStateModifier, applying to the provided
      *    target component.  This is similar to render() for Surfaces.
      *
-     * @method modify
+     * @method
      * @private
      * @ignore
      *

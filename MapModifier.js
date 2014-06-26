@@ -18,8 +18,8 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
- * @author: Hein Rutjes (IjzerenHein)
+ *
+ * @author Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
  */
@@ -28,28 +28,7 @@
 /*global define*/
 
 /**
- * @title MapModifier
- * 
- * The MapModifier makes it possible to link renderables to a geopgraphical position on a `MapView`.
- * Additionally it adds functionality for rotating and zooming renderables, and possibly all kinds of future 
- * map-related transformations.
- *
- * Use `MapStateModifier` if you want to use transitions, e.g. to animate a move from one geographical position
- * to another.
- *
- * ### Options
- *
- * **mapView**: {MapView} The MapView.
- *
- * **[position]**: {LatLng} Initial geographical coordinates.
- *
- * **[offset]**: {LatLng} Displacement offset in geographical coordinates from the position.
- *
- * **[rotateTowards]**: {LatLng, Object, Function} Position to rotate the renderables towards.
- *
- * **[zoomBase]**: {Number} Base zoom-level at which the renderables are displayed in their true size.
- *
- * **[zoomScale]**: {Number, Function} Customer zoom-scaling factor or function.
+ * @module
  */
 define(function (require, exports, module) {
     'use strict';
@@ -59,11 +38,19 @@ define(function (require, exports, module) {
     var MapUtility = require('./MapUtility');
 
     /**
-     * @class MapModifier
+     * The MapModifier makes it possible to link renderables to a geopgraphical position on a `MapView`.
+     * Additionally it adds functionality for rotating and zooming renderables, and possibly all kinds of future  map-related transformations.
+     * Use `MapStateModifier` if you want to use transitions, e.g. to animate a move from one geographical position to another.
      *
-     * @method constructor
-     * @constructor
+     * @class 
      * @param {Object} options Options.
+     * @param {MapView} options.mapView The MapView.
+     * @param {LatLng} [options.position] Initial geographical coordinates.
+     * @param {LatLng} [options.offset] Displacement offset in geographical coordinates from the position.
+     * @param {LatLng | object | function} [options.rotateTowards] Position to rotate the renderables towards.
+     * @param {number} [options.zoomBase] Base zoom-level at which the renderables are displayed in their true size.
+     * @param {number | function} [options.zoomScale] Customer zoom-scaling factor or function.
+     * @alias module:MapModifier
      */
     function MapModifier(options) {
         
@@ -94,7 +81,7 @@ define(function (require, exports, module) {
      * Set the geographical position of the renderables.
      *
      * @method positionFrom
-     * @param {LatLng, Function, Object} position Position in geographical coordinates.
+     * @param {LatLng|Function|Object} position Position in geographical coordinates.
      */
     MapModifier.prototype.positionFrom = function (position) {
         if (!position) {
@@ -153,7 +140,7 @@ define(function (require, exports, module) {
      * a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
      *
      * @method zoomScaleFrom
-     * @param {Number,Function} zoomScale Zoom-scale factor or function.
+     * @param {Number|Function} zoomScale Zoom-scale factor or function.
      */
     MapModifier.prototype.zoomScaleFrom = function (zoomScale) {
         this._zoomScale = zoomScale;
@@ -207,7 +194,7 @@ define(function (require, exports, module) {
      * a scale-factor.
      *
      * @method getZoomScale
-     * @return {Number, Function} Zoom-scale
+     * @return {Number|Function} Zoom-scale
      */
     MapModifier.prototype.getZoomScale = function () {
         return this._zoomScale;
@@ -227,7 +214,6 @@ define(function (require, exports, module) {
      * Return render spec for this MapModifier, applying to the provided
      *    target component.  This is similar to render() for Surfaces.
      *
-     * @method modify
      * @private
      * @ignore
      *

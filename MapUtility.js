@@ -28,7 +28,7 @@
 /*global define*/
 
 /**
- * @title MapUtility
+ * @module
  */
 define(function (require, exports, module) {
     'use strict';
@@ -36,7 +36,8 @@ define(function (require, exports, module) {
     /**
      * This namespace holds standalone functionality.
      *
-     * @class MapUtility
+     * @class
+     * @alias module:MapUtility
      */
     var MapUtility = {};
 
