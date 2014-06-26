@@ -72,25 +72,30 @@ module.exports = function (grunt) {
         }
       }
     },
-    exec: {
-      generate_docs: { cmd: 'mkdir docs', exitCode:[0, 1]},
-      generate_doc1: { cmd: 'jsdoc2md --index MapView.js > docs/MapView.md'},
-      generate_doc2: { cmd: 'jsdoc2md --index MapUtility.js > docs/MapUtility.md'},
-      generate_doc3: { cmd: 'jsdoc2md --index MapModifier.js > docs/MapModifier.md'},
-      generate_doc4: { cmd: 'jsdoc2md --index MapStateModifier.js > docs/MapStateModifier.md'},
-      generate_doc5: { cmd: 'jsdoc2md --index MapTransition.js > docs/MapTransition.md'},
-      generate_doc6: { cmd: 'jsdoc2md --index MapPositionTransitionable.js > docs/MapPositionTransitionable.md'}
+    jsdoc2md: {
+      separateOutputFilePerInput: {
+        options: {
+          index: true
+        },
+        files: [
+            { src: "MapView.js", dest: "docs/MapView.md" },
+            { src: "MapUtility.js", dest: "docs/MapUtility.md" },
+            { src: "MapModifier.js", dest: "docs/MapModifier.md" },
+            { src: "MapStateModifier.js", dest: "docs/MapStateModifier.md" },
+            { src: "MapTransition.js", dest: "docs/MapTransition.md" },
+            { src: "MapPositionTransitionable.js", dest: "docs/MapPositionTransitionable.md" }
+        ]
+      }
     }
   });
 
-    // These plugins provide necessary tasks.
-    grunt.loadNpmTasks('grunt-exec');
-    grunt.loadNpmTasks('grunt-contrib-qunit');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-requirejs');
-    grunt.loadNpmTasks('grunt-jsdox');
+  // These plugins provide necessary tasks.
+  grunt.loadNpmTasks('grunt-contrib-qunit');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-contrib-requirejs');
+  grunt.loadNpmTasks("grunt-jsdoc-to-markdown");
 
-    // Default task.
-    grunt.registerTask('default', ['jshint', 'exec', 'requirejs']);
+  // Default task.
+  grunt.registerTask('default', ['jshint', 'jsdoc2md', 'requirejs']);
 };
