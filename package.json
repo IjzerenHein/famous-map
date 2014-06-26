@@ -36,6 +36,7 @@
     "grunt-contrib-jshint": "latest",
     "grunt-contrib-watch": "latest",
     "grunt-contrib-qunit": "latest",
-    "grunt-jsdox": "latest"
+    "grunt-jsdox": "latest",
+    "grunt-contrib-requirejs": "~0.4.4"
   }
 }

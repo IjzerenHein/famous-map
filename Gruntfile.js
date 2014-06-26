@@ -1,5 +1,5 @@
 /*global module:false*/
-module.exports = function(grunt) {
+module.exports = function (grunt) {
 
   // Project configuration.
   grunt.initConfig({
@@ -51,24 +51,36 @@ module.exports = function(grunt) {
         },
         src: ['./Map*.js'],
         dest: 'docs'
-      },
-      /*publish: {
-        enabled: true,
-        path: '<%= jsdox.generate.dest %>',
-        message: 'Markdown Auto-Generated for version <%= pkg.version %>',
-        remoteName: 'upstream',
-        remoteBranch: 'master'
-      }*/
+      }
+    },
+    requirejs: {
+      compile: {
+        options: {
+          baseUrl: ".",
+          name: 'MapMinify',
+          out: "dist/famous-map.min.js",
+          paths: {
+            "famous": "empty:",
+            "famous-map": '.'
+          },
+          optimize: 'uglify2',
+          uglify: {
+            mangler: {
+              toplevel: true
+            }
+          },
+        }
+      }
     }
   });
 
-  // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-qunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.loadNpmTasks('grunt-jsdox');
+    // These plugins provide necessary tasks.
+    grunt.loadNpmTasks('grunt-contrib-qunit');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-requirejs');
+    grunt.loadNpmTasks('grunt-jsdox');
 
-  // Default task.
-  grunt.registerTask('default', ['jshint', 'jsdox', 'qunit']);
-
+    // Default task.
+    grunt.registerTask('default', ['jshint', 'jsdox', 'requirejs']);
 };
