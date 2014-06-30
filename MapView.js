@@ -159,7 +159,7 @@ define(function (require, exports, module) {
                 
         // Create leaflet Map
         case MapType.LEAFLET:
-            this.map = L.map(elm).setView(this.options.mapOptions.center, this.options.mapOptions.zoom);
+            this.map = L.map(elm, this.options.mapOptions);
             this._initComplete = true;
             this._eventOutput.emit('load', this);
             break;
