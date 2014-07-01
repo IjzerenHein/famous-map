@@ -9,9 +9,9 @@ Map component for Famo.us, supporting the following map-providers:
 Famous-map makes it possible for adding a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
 
 
-## Demo
+### [View the demo here](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
 
-[View the demo here](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
+*note: Hit refresh if the demo doesn't load properly. GitHub sometimes rejects loading famous-map.min.js the first time, but it always loads the next time :?*
 
 
 ## Getting started
