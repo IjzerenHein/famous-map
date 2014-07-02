@@ -52,7 +52,7 @@ define(function (require, exports, module) {
      * @param {number|function} [options.zoomScale] Custom zoom-scaling factor or function.
      * @alias module:MapStateModifier
      */
-    function MapStateModifier(options) {
+    var MapStateModifier = function (options) {
         this.mapView = options.mapView;
         this._positionState = new MapPositionTransitionable(options.position);
         this._rotateTowardsState = new MapPositionTransitionable(options.rotateTowards);
@@ -66,12 +66,11 @@ define(function (require, exports, module) {
         if (options.offset) { this.setOffset(options.offset); }
         if (options.zoomBase !== undefined) { this.setZoomBase(options.zoomBase); }
         if (options.zoomScale) { this.setZoomScale(options.zoomScale); }
-    }
+    };
 
     /**
      * Set the geographical position of the renderables, by adding the new position to the chain of transitions.
      *
-     * @method setPosition
      * @param {LatLng} position New position in geographical coordinates (Latitude, Longitude).
      * @param {Transition} [transition] Famo.us transitionable object.
      * @param {Function} [callback] callback to call after transition completes.
@@ -88,7 +87,6 @@ define(function (require, exports, module) {
      * To change the base rotation, add a rotation-transform to the renderable, like this: 
      * `new Modifier({transform: Transform.rotateZ(Math.PI/2)})`
      *
-     * @method rotateTowards
      * @param {LatLng} position Destination position in geographical position to rotate towards.
      * @param {Transition} [transition] Famo.us transitionable object.
      * @param {Function} [callback] callback to call after transition completes.
@@ -101,7 +99,6 @@ define(function (require, exports, module) {
      * Set the base zoom-level. When set, auto-zooming is effectively enabled.
      * The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
      *
-     * @method setZoomBase
      * @param {Number} zoomBase Map zoom-level
      */
     MapStateModifier.prototype.setZoomBase = function (zoomBase) {
@@ -114,7 +111,6 @@ define(function (require, exports, module) {
      * decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
      * a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
      *
-     * @method setZoomScale
      * @param {Number|Function} zoomScale Zoom-scale factor or function.
      */
     MapStateModifier.prototype.setZoomScale = function (zoomScale) {
@@ -125,7 +121,6 @@ define(function (require, exports, module) {
     /**
      * Set the displacement offset in geographical coordinates.
      *
-     * @method setOffset
      * @param {LatLng} offset Displacement offset in geographical coordinates.
      */
     MapStateModifier.prototype.setOffset = function (offset) {
@@ -136,7 +131,6 @@ define(function (require, exports, module) {
     /**
      * Get the current geographical position.
      *
-     * @method getPosition
      * @return {LatLng} Position in geographical coordinates.
      */
     MapStateModifier.prototype.getPosition = function () {
@@ -146,7 +140,6 @@ define(function (require, exports, module) {
     /**
      * Get the geographical position towards which the renderables are currently rotated.
      *
-     * @method getRotateTowards
      * @return {LatLng} Destination geographical position towards which renderables are rotated.
      */
     MapStateModifier.prototype.getRotateTowards = function () {
@@ -156,7 +149,6 @@ define(function (require, exports, module) {
     /**
      * Get the destination geographical position.
      *
-     * @method getFinalPosition
      * @return {LatLng} Position in geographical coordinates.
      */
     MapStateModifier.prototype.getFinalPosition = function () {
@@ -166,7 +158,6 @@ define(function (require, exports, module) {
     /**
      * Get the destination geographical position which the renderables should be rotated towards.
      *
-     * @method getFinalRotateTowards
      * @return {LatLng} Position in geographical coordinates.
      */
     MapStateModifier.prototype.getFinalRotateTowards = function () {
@@ -177,7 +168,6 @@ define(function (require, exports, module) {
      * Get the base zoom-level. The zoomBase indicates the zoom-level at which renderables are
      * displayed in their true size.
      *
-     * @method getZoomBase
      * @return {Number} Base zoom level
      */
     MapStateModifier.prototype.getZoomBase = function () {
@@ -188,7 +178,6 @@ define(function (require, exports, module) {
      * Get the base zoom-scale. The zoomScale can be either a Number or a Function which returns
      * a scale-factor.
      *
-     * @method getZoomScale
      * @return {Number|Function} Zoom-scale
      */
     MapStateModifier.prototype.getZoomScale = function () {
@@ -198,7 +187,6 @@ define(function (require, exports, module) {
      /**
      * Get the geographical displacement offset.
      *
-     * @method getOffset
      * @return {LatLng} Offset in geographical coordinates.
      */
     MapStateModifier.prototype.getOffset = function () {
@@ -207,8 +195,6 @@ define(function (require, exports, module) {
     
     /**
      * Halts any pending transitions.
-     *
-     * @method halt
      */
     MapStateModifier.prototype.halt = function () {
         this._positionState.halt();
@@ -218,7 +204,6 @@ define(function (require, exports, module) {
     /**
      * Is there at least one transition pending completion?
      *
-     * @method isActive
      * @return {Bool} True when there are active transitions running.
      */
     MapStateModifier.prototype.isActive = function () {
@@ -229,7 +214,6 @@ define(function (require, exports, module) {
      * Return render spec for this MapStateModifier, applying to the provided
      *    target component.  This is similar to render() for Surfaces.
      *
-     * @method
      * @private
      * @ignore
      *

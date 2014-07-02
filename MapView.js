@@ -46,6 +46,7 @@ define(function (require, exports, module) {
     /*
      * Map-type
      * @enum {Number}
+     * @alias module:MapView.MapType
      */
     var MapType = {
         GOOGLEMAPS: 1,
@@ -73,7 +74,7 @@ define(function (require, exports, module) {
      * @param {Transition} [options.zoomTransition] Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
      * @alias module:MapView
      */
-    function MapView() {
+    var MapView = function () {
         View.apply(this, arguments);
         
         // Initialize
@@ -109,13 +110,14 @@ define(function (require, exports, module) {
             });
             this.add(surface);
         }
-    }
+    };
     MapView.prototype = Object.create(View.prototype);
     MapView.prototype.constructor = MapView;
     MapView.MapType = MapType;
     
     /**
-     * @property MapView.DEFAULT_OPTIONS
+     * @property DEFAULT_OPTIONS
+     * @protected
      */
     MapView.DEFAULT_OPTIONS = {
         type: MapType.GOOGLEMAPS,
@@ -170,7 +172,6 @@ define(function (require, exports, module) {
      * Get the internal map-object. This object may not yet have been initialized, the map is only
      * guarenteed to be valid after the 'load' event has been emited.
      *
-     * @method getMap
      * @return {Map} Map object.
      */
     MapView.prototype.getMap = function () {
@@ -180,7 +181,6 @@ define(function (require, exports, module) {
     /**
      * Set the center of the map to the given geographical coordinates.
      *
-     * @method setPosition
      * @param {LatLng} position Position in geographical coordinates.
      * @param {Transitionable} [transition] Transitionable.
      * @param {Function} [callback] callback to call after transition completes.
@@ -194,7 +194,6 @@ define(function (require, exports, module) {
     /**
      * Get the current center position of the map, in geographical coordinates.
      *
-     * @method getPosition
      * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.getPosition = function () {
@@ -204,7 +203,6 @@ define(function (require, exports, module) {
     /**
      * Get the destination center position of the map, in geographical coordinates.
      *
-     * @method getFinalPosition
      * @return {LatLng} Position in geographical coordinates.
      */
     MapView.prototype.getFinalPosition = function () {
@@ -216,7 +214,6 @@ define(function (require, exports, module) {
      * E.g., when zooming from zoom-level 4 to 5, this function returns an increasing value starting at 4 and ending
      * at 5, over time. The used zoomTransition can be set as an option.
      *
-     * @method getZoom
      * @return {Number} Zoom-level.
      */
     MapView.prototype.getZoom = function () {
@@ -226,7 +223,6 @@ define(function (require, exports, module) {
     /**
      * Get the position in pixels (relative to the left-top of the container) for the given geographical position.
      *
-     * @method pointFromPosition
      * @param {LatLng} Position in geographical coordinates.
      * @return {Point} Position in pixels, relative to the left-top of the mapView.
      */
@@ -251,7 +247,6 @@ define(function (require, exports, module) {
     /**
      * Get the geographical coordinates for a given position in pixels (relative to the left-top of the container).
      *
-     * @method positionFromPoint
      * @param {Point} point Position in pixels, relative to the left-top of the mapView.
      * @return {LatLng} Position in geographical coordinates.
      */
@@ -272,7 +267,6 @@ define(function (require, exports, module) {
     /**
      * Get the size of the map-view in pixels.
      *
-     * @method getSize
      * @return {Array.Number} Size of the mapView.
      */
     MapView.prototype.getSize = function () {
@@ -281,8 +275,6 @@ define(function (require, exports, module) {
         
     /**
      * Halts any pending transitions.
-     *
-     * @method halt
      */
     MapView.prototype.halt = function () {
         this._position.halt();
@@ -292,7 +284,6 @@ define(function (require, exports, module) {
     /**
      * Is there at least one action pending completion?
      *
-     * @method isActive
      * @return {Bool} True when there are active transitions running.
      */
     MapView.prototype.isActive = function () {

@@ -15,24 +15,24 @@ and stateless `MapModifier` is strongly preferred.
   - [zoomScale] `number` | `function` - Custom zoom-scaling factor or function.
 
   
-**Contents**
-* [setPosition(position, [transition], [callback])](#module_MapStateModifier.setPosition)
-* [rotateTowards(position, [transition], [callback])](#module_MapStateModifier.rotateTowards)
-* [setZoomBase(zoomBase)](#module_MapStateModifier.setZoomBase)
-* [setZoomScale(zoomScale)](#module_MapStateModifier.setZoomScale)
-* [setOffset(offset)](#module_MapStateModifier.setOffset)
-* [getPosition()](#module_MapStateModifier.getPosition)
-* [getRotateTowards()](#module_MapStateModifier.getRotateTowards)
-* [getFinalPosition()](#module_MapStateModifier.getFinalPosition)
-* [getFinalRotateTowards()](#module_MapStateModifier.getFinalRotateTowards)
-* [getZoomBase()](#module_MapStateModifier.getZoomBase)
-* [getZoomScale()](#module_MapStateModifier.getZoomScale)
-* [getOffset()](#module_MapStateModifier.getOffset)
-* [halt()](#module_MapStateModifier.halt)
-* [isActive()](#module_MapStateModifier.isActive)
+**Contents**  
+* [setPosition(position, [transition], [callback])](#module_MapStateModifier#setPosition)
+* [rotateTowards(position, [transition], [callback])](#module_MapStateModifier#rotateTowards)
+* [setZoomBase(zoomBase)](#module_MapStateModifier#setZoomBase)
+* [setZoomScale(zoomScale)](#module_MapStateModifier#setZoomScale)
+* [setOffset(offset)](#module_MapStateModifier#setOffset)
+* [getPosition()](#module_MapStateModifier#getPosition)
+* [getRotateTowards()](#module_MapStateModifier#getRotateTowards)
+* [getFinalPosition()](#module_MapStateModifier#getFinalPosition)
+* [getFinalRotateTowards()](#module_MapStateModifier#getFinalRotateTowards)
+* [getZoomBase()](#module_MapStateModifier#getZoomBase)
+* [getZoomScale()](#module_MapStateModifier#getZoomScale)
+* [getOffset()](#module_MapStateModifier#getOffset)
+* [halt()](#module_MapStateModifier#halt)
+* [isActive()](#module_MapStateModifier#isActive)
 
-<a name="module_MapStateModifier.setPosition"></a>
-###setPosition(position, [transition], [callback])
+<a name="module_MapStateModifier#setPosition"></a>
+###mapStateModifier.setPosition(position, [transition], [callback])
 Set the geographical position of the renderables, by adding the new position to the chain of transitions.
 
 **Params**
@@ -40,9 +40,8 @@ Set the geographical position of the renderables, by adding the new position to 
 - [transition] `Transition` - Famo.us transitionable object.
 - [callback] `function` - callback to call after transition completes.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
-<a name="module_MapStateModifier.rotateTowards"></a>
-###rotateTowards(position, [transition], [callback])
+<a name="module_MapStateModifier#rotateTowards"></a>
+###mapStateModifier.rotateTowards(position, [transition], [callback])
 Set the destination geographical position to rotate the renderables towards, by adding them.
 to the chain of transitions.
 The child renderables are assumed to be rotated to the right by default.
@@ -54,18 +53,16 @@ To change the base rotation, add a rotation-transform to the renderable, like th
 - [transition] `Transition` - Famo.us transitionable object.
 - [callback] `function` - callback to call after transition completes.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
-<a name="module_MapStateModifier.setZoomBase"></a>
-###setZoomBase(zoomBase)
+<a name="module_MapStateModifier#setZoomBase"></a>
+###mapStateModifier.setZoomBase(zoomBase)
 Set the base zoom-level. When set, auto-zooming is effectively enabled.
 The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
 
 **Params**
 - zoomBase `Number` - Map zoom-level
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
-<a name="module_MapStateModifier.setZoomScale"></a>
-###setZoomScale(zoomScale)
+<a name="module_MapStateModifier#setZoomScale"></a>
+###mapStateModifier.setZoomScale(zoomScale)
 Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and 
 decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
 a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
@@ -73,67 +70,56 @@ a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
 **Params**
 - zoomScale `Number` | `function` - Zoom-scale factor or function.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
-<a name="module_MapStateModifier.setOffset"></a>
-###setOffset(offset)
+<a name="module_MapStateModifier#setOffset"></a>
+###mapStateModifier.setOffset(offset)
 Set the displacement offset in geographical coordinates.
 
 **Params**
 - offset `LatLng` - Displacement offset in geographical coordinates.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
-<a name="module_MapStateModifier.getPosition"></a>
-###getPosition()
+<a name="module_MapStateModifier#getPosition"></a>
+###mapStateModifier.getPosition()
 Get the current geographical position.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `LatLng` - Position in geographical coordinates.  
-<a name="module_MapStateModifier.getRotateTowards"></a>
-###getRotateTowards()
+<a name="module_MapStateModifier#getRotateTowards"></a>
+###mapStateModifier.getRotateTowards()
 Get the geographical position towards which the renderables are currently rotated.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `LatLng` - Destination geographical position towards which renderables are rotated.  
-<a name="module_MapStateModifier.getFinalPosition"></a>
-###getFinalPosition()
+<a name="module_MapStateModifier#getFinalPosition"></a>
+###mapStateModifier.getFinalPosition()
 Get the destination geographical position.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `LatLng` - Position in geographical coordinates.  
-<a name="module_MapStateModifier.getFinalRotateTowards"></a>
-###getFinalRotateTowards()
+<a name="module_MapStateModifier#getFinalRotateTowards"></a>
+###mapStateModifier.getFinalRotateTowards()
 Get the destination geographical position which the renderables should be rotated towards.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `LatLng` - Position in geographical coordinates.  
-<a name="module_MapStateModifier.getZoomBase"></a>
-###getZoomBase()
+<a name="module_MapStateModifier#getZoomBase"></a>
+###mapStateModifier.getZoomBase()
 Get the base zoom-level. The zoomBase indicates the zoom-level at which renderables are
 displayed in their true size.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `Number` - Base zoom level  
-<a name="module_MapStateModifier.getZoomScale"></a>
-###getZoomScale()
+<a name="module_MapStateModifier#getZoomScale"></a>
+###mapStateModifier.getZoomScale()
 Get the base zoom-scale. The zoomScale can be either a Number or a Function which returns
 a scale-factor.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `Number` | `function` - Zoom-scale  
-<a name="module_MapStateModifier.getOffset"></a>
-###getOffset()
+<a name="module_MapStateModifier#getOffset"></a>
+###mapStateModifier.getOffset()
 Get the geographical displacement offset.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `LatLng` - Offset in geographical coordinates.  
-<a name="module_MapStateModifier.halt"></a>
-###halt()
+<a name="module_MapStateModifier#halt"></a>
+###mapStateModifier.halt()
 Halts any pending transitions.
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
-<a name="module_MapStateModifier.isActive"></a>
-###isActive()
+<a name="module_MapStateModifier#isActive"></a>
+###mapStateModifier.isActive()
 Is there at least one transition pending completion?
 
-**Scope**: inner function of [MapStateModifier](#module_MapStateModifier)  
 **Returns**: `Bool` - True when there are active transitions running.  

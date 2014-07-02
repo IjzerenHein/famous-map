@@ -48,15 +48,14 @@ define(function (require, exports, module) {
      * @param {LatLng} [position] Default geopgraphical position
      * @alias module:MapPositionTransitionable
      */
-    function MapPositionTransitionable(position) {
+    var MapPositionTransitionable = function (position) {
         this.position = new Transitionable([0, 0]);
         if (position) { this.set(position); }
-    }
+    };
 
     /**
      * Sets the default transition to use for transitioning between position states.
      *
-     * @method setDefaultTransition
      * @param  {Object} transition Transition definition
      */
     MapPositionTransitionable.prototype.setDefaultTransition = function setDefaultTransition(transition) {
@@ -66,7 +65,6 @@ define(function (require, exports, module) {
     /**
      * Cancel all transitions and reset to a geographical position.
      *
-     * @method reset
      * @param {LatLng} position
      */
     MapPositionTransitionable.prototype.reset = function reset(position) {
@@ -77,8 +75,6 @@ define(function (require, exports, module) {
         
     /**
      * Set the geographical position by adding it to the queue of transition.
-     *
-     * @method set
      *
      * @param {LatLng} position
      * @param {Object} [transition] Transition definition
@@ -94,7 +90,6 @@ define(function (require, exports, module) {
     /**
      * Get the current geographical position.
      *
-     * @method get
      * @return {LatLng}
      */
     MapPositionTransitionable.prototype.get = function get() {
@@ -112,7 +107,6 @@ define(function (require, exports, module) {
     /**
      * Get the destination geographical position.
      *
-     * @method getFinal
      * @return {LatLng}
      */
     MapPositionTransitionable.prototype.getFinal = function getFinal() {
@@ -122,7 +116,6 @@ define(function (require, exports, module) {
     /**
      * Determine if the transitionable is currently transitioning
      *
-     * @method isActive
      * @return {Boolean}
      */
     MapPositionTransitionable.prototype.isActive = function isActive() {
@@ -131,8 +124,6 @@ define(function (require, exports, module) {
 
     /**
      * Halts the transition
-     *
-     * @method halt
      */
     MapPositionTransitionable.prototype.halt = function halt() {
         this._final = this.get();

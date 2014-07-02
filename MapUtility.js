@@ -44,7 +44,6 @@ define(function (require, exports, module) {
     /**
      * Get the latitude from the position (LatLng) object.
      *
-     * @method lat
      * @param {LatLng} position Position
      * @return {Number} Latitude in degrees
      */
@@ -61,7 +60,6 @@ define(function (require, exports, module) {
     /**
      * Get the longitude from the position (LatLng) object.
      *
-     * @method lng
      * @param {LatLng} position Position
      * @return {Number} Longitude in degrees
      */
@@ -78,7 +76,6 @@ define(function (require, exports, module) {
     /**
      * Compares two positions for equality.
      *
-     * @method equals
      * @param {LatLng} position1 Position 1
      * @param {LatLng} position2 Position 2
      * @return {Boolean} Result of comparison
@@ -91,7 +88,6 @@ define(function (require, exports, module) {
     /**
      * Converts degrees into radians (radians = degrees * (Math.PI / 180)).
      *
-     * @method radiansFromDegrees
      * @param {Number} degr Degrees
      * @return {Number} radians.
      */
@@ -102,7 +98,6 @@ define(function (require, exports, module) {
     /**
      * Calculates the rotation-angle between two given positions.
      *
-     * @method rotationFromPositions
      * @param {LatLng} start Start position.
      * @param {LatLng} end End position.
      * @return {Number} Rotation in radians.
@@ -114,7 +109,6 @@ define(function (require, exports, module) {
     /**
      * Calculates the distance between two positions in kilometers.
      *
-     * @method distanceBetweenPositions
      * @param {LatLng} start Starting position
      * @param {LatLng} end End position
      * @return {Number} Distance in km

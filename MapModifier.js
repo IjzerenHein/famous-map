@@ -52,7 +52,7 @@ define(function (require, exports, module) {
      * @param {number | function} [options.zoomScale] Customer zoom-scaling factor or function.
      * @alias module:MapModifier
      */
-    function MapModifier(options) {
+    var MapModifier = function (options) {
         
         this.mapView = options.mapView;
                 
@@ -75,12 +75,11 @@ define(function (require, exports, module) {
                 
         if (options.position) { this.positionFrom(options.position); }
         if (options.rotateTowards) { this.rotateTowardsFrom(options.rotateTowards); }
-    }
-    
+    };
+
     /**
      * Set the geographical position of the renderables.
      *
-     * @method positionFrom
      * @param {LatLng|Function|Object} position Position in geographical coordinates.
      */
     MapModifier.prototype.positionFrom = function (position) {
@@ -104,7 +103,6 @@ define(function (require, exports, module) {
      * To change the base rotation, add a rotation-transform to the renderable, like this: 
      * `new Modifier({transform: Transform.rotateZ(Math.PI/2)})`
      *
-     * @method rotateTowardsFrom
      * @param {LatLng} position Geographical position to rotate towards.
      */
     MapModifier.prototype.rotateTowardsFrom = function (position) {
@@ -126,7 +124,6 @@ define(function (require, exports, module) {
      * Set the base zoom-level. When set, auto-zooming is effectively enabled.
      * The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
      *
-     * @method zoomBaseFrom
      * @param {Number} zoomBase Map zoom-level
      */
     MapModifier.prototype.zoomBaseFrom = function (zoomBase) {
@@ -139,7 +136,6 @@ define(function (require, exports, module) {
      * decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
      * a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
      *
-     * @method zoomScaleFrom
      * @param {Number|Function} zoomScale Zoom-scale factor or function.
      */
     MapModifier.prototype.zoomScaleFrom = function (zoomScale) {
@@ -150,7 +146,6 @@ define(function (require, exports, module) {
     /**
      * Set the displacement offset in geographical coordinates.
      *
-     * @method offsetFrom
      * @param {LatLng} offset Displacement offset in geographical coordinates.
      */
     MapModifier.prototype.offsetFrom = function (offset) {
@@ -161,7 +156,6 @@ define(function (require, exports, module) {
     /**
      * Get the current geographical position.
      *
-     * @method getPosition
      * @return {LatLng} Position in geographical coordinates.
      */
     MapModifier.prototype.getPosition = function () {
@@ -171,7 +165,6 @@ define(function (require, exports, module) {
     /**
      * Get the geographical position towards which the renderables are rotated.
      *
-     * @method getRotateTowards
      * @return {LatLng} Geographical position towards which renderables are rotated.
      */
     MapModifier.prototype.getRotateTowards = function () {
@@ -182,7 +175,6 @@ define(function (require, exports, module) {
      * Get the base zoom-level. The zoomBase indicates the zoom-level at which renderables are
      * displayed in their true size.
      *
-     * @method getZoomBase
      * @return {Number} Base zoom level
      */
     MapModifier.prototype.getZoomBase = function () {
@@ -193,7 +185,6 @@ define(function (require, exports, module) {
      * Get the base zoom-scale. The zoomScale can be either a Number or a Function which returns
      * a scale-factor.
      *
-     * @method getZoomScale
      * @return {Number|Function} Zoom-scale
      */
     MapModifier.prototype.getZoomScale = function () {
@@ -203,7 +194,6 @@ define(function (require, exports, module) {
     /**
      * Get the geographical displacement offset.
      *
-     * @method getOffset
      * @return {LatLng} Offset in geographical coordinates.
      */
     MapModifier.prototype.getOffset = function () {

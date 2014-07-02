@@ -42,7 +42,7 @@ define(function (require, exports, module) {
      * @class
      * @alias module:MapTransition
      */
-    function MapTransition() {
+    var MapTransition = function () {
         
         this.state = undefined;
 
@@ -54,12 +54,12 @@ define(function (require, exports, module) {
         this._duration = 0;
         this._distance = 0;
         this._callback = undefined;
-    }
+    };
 
     MapTransition.SUPPORTS_MULTIPLE = 2;
     
     /**
-     * @property MapTransition.DEFAULT_OPTIONS
+     * @property DEFAULT_OPTIONS
      * @protected
      */
     MapTransition.DEFAULT_OPTIONS = {
@@ -81,7 +81,6 @@ define(function (require, exports, module) {
     /**
      * Resets the position
      *
-     * @method reset
      * @param {Array.Number} state Array: [lat, lng]
      */
     MapTransition.prototype.reset = function reset(state) {
@@ -105,7 +104,6 @@ define(function (require, exports, module) {
     /**
      * Set the end position and transition, with optional callback on completion.
      *
-     * @method set
      * @param {Array.Number} state Array: [lat,lng]
      * @param {Object} [transition] Transition definition
      * @param {Function} [callback] Callback
@@ -134,7 +132,6 @@ define(function (require, exports, module) {
     /**
      * Get the current position of the transition.
      *
-     * @method get
      * @param {Date} [timestamp] Timestamp at which to get the position
      * @return {Array.Number} Array: [lat, lng]
      */
@@ -171,7 +168,6 @@ define(function (require, exports, module) {
     /**
      * Detects whether a transition is in progress
      *
-     * @method isActive
      * @return {Boolean}
      */
     MapTransition.prototype.isActive = function isActive() {
@@ -180,8 +176,6 @@ define(function (require, exports, module) {
 
     /**
      * Halt the transition
-     *
-     * @method halt
      */
     MapTransition.prototype.halt = function halt() {
         this.set(this.get());
