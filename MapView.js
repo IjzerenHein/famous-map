@@ -230,7 +230,7 @@ define(function (require, exports, module) {
         switch (this.mapType) {
         case MapType.GOOGLEMAPS:
             if (!(position instanceof google.maps.LatLng)) {
-                position = new google.maps.LatLng(MapUtility.lat(position), MapUtility.lng(position));
+                position = new google.maps.LatLng(MapUtility.lat(position), MapUtility.lng(position), true);
             }
             var worldPoint = this.map.getProjection().fromLatLngToPoint(position);
             return {
@@ -306,8 +306,8 @@ define(function (require, exports, module) {
         switch (this.mapType) {
         case MapType.GOOGLEMAPS:
                             
-            if (!(northEast instanceof google.maps.LatLng)) { northEast = new google.maps.LatLng(MapUtility.lat(northEast), MapUtility.lng(northEast)); }
-            if (!(southWest instanceof google.maps.LatLng)) { southWest = new google.maps.LatLng(MapUtility.lat(southWest), MapUtility.lng(southWest)); }
+            if (!(northEast instanceof google.maps.LatLng)) { northEast = new google.maps.LatLng(MapUtility.lat(northEast), MapUtility.lng(northEast), true); }
+            if (!(southWest instanceof google.maps.LatLng)) { southWest = new google.maps.LatLng(MapUtility.lat(southWest), MapUtility.lng(southWest), true); }
 
             var topRight = this.map.getProjection().fromLatLngToPoint(northEast);
             var bottomLeft = this.map.getProjection().fromLatLngToPoint(southWest);
@@ -328,8 +328,8 @@ define(function (require, exports, module) {
 
             northEast = this._zoom.northEast.get();
             southWest = this._zoom.southWest.get();
-            if (!(northEast instanceof google.maps.LatLng)) { northEast = new google.maps.LatLng(MapUtility.lat(northEast), MapUtility.lng(northEast)); }
-            if (!(southWest instanceof google.maps.LatLng)) { southWest = new google.maps.LatLng(MapUtility.lat(southWest), MapUtility.lng(southWest)); }
+            if (!(northEast instanceof google.maps.LatLng)) { northEast = new google.maps.LatLng(MapUtility.lat(northEast), MapUtility.lng(northEast), true); }
+            if (!(southWest instanceof google.maps.LatLng)) { southWest = new google.maps.LatLng(MapUtility.lat(southWest), MapUtility.lng(southWest), true); }
                 
             this._cache.topRight = this.map.getProjection().fromLatLngToPoint(northEast);
             this._cache.bottomLeft = this.map.getProjection().fromLatLngToPoint(southWest);
