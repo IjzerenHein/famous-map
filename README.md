@@ -8,8 +8,11 @@ Map component for Famo.us, supporting the following map-providers:
 
 Famous-map makes it possible for adding a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
 
+## Demos
 
-### [View the demo here](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
+- [photo animation demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/photos/index.html)
+- [eindhoven demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
+- [nyan-cat scrolling demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/nyan-cat/index.html)
 
 *note: Hit refresh if the demo doesn't load properly. GitHub sometimes rejects loading famous-map.min.js the first time, but it always loads the next time :?*
 
@@ -116,6 +119,16 @@ mapView.on('load', function () {
     var map = mapView.getMap();
     ...
 });
+```
+
+##### LatLng notation
+
+Multiple LatLng formats are supported by the famous-map functions:
+
+```javascript
+var pos = { lat: 57.876, lng: -13.242 }; // object literal
+var pos = [57.876, -13.242]; // array: [lat, lng]
+var pos = new google.maps.LatLng(57.876, -13.242); // object with .lat() and .lng() functions
 ```
 
 ##### Panning the map using transitions
@@ -241,9 +254,9 @@ var mapModifier = new MapModifier({
 
 ## Known issues & performance
 
-##### Scrolling on mobile devices
+##### Google-Maps and Scrolling on mobile devices
 
-Famo.us prevents scrolling on mobile-devices by disabling the 'touch-event'.  This is a known issue in famo.us and should be addressed in the next release. To workaround this issue, out-comment the following lines 119 - 122 in Engine.js:
+Famo.us prevents scrolling on mobile-devices by disabling the 'touch-event'. This is a known issue in famo.us and should be addressed in the next release. To workaround this issue, out-comment the following lines 119 - 122 in Engine.js:
 
 ```javascript
 // prevent scrolling via browser
