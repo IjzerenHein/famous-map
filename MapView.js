@@ -234,7 +234,7 @@ define(function (require, exports, module) {
         switch (this.mapType) {
         case MapType.GOOGLEMAPS:
             if (!(position instanceof google.maps.LatLng)) {
-                position = new google.maps.LatLng(position.lat, position.lng);
+                position = new google.maps.LatLng(MapUtility.lat(position), MapUtility.lng(position));
             }
             var worldPoint = this.map.getProjection().fromLatLngToPoint(position);
             return {
