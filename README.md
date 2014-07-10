@@ -276,7 +276,7 @@ Panning the map using MapView.setPosition() and a transition works great, but is
 
 ##### Google-Maps and Zoom-levels < 3
 
-At the lower zoom-levels, renderables may not be positiond correctly using Google Maps. This happens when the entire worlds fits more than once on the surface. In this case, the bounding east- and west longitude cannot be determined through the google-maps API, which are required for calculating the x position. To workaround this issue, set `mapOptions.minZoom` to 3.
+At the lower zoom-levels, renderables may not be positioned correctly using Google Maps. This happens when the entire world fits more than once on the surface. In this case, the bounding east and west longitude cannot be determined through the google-maps API, which are required for calculating the x position. To workaround this issue, set `mapOptions.minZoom` to 3.
 
 ##### Renderables lag and Leaflet
 
