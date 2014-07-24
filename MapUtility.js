@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2014 Gloey Apps
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,24 +18,23 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
  */
 
-/*jslint browser:true, nomen:true, vars:true, plusplus:true*/
 /*global define*/
 
 /**
+ * This namespace holds standalone functionality.
+ *
  * @module
  */
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     'use strict';
-    
+
     /**
-     * This namespace holds standalone functionality.
-     *
      * @class
      * @alias module:MapUtility
      */
@@ -52,11 +51,12 @@ define(function (require, exports, module) {
             return position[0];
         } else if (position.lat instanceof Function) {
             return position.lat();
-        } else {
+        }
+        else {
             return position.lat;
         }
     };
-    
+
     /**
      * Get the longitude from the position (LatLng) object.
      *
@@ -68,11 +68,12 @@ define(function (require, exports, module) {
             return position[1];
         } else if (position.lng instanceof Function) {
             return position.lng();
-        } else {
+        }
+        else {
             return position.lng;
         }
     };
-    
+
     /**
      * Compares two positions for equality.
      *
@@ -80,21 +81,21 @@ define(function (require, exports, module) {
      * @param {LatLng} position2 Position 2
      * @return {Boolean} Result of comparison
      */
-    MapUtility.equals = function (position1, position2) {
+    MapUtility.equals = function(position1, position2) {
         return (MapUtility.lat(position1) === MapUtility.lat(position2)) &&
                (MapUtility.lng(position1) === MapUtility.lng(position2));
     };
-    
+
     /**
      * Converts degrees into radians (radians = degrees * (Math.PI / 180)).
      *
-     * @param {Number} degr Degrees
+     * @param {Number} deg Degrees
      * @return {Number} radians.
      */
-    MapUtility.radiansFromDegrees = function (deg) {
+    MapUtility.radiansFromDegrees = function(deg) {
         return deg * (Math.PI / 180);
     };
-    
+
     /**
      * Calculates the rotation-angle between two given positions.
      *
@@ -102,10 +103,10 @@ define(function (require, exports, module) {
      * @param {LatLng} end End position.
      * @return {Number} Rotation in radians.
      */
-    MapUtility.rotationFromPositions = function (start, end) {
+    MapUtility.rotationFromPositions = function(start, end) {
         return Math.atan2(MapUtility.lng(start) - MapUtility.lng(end), MapUtility.lat(start) - MapUtility.lat(end)) + (Math.PI / 2.0);
     };
-    
+
     /**
      * Calculates the distance between two positions in kilometers.
      *
@@ -113,7 +114,7 @@ define(function (require, exports, module) {
      * @param {LatLng} end End position
      * @return {Number} Distance in km
      */
-    MapUtility.distanceBetweenPositions = function (start, end) {
+    MapUtility.distanceBetweenPositions = function(start, end) {
 
         // Taken from: http://www.movable-type.co.uk/scripts/latlong.html
         var R = 6371; // earths radius in km

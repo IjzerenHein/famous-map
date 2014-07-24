@@ -1,48 +1,56 @@
 <a name="module_MapModifier"></a>
-##MapModifier(options)
-
+#MapModifier
 The MapModifier makes it possible to link renderables to a geopgraphical position on a `MapView`.
 Additionally it adds functionality for rotating and zooming renderables, and possibly all kinds of future  map-related transformations.
 Use `MapStateModifier` if you want to use transitions, e.g. to animate a move from one geographical position to another.
 
-**Params**
-- options `Object` - Options.
-  - mapView `MapView` - The MapView.
-  - [position] `LatLng` - Initial geographical coordinates.
-  - [offset] `LatLng` - Displacement offset in geographical coordinates from the position.
-  - [rotateTowards] `LatLng` | `object` | `function` - Position to rotate the renderables towards.
-  - [zoomBase] `number` - Base zoom-level at which the renderables are displayed in their true size.
-  - [zoomScale] `number` | `function` - Customer zoom-scaling factor or function.
+<a name="exp_module_MapModifier"></a>
+##class: MapModifier ⏏
+**Members**
 
-  
-**Contents**  
-* [positionFrom(position)](#module_MapModifier#positionFrom)
-* [rotateTowardsFrom(position)](#module_MapModifier#rotateTowardsFrom)
-* [zoomBaseFrom(zoomBase)](#module_MapModifier#zoomBaseFrom)
-* [zoomScaleFrom(zoomScale)](#module_MapModifier#zoomScaleFrom)
-* [offsetFrom(offset)](#module_MapModifier#offsetFrom)
-* [getPosition()](#module_MapModifier#getPosition)
-* [getRotateTowards()](#module_MapModifier#getRotateTowards)
-* [getZoomBase()](#module_MapModifier#getZoomBase)
-* [getZoomScale()](#module_MapModifier#getZoomScale)
-* [getOffset()](#module_MapModifier#getOffset)
+* [class: MapModifier ⏏](#exp_module_MapModifier)
+  * [new MapModifier(options)](#exp_new_module_MapModifier)
+  * [mapModifier.positionFrom(position)](#module_MapModifier#positionFrom)
+  * [mapModifier.rotateTowardsFrom(position)](#module_MapModifier#rotateTowardsFrom)
+  * [mapModifier.zoomBaseFrom(zoomBase)](#module_MapModifier#zoomBaseFrom)
+  * [mapModifier.zoomScaleFrom(zoomScale)](#module_MapModifier#zoomScaleFrom)
+  * [mapModifier.offsetFrom(offset)](#module_MapModifier#offsetFrom)
+  * [mapModifier.getPosition()](#module_MapModifier#getPosition)
+  * [mapModifier.getRotateTowards()](#module_MapModifier#getRotateTowards)
+  * [mapModifier.getZoomBase()](#module_MapModifier#getZoomBase)
+  * [mapModifier.getZoomScale()](#module_MapModifier#getZoomScale)
+  * [mapModifier.getOffset()](#module_MapModifier#getOffset)
+
+<a name="exp_new_module_MapModifier"></a>
+###new MapModifier(options)
+**Params**
+
+- options `Object` - Options.  
+  - mapView `MapView` - The MapView.  
+  - \[position\] `LatLng` - Initial geographical coordinates.  
+  - \[offset\] `LatLng` - Displacement offset in geographical coordinates from the position.  
+  - \[rotateTowards\] `LatLng` | `object` | `function` - Position to rotate the renderables towards.  
+  - \[zoomBase\] `number` - Base zoom-level at which the renderables are displayed in their true size.  
+  - \[zoomScale\] `number` | `function` - Customer zoom-scaling factor or function.  
 
 <a name="module_MapModifier#positionFrom"></a>
 ###mapModifier.positionFrom(position)
 Set the geographical position of the renderables.
 
 **Params**
-- position `LatLng` | `function` | `Object` - Position in geographical coordinates.
+
+- position `LatLng` | `function` | `Object` - Position in geographical coordinates.  
 
 <a name="module_MapModifier#rotateTowardsFrom"></a>
 ###mapModifier.rotateTowardsFrom(position)
 Set the geographical position to rotate the renderables towards.
 The child renderables are assumed to be rotated to the right by default.
-To change the base rotation, add a rotation-transform to the renderable, like this: 
+To change the base rotation, add a rotation-transform to the renderable, like this:
 `new Modifier({transform: Transform.rotateZ(Math.PI/2)})`
 
 **Params**
-- position `LatLng` - Geographical position to rotate towards.
+
+- position `LatLng` - Geographical position to rotate towards.  
 
 <a name="module_MapModifier#zoomBaseFrom"></a>
 ###mapModifier.zoomBaseFrom(zoomBase)
@@ -50,23 +58,26 @@ Set the base zoom-level. When set, auto-zooming is effectively enabled.
 The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
 
 **Params**
-- zoomBase `Number` - Map zoom-level
+
+- zoomBase `Number` - Map zoom-level  
 
 <a name="module_MapModifier#zoomScaleFrom"></a>
 ###mapModifier.zoomScaleFrom(zoomScale)
-Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and 
+Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and
 decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
 a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
 
 **Params**
-- zoomScale `Number` | `function` - Zoom-scale factor or function.
+
+- zoomScale `Number` | `function` - Zoom-scale factor or function.  
 
 <a name="module_MapModifier#offsetFrom"></a>
 ###mapModifier.offsetFrom(offset)
 Set the displacement offset in geographical coordinates.
 
 **Params**
-- offset `LatLng` - Displacement offset in geographical coordinates.
+
+- offset `LatLng` - Displacement offset in geographical coordinates.  
 
 <a name="module_MapModifier#getPosition"></a>
 ###mapModifier.getPosition()

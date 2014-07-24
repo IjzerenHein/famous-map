@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2014 Gloey Apps
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,19 +18,24 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
  */
 
-/*jslint browser:true, nomen:true, vars:true, plusplus:true*/
 /*global define*/
 
 /**
+ * The MapPositionTransitionable makes it possible to transition between two geographical
+ * positions. Currently, only standard transition definitions are supported (see `Transitionable`), but in the future more interesting
+ * transitions may be added.
+ *
+ * *This class is used internally by `MapView` and `MapStateModifier`.*
+ *
  * @module
  */
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     'use strict';
 
     // import dependencies
@@ -38,20 +43,16 @@ define(function (require, exports, module) {
     var MapUtility = require('./MapUtility');
 
     /**
-     * The MapPositionTransitionable makes it possible to transition between two geographical
-     * positions. Currently, only standard transition definitions are supported (see `Transitionable`), but in the future more interesting
-     * transitions may be added.
-     *
-     * *This class is used internally by `MapView` and `MapStateModifier`.*
-     *
      * @class
      * @param {LatLng} [position] Default geopgraphical position
      * @alias module:MapPositionTransitionable
      */
-    var MapPositionTransitionable = function (position) {
+    function MapPositionTransitionable(position) {
         this.position = new Transitionable([0, 0]);
-        if (position) { this.set(position); }
-    };
+        if (position) {
+            this.set(position);
+        }
+    }
 
     /**
      * Sets the default transition to use for transitioning between position states.
@@ -61,7 +62,7 @@ define(function (require, exports, module) {
     MapPositionTransitionable.prototype.setDefaultTransition = function setDefaultTransition(transition) {
         this.position.setDefault(transition);
     };
-    
+
     /**
      * Cancel all transitions and reset to a geographical position.
      *
@@ -72,7 +73,7 @@ define(function (require, exports, module) {
         this.position.reset(latlng);
         this._final = position;
     };
-        
+
     /**
      * Set the geographical position by adding it to the queue of transition.
      *
@@ -86,7 +87,7 @@ define(function (require, exports, module) {
         this._final = position;
         return this;
     };
-    
+
     /**
      * Get the current geographical position.
      *
@@ -99,7 +100,8 @@ define(function (require, exports, module) {
                 lat: latlng[0],
                 lng: latlng[1]
             };
-        } else {
+        }
+        else {
             return this._final;
         }
     };

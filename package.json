@@ -33,9 +33,8 @@
   },
   "devDependencies": {
     "grunt": "latest",
-    "grunt-contrib-jshint": "latest",
-    "grunt-contrib-watch": "latest",
-    "grunt-contrib-qunit": "latest",
+    "grunt-eslint": "latest",
+    "grunt-jscs": "latest",
     "grunt-contrib-requirejs": "latest",
     "grunt-jsdoc-to-markdown": "latest"
   }

@@ -1,57 +1,65 @@
 <a name="module_MapStateModifier"></a>
-##MapStateModifier(options)
-
+#MapStateModifier
 The MapStateModifier makes it possible to use transitions to e.g. move a renderable from one geographical
-position to another. If the renderable doesn't require transitions, the use of the lightweight 
+position to another. If the renderable doesn't require transitions, the use of the lightweight
 and stateless `MapModifier` is strongly preferred.
 
-**Params**
-- options `Object` - Options.
-  - mapView `MapView` - The MapView.
-  - [position] `LatLng` - Initial geographical coordinates.
-  - [offset] `LatLng` - Displacement offset in geographical coordinates from the position.
-  - [rotateTowards] `LatLng` - Position to rotate the renderables towards.
-  - [zoomBase] `number` - Base zoom-level at which the renderables are displayed in their true size.
-  - [zoomScale] `number` | `function` - Custom zoom-scaling factor or function.
+<a name="exp_module_MapStateModifier"></a>
+##class: MapStateModifier ⏏
+**Members**
 
-  
-**Contents**  
-* [setPosition(position, [transition], [callback])](#module_MapStateModifier#setPosition)
-* [rotateTowards(position, [transition], [callback])](#module_MapStateModifier#rotateTowards)
-* [setZoomBase(zoomBase)](#module_MapStateModifier#setZoomBase)
-* [setZoomScale(zoomScale)](#module_MapStateModifier#setZoomScale)
-* [setOffset(offset)](#module_MapStateModifier#setOffset)
-* [getPosition()](#module_MapStateModifier#getPosition)
-* [getRotateTowards()](#module_MapStateModifier#getRotateTowards)
-* [getFinalPosition()](#module_MapStateModifier#getFinalPosition)
-* [getFinalRotateTowards()](#module_MapStateModifier#getFinalRotateTowards)
-* [getZoomBase()](#module_MapStateModifier#getZoomBase)
-* [getZoomScale()](#module_MapStateModifier#getZoomScale)
-* [getOffset()](#module_MapStateModifier#getOffset)
-* [halt()](#module_MapStateModifier#halt)
-* [isActive()](#module_MapStateModifier#isActive)
+* [class: MapStateModifier ⏏](#exp_module_MapStateModifier)
+  * [new MapStateModifier(options)](#exp_new_module_MapStateModifier)
+  * [mapStateModifier.setPosition(position, [transition], [callback])](#module_MapStateModifier#setPosition)
+  * [mapStateModifier.rotateTowards(position, [transition], [callback])](#module_MapStateModifier#rotateTowards)
+  * [mapStateModifier.setZoomBase(zoomBase)](#module_MapStateModifier#setZoomBase)
+  * [mapStateModifier.setZoomScale(zoomScale)](#module_MapStateModifier#setZoomScale)
+  * [mapStateModifier.setOffset(offset)](#module_MapStateModifier#setOffset)
+  * [mapStateModifier.getPosition()](#module_MapStateModifier#getPosition)
+  * [mapStateModifier.getRotateTowards()](#module_MapStateModifier#getRotateTowards)
+  * [mapStateModifier.getFinalPosition()](#module_MapStateModifier#getFinalPosition)
+  * [mapStateModifier.getFinalRotateTowards()](#module_MapStateModifier#getFinalRotateTowards)
+  * [mapStateModifier.getZoomBase()](#module_MapStateModifier#getZoomBase)
+  * [mapStateModifier.getZoomScale()](#module_MapStateModifier#getZoomScale)
+  * [mapStateModifier.getOffset()](#module_MapStateModifier#getOffset)
+  * [mapStateModifier.halt()](#module_MapStateModifier#halt)
+  * [mapStateModifier.isActive()](#module_MapStateModifier#isActive)
+
+<a name="exp_new_module_MapStateModifier"></a>
+###new MapStateModifier(options)
+**Params**
+
+- options `Object` - Options.  
+  - mapView `MapView` - The MapView.  
+  - \[position\] `LatLng` - Initial geographical coordinates.  
+  - \[offset\] `LatLng` - Displacement offset in geographical coordinates from the position.  
+  - \[rotateTowards\] `LatLng` - Position to rotate the renderables towards.  
+  - \[zoomBase\] `number` - Base zoom-level at which the renderables are displayed in their true size.  
+  - \[zoomScale\] `number` | `function` - Custom zoom-scaling factor or function.  
 
 <a name="module_MapStateModifier#setPosition"></a>
 ###mapStateModifier.setPosition(position, [transition], [callback])
 Set the geographical position of the renderables, by adding the new position to the chain of transitions.
 
 **Params**
-- position `LatLng` - New position in geographical coordinates (Latitude, Longitude).
-- [transition] `Transition` - Famo.us transitionable object.
-- [callback] `function` - callback to call after transition completes.
+
+- position `LatLng` - New position in geographical coordinates (Latitude, Longitude).  
+- \[transition\] `Transition` - Famo.us transitionable object.  
+- \[callback\] `function` - callback to call after transition completes.  
 
 <a name="module_MapStateModifier#rotateTowards"></a>
 ###mapStateModifier.rotateTowards(position, [transition], [callback])
 Set the destination geographical position to rotate the renderables towards, by adding them.
 to the chain of transitions.
 The child renderables are assumed to be rotated to the right by default.
-To change the base rotation, add a rotation-transform to the renderable, like this: 
+To change the base rotation, add a rotation-transform to the renderable, like this:
 `new Modifier({transform: Transform.rotateZ(Math.PI/2)})`
 
 **Params**
-- position `LatLng` - Destination position in geographical position to rotate towards.
-- [transition] `Transition` - Famo.us transitionable object.
-- [callback] `function` - callback to call after transition completes.
+
+- position `LatLng` - Destination position in geographical position to rotate towards.  
+- \[transition\] `Transition` - Famo.us transitionable object.  
+- \[callback\] `function` - callback to call after transition completes.  
 
 <a name="module_MapStateModifier#setZoomBase"></a>
 ###mapStateModifier.setZoomBase(zoomBase)
@@ -59,23 +67,26 @@ Set the base zoom-level. When set, auto-zooming is effectively enabled.
 The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
 
 **Params**
-- zoomBase `Number` - Map zoom-level
+
+- zoomBase `Number` - Map zoom-level  
 
 <a name="module_MapStateModifier#setZoomScale"></a>
 ###mapStateModifier.setZoomScale(zoomScale)
-Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and 
+Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and
 decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
 a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
 
 **Params**
-- zoomScale `Number` | `function` - Zoom-scale factor or function.
+
+- zoomScale `Number` | `function` - Zoom-scale factor or function.  
 
 <a name="module_MapStateModifier#setOffset"></a>
 ###mapStateModifier.setOffset(offset)
 Set the displacement offset in geographical coordinates.
 
 **Params**
-- offset `LatLng` - Displacement offset in geographical coordinates.
+
+- offset `LatLng` - Displacement offset in geographical coordinates.  
 
 <a name="module_MapStateModifier#getPosition"></a>
 ###mapStateModifier.getPosition()

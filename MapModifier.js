@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2014 Gloey Apps
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -19,18 +19,21 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  *
- * @author Hein Rutjes (IjzerenHein)
+ * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
  */
 
-/*jslint browser:true, nomen:true, vars:true, plusplus:true*/
 /*global define*/
 
 /**
+ * The MapModifier makes it possible to link renderables to a geopgraphical position on a `MapView`.
+ * Additionally it adds functionality for rotating and zooming renderables, and possibly all kinds of future  map-related transformations.
+ * Use `MapStateModifier` if you want to use transitions, e.g. to animate a move from one geographical position to another.
+ *
  * @module
  */
-define(function (require, exports, module) {
+define(function(require, exports, module) {
     'use strict';
 
     // import dependencies
@@ -38,11 +41,7 @@ define(function (require, exports, module) {
     var MapUtility = require('./MapUtility');
 
     /**
-     * The MapModifier makes it possible to link renderables to a geopgraphical position on a `MapView`.
-     * Additionally it adds functionality for rotating and zooming renderables, and possibly all kinds of future  map-related transformations.
-     * Use `MapStateModifier` if you want to use transitions, e.g. to animate a move from one geographical position to another.
-     *
-     * @class 
+     * @class
      * @param {Object} options Options.
      * @param {MapView} options.mapView The MapView.
      * @param {LatLng} [options.position] Initial geographical coordinates.
@@ -52,10 +51,10 @@ define(function (require, exports, module) {
      * @param {number | function} [options.zoomScale] Customer zoom-scaling factor or function.
      * @alias module:MapModifier
      */
-    var MapModifier = function (options) {
-        
+    function MapModifier(options) {
+
         this.mapView = options.mapView;
-                
+
         this._output = {
             transform: Transform.identity,
             opacity: 1,
@@ -64,25 +63,29 @@ define(function (require, exports, module) {
             size: null,
             target: null
         };
-        
+
         this._cache = {};
-        
+
         this._positionGetter = null;
         this._rotateTowardsGetter = null;
         this._offset = options.offset;
         this._zoomScale = options.zoomScale;
         this._zoomBase = options.zoomBase;
-                
-        if (options.position) { this.positionFrom(options.position); }
-        if (options.rotateTowards) { this.rotateTowardsFrom(options.rotateTowards); }
-    };
+
+        if (options.position) {
+            this.positionFrom(options.position);
+        }
+        if (options.rotateTowards) {
+            this.rotateTowardsFrom(options.rotateTowards);
+        }
+    }
 
     /**
      * Set the geographical position of the renderables.
      *
      * @param {LatLng|Function|Object} position Position in geographical coordinates.
      */
-    MapModifier.prototype.positionFrom = function (position) {
+    MapModifier.prototype.positionFrom = function(position) {
         if (!position) {
             this._positionGetter = null;
             this._position = null;
@@ -90,22 +93,23 @@ define(function (require, exports, module) {
             this._positionGetter = position;
         } else if (position instanceof Object && position.getPosition) {
             this._positionGetter = position.getPosition.bind(position);
-        } else {
+        }
+        else {
             this._positionGetter = null;
             this._position = position;
         }
         return this;
     };
-    
+
     /**
      * Set the geographical position to rotate the renderables towards.
      * The child renderables are assumed to be rotated to the right by default.
-     * To change the base rotation, add a rotation-transform to the renderable, like this: 
+     * To change the base rotation, add a rotation-transform to the renderable, like this:
      * `new Modifier({transform: Transform.rotateZ(Math.PI/2)})`
      *
      * @param {LatLng} position Geographical position to rotate towards.
      */
-    MapModifier.prototype.rotateTowardsFrom = function (position) {
+    MapModifier.prototype.rotateTowardsFrom = function(position) {
         if (!position) {
             this._rotateTowardsGetter = null;
             this._rotateTowards = null;
@@ -113,93 +117,94 @@ define(function (require, exports, module) {
             this._rotateTowardsGetter = position;
         } else if (position instanceof Object && position.getPosition) {
             this._rotateTowardsGetter = position.getPosition.bind(position);
-        } else {
+        }
+        else {
             this._rotateTowardsGetter = null;
             this._rotateTowards = position;
         }
         return this;
     };
-    
+
     /**
      * Set the base zoom-level. When set, auto-zooming is effectively enabled.
      * The renderables are then displayed in their true size when the map zoom-level equals zoomBase.
      *
      * @param {Number} zoomBase Map zoom-level
      */
-    MapModifier.prototype.zoomBaseFrom = function (zoomBase) {
+    MapModifier.prototype.zoomBaseFrom = function(zoomBase) {
         this._zoomBase = zoomBase;
         return this;
     };
 
     /**
-     * Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and 
+     * Set the zoom-scale (ignored when zoomBase is not set). When set, the scale is increased when zooming in and
      * decreased when zooming-out. The zoomScale can be either a Number or a Function which returns
      * a scale-factor, with the following signature: function (zoomBase, zoomCurrent).
      *
      * @param {Number|Function} zoomScale Zoom-scale factor or function.
      */
-    MapModifier.prototype.zoomScaleFrom = function (zoomScale) {
+    MapModifier.prototype.zoomScaleFrom = function(zoomScale) {
         this._zoomScale = zoomScale;
         return this;
     };
-        
+
     /**
      * Set the displacement offset in geographical coordinates.
      *
      * @param {LatLng} offset Displacement offset in geographical coordinates.
      */
-    MapModifier.prototype.offsetFrom = function (offset) {
+    MapModifier.prototype.offsetFrom = function(offset) {
         this._offset = offset;
         return this;
     };
-    
+
     /**
      * Get the current geographical position.
      *
      * @return {LatLng} Position in geographical coordinates.
      */
-    MapModifier.prototype.getPosition = function () {
+    MapModifier.prototype.getPosition = function() {
         return this._positionGetter || this._position;
     };
-    
+
     /**
      * Get the geographical position towards which the renderables are rotated.
      *
      * @return {LatLng} Geographical position towards which renderables are rotated.
      */
-    MapModifier.prototype.getRotateTowards = function () {
+    MapModifier.prototype.getRotateTowards = function() {
         return this._rotateTowardsGetter || this._rotateTowards;
     };
-    
+
     /**
      * Get the base zoom-level. The zoomBase indicates the zoom-level at which renderables are
      * displayed in their true size.
      *
      * @return {Number} Base zoom level
      */
-    MapModifier.prototype.getZoomBase = function () {
+    MapModifier.prototype.getZoomBase = function() {
         return this._zoomBase;
     };
-    
+
     /**
      * Get the base zoom-scale. The zoomScale can be either a Number or a Function which returns
      * a scale-factor.
      *
      * @return {Number|Function} Zoom-scale
      */
-    MapModifier.prototype.getZoomScale = function () {
+    MapModifier.prototype.getZoomScale = function() {
         return this._zoomScale;
     };
-    
+
     /**
      * Get the geographical displacement offset.
      *
      * @return {LatLng} Offset in geographical coordinates.
      */
-    MapModifier.prototype.getOffset = function () {
+    MapModifier.prototype.getOffset = function() {
         return this._offset;
     };
-    
+
     /**
      * Return render spec for this MapModifier, applying to the provided
      *    target component.  This is similar to render() for Surfaces.
@@ -214,22 +219,25 @@ define(function (require, exports, module) {
      */
     MapModifier.prototype.modify = function modify(target) {
         var cacheInvalidated = false;
-        
+
         // Calculate scale transform
         if (this._zoomBase !== undefined) {
             var scaling;
             if (this._zoomScale) {
                 if (this._zoomScale instanceof Function) {
                     scaling = this._zoomScale(this._zoomBase, this.mapView.getZoom());
-                } else {
+                }
+                else {
                     var zoom = (this.mapView.getZoom() - this._zoomBase) + 1;
                     if (zoom < 0) {
                         scaling = (1 / (Math.abs(zoom) + 1)) * this._zoomScale;
-                    } else {
+                    }
+                    else {
                         scaling = (1 + zoom) * this._zoomScale;
                     }
                 }
-            } else {
+            }
+            else {
                 scaling = Math.pow(2, this.mapView.getZoom() - this._zoomBase);
             }
             if (this._cache.scaling !== scaling) {
@@ -246,7 +254,7 @@ define(function (require, exports, module) {
         // Move, rotate, etc... based on position
         var position = this._positionGetter ? this._positionGetter() : this._position;
         if (position) {
-            
+
             // Offset position
             if (this._offset) {
                 position = {
@@ -254,7 +262,7 @@ define(function (require, exports, module) {
                     lng: MapUtility.lng(position) + MapUtility.lng(this._offset)
                 };
             }
-            
+
             // Calculate rotation transform
             var rotateTowards = this._rotateTowardsGetter ? this._rotateTowardsGetter() : this._rotateTowards;
             if (rotateTowards) {
@@ -282,18 +290,22 @@ define(function (require, exports, module) {
             this._cache.translate = null;
             cacheInvalidated = true;
         }
-        
+
         // Update transformation matrix
         if (cacheInvalidated) {
             var transform = this._cache.scale;
-            if (this._cache.rotate) { transform = transform ? Transform.multiply(this._cache.rotate, transform) : this._cache.rotate; }
-            if (this._cache.translate) { transform = transform ? Transform.multiply(this._cache.translate, transform) : this._cache.translate; }
+            if (this._cache.rotate) {
+                transform = transform ? Transform.multiply(this._cache.rotate, transform) : this._cache.rotate;
+            }
+            if (this._cache.translate) {
+                transform = transform ? Transform.multiply(this._cache.translate, transform) : this._cache.translate;
+            }
             this._output.transform = transform;
         }
-        
+
         this._output.target = target;
         return this._output;
     };
-    
+
     module.exports = MapModifier;
 });
