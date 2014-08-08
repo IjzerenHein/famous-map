@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2014 Gloey Apps
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,7 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
@@ -29,7 +29,7 @@
 
 define(function (require) {
     'use strict';
-    
+
     // import dependencies
     var Engine = require('famous/core/Engine');
     var Modifier = require('famous/core/Modifier');
@@ -66,7 +66,7 @@ define(function (require) {
     var mapView;
     switch (mapType) {
     case MapView.MapType.LEAFLET:
-        
+
         // Create leaflet map-view
         mapView = new MapView({
             type: mapType,
@@ -77,7 +77,7 @@ define(function (require) {
         });
         break;
     case MapView.MapType.GOOGLEMAPS:
-        
+
         // Create google-maps map-view
         mapView = new MapView({
             type: mapType,
@@ -92,7 +92,7 @@ define(function (require) {
         break;
     }
     mainContext.add(mapView);
-    
+
     //
     // Create title
     //
@@ -107,8 +107,8 @@ define(function (require) {
         transform: Transform.translate(0, 20, 0)
     });
     mainContext.add(titleModifier).add(title);
-    
-    
+
+
     //
     // Create instructions
     //
@@ -122,8 +122,8 @@ define(function (require) {
         origin: [0.0, 1.0]
     });
     mainContext.add(instructionsModifier).add(instructions);
-    
-    
+
+
     //
     // Wait for the map to load and initialize
     //
@@ -131,12 +131,12 @@ define(function (require) {
 
         // Add Leaflet tile-layer
         if (mapType === MapView.MapType.LEAFLET) {
-            L.tileLayer('http://{s}.tiles.mapbox.com/v3/ijzerenhein.iil33fn1/{z}/{x}/{y}.png', {
+            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
                 //maxZoom: 18
             }).addTo(mapView.getMap());
         }
-        
+
         //
         // Pan the map across the world
         //
@@ -144,8 +144,8 @@ define(function (require) {
             {lat: 37.30925, lng: 1000},
             { method: 'map-speed', speed: 20000 }
         );
-        
-        
+
+
         //
         // Create nyan-cat
         //

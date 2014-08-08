@@ -1,16 +1,16 @@
-/* 
+/*
  * Copyright (c) 2014 Gloey Apps
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -18,7 +18,7 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
- * 
+ *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
@@ -29,7 +29,7 @@
 
 define(function (require) {
     'use strict';
-    
+
     // import dependencies
     var Engine = require('famous/core/Engine');
     var Modifier = require('famous/core/Modifier');
@@ -40,7 +40,7 @@ define(function (require) {
     var StateModifier = require('famous/modifiers/StateModifier');
     var Easing = require('famous/transitions/Easing');
     var Timer = require('famous/utilities/Timer');
-    
+
     var MapView = require('famous-map/MapView');
     var MapModifier = require('famous-map/MapModifier');
     var MapStateModifier = require('famous-map/MapStateModifier');
@@ -54,7 +54,7 @@ define(function (require) {
         {loc: [-19.9996424, -67], img: "http://i1-news.softpedia-static.com/images/news2/How-the-Andes-Mountains-Were-Generated-2.jpg"},
         {loc: [-24.7913296, -65.4268636], img: "http://www.fsdinternational.org/sites/default/files/public/salta20y.jpg"},
         {loc: [-24.7994937, -65.3327128], img: "http://www.agefotostock.com/previewimage/bajaage/a2cf1571e858f9ca288ce9c12cfc0d9c/IBR-2117612.jpg"},
-        
+
         {loc: [-24.7631775, -65.4249721], img: "http://www.argentinaindependent.com/images/edition059/salta/salta04.jpg"},
         {loc: [-21.6629918, -64.4502754], img: "http://graphics8.nytimes.com/images/2013/05/14/world/BOLIVIA-1/BOLIVIA-1-articleLarge.jpg"},
         {loc: [-17.7125307, -64.7139473], img: "http://santafeselection.com/blog/wp-content/uploads/2014/01/Bolivia-woven-clothing-accessories.jpg"},
@@ -64,7 +64,7 @@ define(function (require) {
         {loc: [-12.0553442, -77.0451853], img: "http://erikaearl.files.wordpress.com/2010/05/fukada_bangladesh.jpg"},
         {loc: [-3.3981796, -79.9538157], img: "http://www1.folha.uol.com.br/folha/turismo/images/20050421-equador470.jpg"},
         {loc: [4.6367492, -74.4826243], img: "http://www.eslfocus.com/newscontent/photos/article-lb-505.jpg"},
-        
+
         {loc: [6.3426914, -67.4623606], img: "http://i1.ytimg.com/vi/TTe8XIyfpdc/0.jpg"},
         {loc: [5.2168707, -55.7948801], img: "http://upload.wikimedia.org/wikipedia/commons/5/5b/Bridge_over_Suriname_river_at_Afobaka_dam.JPG"},
         {loc: [3.8917523, -53.9381907], img: "http://media1.s-nbcnews.com/j/msnbc/Components/Photos/050909/050909_katrina_vmed_4p.grid-4x2.jpg"},
@@ -74,10 +74,10 @@ define(function (require) {
         {loc: [-22.9156911, -43.449703], img: "http://blogimgs.only-apartments.com/images/only-apartments/6418/visit-rio-de-janeiro.jpg"},
         {loc: [-34.6158526, -58.4332985], img: "http://www.travel.com.au/dms/images/destination_images/buenosaires/buenosaires_1.jpg"}
     ];
-    
+
     // create the main context
     var mainContext = Engine.createContext();
-    
+
     // Determine map-type
     var mapType;
     try {
@@ -95,7 +95,7 @@ define(function (require) {
     var mapView;
     switch (mapType) {
     case MapView.MapType.LEAFLET:
-        
+
         // Create leaflet map-view
         mapView = new MapView({
             type: mapType,
@@ -106,7 +106,7 @@ define(function (require) {
         });
         break;
     case MapView.MapType.GOOGLEMAPS:
-        
+
         // Create google-maps map-view
         mapView = new MapView({
             type: mapType,
@@ -122,7 +122,7 @@ define(function (require) {
         break;
     }
     mainContext.add(mapView);
-    
+
     //
     // Create title
     //
@@ -137,7 +137,7 @@ define(function (require) {
         transform: Transform.translate(0, 20, 0)
     });
     mainContext.add(titleModifier).add(title);
-        
+
     /**
      * Creates a photo-marker
      */
@@ -176,7 +176,7 @@ define(function (require) {
         renderable.add(marker.content.photoModifier).add(marker.content.photo);
         return marker;
     }
-    
+
     //
     // Wait for the map to load and initialize
     //
@@ -184,15 +184,15 @@ define(function (require) {
 
         // Add Leaflet tile-layer
         if (mapType === MapView.MapType.LEAFLET) {
-            L.tileLayer('http://{s}.tiles.mapbox.com/v3/ijzerenhein.iil33fn1/{z}/{x}/{y}.png', {
+            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
                 //maxZoom: 18
             }).addTo(mapView.getMap());
         }
-        
+
         // Wait a little bit and let the map load some tiles, before doing the photo animation
         Timer.setTimeout(function () {
-        
+
             // Create (almost) transparent markers.
             // The markers are created with correct dimensions but transparent,
             // so that they are correctly displayed on Android devices.
