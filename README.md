@@ -20,9 +20,9 @@ Famous-map makes it possible for adding a map-component to the famo.us render-tr
 ## Getting started
 
 Install using bower:
-	
+
 	bower install famous-map
-	
+
 Add famous-map to the requirejs paths config:
 
 ```javascript
@@ -102,9 +102,9 @@ this.add(mapView);
 // Wait for the map to load and initialize
 mapView.on('load', function () {
 
-    // Add tile-layer (get your own at mapbox.com)
-    L.tileLayer('http://{s}.tiles.mapbox.com/v3/yourmapid/{z}/{x}/{y}.png', {
-		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+    // Add tile-layer (you can also get your own at mapbox.com)
+    L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
 	}).addTo(mapView.getMap());
 }.bind(this));
 ```
@@ -151,7 +151,7 @@ mapView.setPosition(
 To place a renderable on the map like a marker, use MapModifier or MapStateModifier:
 
 ```javascript
-MapModifier = require('famous-map/MapModifier');
+var MapModifier = require('famous-map/MapModifier');
 
 var surface = new Surface({
     size: [50, 50],
