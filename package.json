@@ -1,7 +1,11 @@
 {
   "name": "famous-map",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "homepage": "https://github.com/IjzerenHein/famous-map",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IjzerenHein/famous-map.git"
+  },
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
@@ -37,5 +41,14 @@
     "grunt-jscs": "latest",
     "grunt-contrib-requirejs": "latest",
     "grunt-jsdoc-to-markdown": "latest"
-  }
+  },
+  "files": [
+    "MapModifier.js",
+    "MapStateModifier.js",
+    "MapPositionTransitionable.js",
+    "MapTransition.js",
+    "MapUtility.js",
+    "MapView.js",
+    "LICENSE"
+  ]
 }

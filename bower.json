@@ -1,7 +1,11 @@
 {
   "name": "famous-map",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "homepage": "https://github.com/IjzerenHein/famous-map",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/IjzerenHein/famous-map.git"
+  },
   "authors": [
     "Hein Rutjes <hrutjes@gmail.com>"
   ],
@@ -26,9 +30,12 @@
     "tests",
     "examples",
     "docs",
-    "Gruntfile.js"
+    "dist",
+    "Gruntfile.js",
+    "CONTRIBUTORS.md",
+    "package.json"
   ],
-  "dependencies": {
+  "devDependencies": {
     "requirejs": "~2.1.11",
     "famous": "~0.2.0"
   }
