@@ -19,21 +19,12 @@ Famous-map makes it possible for adding a map-component to the famo.us render-tr
 
 ## Getting started
 
-Install using bower:
+Install using bower or npm:
 
 	bower install famous-map
 
-Add famous-map to the requirejs paths config:
+    npm install famous-map
 
-```javascript
-require.config({
-    paths: {
-        ...
-        'famous-map': 'bower_components/famous-map',
-        ...
-    }
-});
-```
 
 ### Google Maps
 
