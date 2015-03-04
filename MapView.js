@@ -1,30 +1,14 @@
 /**
- * Copyright (c) 2014 Gloey Apps
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+ * This Source Code is licensed under the MIT license. If a copy of the
+ * MIT-license was not distributed with this file, You can obtain one at:
+ * http://opensource.org/licenses/mit-license.html.
  *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
  * @copyright Gloey Apps, 2014
  */
 
-/*global define, google, L*/
+/*global google, L*/
 
 /**
  * MapView encapsulates a Google maps view so it can be used with famo.us.
@@ -40,7 +24,6 @@
  * |MapType.LEAFLET|Leaflet.js.|
  * @module
  */
-var _globalMapViewId = 1;
 define(function(require, exports, module) {
     'use strict';
 
@@ -52,6 +35,7 @@ define(function(require, exports, module) {
     var MapPositionTransitionable = require('./MapPositionTransitionable');
     var MapTransition = require('./MapTransition');
     Transitionable.registerMethod('map-speed', MapTransition);
+    var globalMapViewId = 1;
 
     /*
      * Map-type
@@ -98,8 +82,8 @@ define(function(require, exports, module) {
         else {
 
             // Otherwise generate unique id, and create the div ourselves
-            this.mapId = 'MapView' + _globalMapViewId;
-            _globalMapViewId++;
+            this.mapId = 'MapView' + globalMapViewId;
+            globalMapViewId++;
 
             // Insert div into the DOM
             var surface = new Surface({
@@ -444,7 +428,8 @@ define(function(require, exports, module) {
                 this._zoom.southWest.set(info.southWest, this.options.zoomTransition);
                 this._zoom.center.set(info.center, this.options.zoomTransition);
                 invalidateCache = true;
-            } else if (!this._zoom.northEast.isActive()) {
+            }
+            else if (!this._zoom.northEast.isActive()) {
                 this._zoom.northEast.reset(info.northEast);
                 this._zoom.southWest.reset(info.southWest);
                 this._zoom.center.reset(info.center);
