@@ -17,6 +17,10 @@ MapTransitions can transition between geographical positions using specific spee
 
 <a name="module_MapTransition.DEFAULT_OPTIONS"></a>
 ###MapTransition.DEFAULT_OPTIONS
+**Properties**
+
+- DEFAULT_OPTIONS   
+
 **Access**: protected  
 <a name="module_MapTransition#reset"></a>
 ###mapTransition.reset(state)
