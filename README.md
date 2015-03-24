@@ -247,13 +247,11 @@ var mapModifier = new MapModifier({
 
 ##### Google-Maps and Drag/Pinch on mobile devices
 
-Famo.us prevents 'touchmove' events on mobile devices, which causes drag-to-move and pinch-to-zoom to break in Google Maps. This is a known issue in famo.us and should be addressed in the next release. To workaround this issue, out-comment the following lines 119 - 122 in Engine.js:
+Famo.us prevents 'touchmove' events on mobile devices, which causes drag-to-move and pinch-to-zoom to break in Google Maps. The solution for this known issue is to add the following snippet:
 
 ```javascript
-// prevent scrolling via browser
-// window.addEventListener('touchmove', function(event) {
-// event.preventDefault();
-// }, true);
+\\ Engine = require('famous/core/Engine')
+\\ Engine.setOptions({appMode: false})
 ```
 
 *Resources:*
