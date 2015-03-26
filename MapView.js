@@ -230,6 +230,20 @@ define(function(require, exports, module) {
     };
 
     /**
+     * Get the rotation of the map. 0 means north-up.
+     * @return {Number} Rotation in radians.
+     */
+    MapView.prototype.getRotation = function() {
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
+        case MapType.LEAFLET:
+            return 0;
+        case MapType.OPENLAYERS3:
+            return this.map.getView().getRotation();
+        }
+    };
+
+    /**
      * Get the position in pixels (relative to the left-top of the container) for the given geographical position.
      *
      * @param {LatLng} position in geographical coordinates.

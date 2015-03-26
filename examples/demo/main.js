@@ -119,8 +119,9 @@ define(function (require) {
     // Create instructions
     //
     var instructions = new Surface({
-        size: [300, 140],
-        content: 'Things to try out:<li>Move the map</li><li>Zoom the map</li><li>Click on a landmark</li>',
+        size: [400, 140],
+        content: 'Things to try out:<li>Move the map</li><li>Zoom the map</li><li>Click on a landmark</li>' +
+            (mapType === MapView.MapType.OPENLAYERS3 ? '<li>Rotate the map (Alt+Shift+Drag)</li>' : ''),
         classes: ['instruction']
     });
     var instructionsModifier = new Modifier({
