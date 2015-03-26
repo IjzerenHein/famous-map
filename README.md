@@ -5,6 +5,7 @@ Map component for Famo.us, supporting the following map-providers:
 
 - [Google Maps](https://developers.google.com/maps/documentation)
 - [Leaflet.js](http://leafletjs.com) (OpenStreetMap)
+- [OpenLayers 3](http://openlayers.org) (any base map)
 
 Famous-map makes it possible for adding a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
 
@@ -97,6 +98,42 @@ mapView.on('load', function () {
     L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 		attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a>'
 	}).addTo(mapView.getMap());
+}.bind(this));
+```
+
+### OpenLayers 3
+
+Include OpenLayers in the html file:
+
+```html
+<head>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.3.0/ol.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.3.0/ol.js"></script>
+</head>
+```
+
+Create a leaflet map:
+
+```javascript
+var MapView = require('famous-map/MapView');
+
+var mapView = new MapView({
+	type: MapView.MapType.OPENLAYERS3,
+    mapOptions: {
+        zoom: 3,
+        center: {lat: 51.4484855, lng: 5.451478}
+    }
+});
+this.add(mapView);
+
+// Wait for the map to load and initialize
+mapView.on('load', function () {
+
+    // Add tile-layer (OSM is just one of many options)
+		mapView.getMap().addLayer(new ol.layer.Tile({
+			source: new ol.source.OSM()
+		}));
+
 }.bind(this));
 ```
 

@@ -17,6 +17,10 @@ body, div, a {
     border-radius: 5px;
 }
 
+.provider a {
+    color: white;
+}
+
 .title {
     color: black;
     font-weight: bold;
