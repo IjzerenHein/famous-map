@@ -107,12 +107,12 @@ Include OpenLayers in the html file:
 
 ```html
 <head>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.3.0/ol.min.css" />
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.3.0/ol.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.4.0/ol.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/ol3/3.4.0/ol.js"></script>
 </head>
 ```
 
-Create an open-layers map:
+Create an open-layers map (uses canvas):
 
 ```javascript
 var MapView = require('famous-map/MapView');

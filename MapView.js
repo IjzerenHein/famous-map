@@ -95,6 +95,16 @@ define(function(require, exports, module) {
             });
             this.add(surface);
             this._surface = surface;
+
+            // When famo.us removes the OpenLayers div from the DOM, the canvas gets
+            // hidden and is not restored to its visible state when shown again.
+            // The following code, calls 'updateSize' whenever famo.us re-deploys
+            // the surface to the DOM.
+            surface.on('deploy', function() {
+                if (this._initComplete && (this.mapType === MapType.OPENLAYERS3)) {
+                    this.map.updateSize();
+                }
+            }.bind(this));
         }
     }
     MapView.prototype = Object.create(View.prototype);
