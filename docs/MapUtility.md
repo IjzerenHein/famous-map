@@ -1,73 +1,86 @@
 <a name="module_MapUtility"></a>
-#MapUtility
+## MapUtility
 This namespace holds standalone functionality.
 
-<a name="exp_module_MapUtility"></a>
-##class: MapUtility ⏏
-**Members**
 
-* [class: MapUtility ⏏](#exp_module_MapUtility)
-  * [MapUtility.lat(position)](#module_MapUtility.lat)
-  * [MapUtility.lng(position)](#module_MapUtility.lng)
-  * [MapUtility.equals(position1, position2)](#module_MapUtility.equals)
-  * [MapUtility.radiansFromDegrees(deg)](#module_MapUtility.radiansFromDegrees)
-  * [MapUtility.rotationFromPositions(start, end)](#module_MapUtility.rotationFromPositions)
-  * [MapUtility.distanceBetweenPositions(start, end)](#module_MapUtility.distanceBetweenPositions)
+* [MapUtility](#module_MapUtility)
+  * [MapUtility](#exp_module_MapUtility--MapUtility) ⏏
+    * [.lat(position)](#module_MapUtility--MapUtility.lat) ⇒ <code>Number</code>
+    * [.lng(position)](#module_MapUtility--MapUtility.lng) ⇒ <code>Number</code>
+    * [.equals(position1, position2)](#module_MapUtility--MapUtility.equals) ⇒ <code>Boolean</code>
+    * [.radiansFromDegrees(deg)](#module_MapUtility--MapUtility.radiansFromDegrees) ⇒ <code>Number</code>
+    * [.rotationFromPositions(start, end)](#module_MapUtility--MapUtility.rotationFromPositions) ⇒ <code>Number</code>
+    * [.distanceBetweenPositions(start, end)](#module_MapUtility--MapUtility.distanceBetweenPositions) ⇒ <code>Number</code>
 
-<a name="module_MapUtility.lat"></a>
-###MapUtility.lat(position)
+<a name="exp_module_MapUtility--MapUtility"></a>
+### MapUtility ⏏
+**Kind**: Exported class  
+<a name="module_MapUtility--MapUtility.lat"></a>
+#### MapUtility.lat(position) ⇒ <code>Number</code>
 Get the latitude from the position (LatLng) object.
 
-**Params**
+**Kind**: static method of <code>[MapUtility](#exp_module_MapUtility--MapUtility)</code>  
+**Returns**: <code>Number</code> - Latitude in degrees  
 
-- position `LatLng` - Position  
+| Param | Type | Description |
+| --- | --- | --- |
+| position | <code>LatLng</code> | Position |
 
-**Returns**: `Number` - Latitude in degrees  
-<a name="module_MapUtility.lng"></a>
-###MapUtility.lng(position)
+<a name="module_MapUtility--MapUtility.lng"></a>
+#### MapUtility.lng(position) ⇒ <code>Number</code>
 Get the longitude from the position (LatLng) object.
 
-**Params**
+**Kind**: static method of <code>[MapUtility](#exp_module_MapUtility--MapUtility)</code>  
+**Returns**: <code>Number</code> - Longitude in degrees  
 
-- position `LatLng` - Position  
+| Param | Type | Description |
+| --- | --- | --- |
+| position | <code>LatLng</code> | Position |
 
-**Returns**: `Number` - Longitude in degrees  
-<a name="module_MapUtility.equals"></a>
-###MapUtility.equals(position1, position2)
+<a name="module_MapUtility--MapUtility.equals"></a>
+#### MapUtility.equals(position1, position2) ⇒ <code>Boolean</code>
 Compares two positions for equality.
 
-**Params**
+**Kind**: static method of <code>[MapUtility](#exp_module_MapUtility--MapUtility)</code>  
+**Returns**: <code>Boolean</code> - Result of comparison  
 
-- position1 `LatLng` - Position 1  
-- position2 `LatLng` - Position 2  
+| Param | Type | Description |
+| --- | --- | --- |
+| position1 | <code>LatLng</code> | Position 1 |
+| position2 | <code>LatLng</code> | Position 2 |
 
-**Returns**: `Boolean` - Result of comparison  
-<a name="module_MapUtility.radiansFromDegrees"></a>
-###MapUtility.radiansFromDegrees(deg)
+<a name="module_MapUtility--MapUtility.radiansFromDegrees"></a>
+#### MapUtility.radiansFromDegrees(deg) ⇒ <code>Number</code>
 Converts degrees into radians (radians = degrees * (Math.PI / 180)).
 
-**Params**
+**Kind**: static method of <code>[MapUtility](#exp_module_MapUtility--MapUtility)</code>  
+**Returns**: <code>Number</code> - radians.  
 
-- deg `Number` - Degrees  
+| Param | Type | Description |
+| --- | --- | --- |
+| deg | <code>Number</code> | Degrees |
 
-**Returns**: `Number` - radians.  
-<a name="module_MapUtility.rotationFromPositions"></a>
-###MapUtility.rotationFromPositions(start, end)
+<a name="module_MapUtility--MapUtility.rotationFromPositions"></a>
+#### MapUtility.rotationFromPositions(start, end) ⇒ <code>Number</code>
 Calculates the rotation-angle between two given positions.
 
-**Params**
+**Kind**: static method of <code>[MapUtility](#exp_module_MapUtility--MapUtility)</code>  
+**Returns**: <code>Number</code> - Rotation in radians.  
 
-- start `LatLng` - Start position.  
-- end `LatLng` - End position.  
+| Param | Type | Description |
+| --- | --- | --- |
+| start | <code>LatLng</code> | Start position. |
+| end | <code>LatLng</code> | End position. |
 
-**Returns**: `Number` - Rotation in radians.  
-<a name="module_MapUtility.distanceBetweenPositions"></a>
-###MapUtility.distanceBetweenPositions(start, end)
+<a name="module_MapUtility--MapUtility.distanceBetweenPositions"></a>
+#### MapUtility.distanceBetweenPositions(start, end) ⇒ <code>Number</code>
 Calculates the distance between two positions in kilometers.
 
-**Params**
+**Kind**: static method of <code>[MapUtility](#exp_module_MapUtility--MapUtility)</code>  
+**Returns**: <code>Number</code> - Distance in km  
 
-- start `LatLng` - Starting position  
-- end `LatLng` - End position  
+| Param | Type | Description |
+| --- | --- | --- |
+| start | <code>LatLng</code> | Starting position |
+| end | <code>LatLng</code> | End position |
 
-**Returns**: `Number` - Distance in km  

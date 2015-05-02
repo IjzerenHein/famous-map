@@ -5,7 +5,7 @@
  *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
- * @copyright Gloey Apps, 2014
+ * @copyright Gloey Apps, 2014/2015
  */
 
 /*global google, L, ol*/
@@ -20,9 +20,9 @@
  *
  * |Value|Description|
  * |---|---|
- * |MapType.GOOGLEMAPS (default)|Google-maps.|
- * |MapType.LEAFLET|Leaflet.js.|
- * |MapType.OPENLAYERS3|OpenLayers.|
+ * |MapType.GOOGLEMAPS (default)|Google-maps|
+ * |MapType.LEAFLET|Leaflet.js|
+ * |MapType.OPENLAYERS3|Open layers 3|
  * @module
  */
 define(function(require, exports, module) {
@@ -101,10 +101,6 @@ define(function(require, exports, module) {
     MapView.prototype.constructor = MapView;
     MapView.MapType = MapType;
 
-    /**
-     * @property DEFAULT_OPTIONS
-     * @protected
-     */
     MapView.DEFAULT_OPTIONS = {
         type: MapType.GOOGLEMAPS,
         mapOptions: {
@@ -192,7 +188,7 @@ define(function(require, exports, module) {
     };
 
     /**
-     * Get the initialisation state of the map-view.
+     * Returns `true` when the map-view has been fully initialized.
      *
      * @return {Bool} true/false.
      */
@@ -573,7 +569,7 @@ define(function(require, exports, module) {
      * can be correctly used with touch events (mobile).
      *
      * Install this handler before creating the main Context:
-     * '''javascript
+     * ```javascript
      * var Engine = require('famous/core/Engine');
      * var MapView = require('famous-map/MapView');
      * var isMobile = require('ismobilejs');
@@ -585,7 +581,7 @@ define(function(require, exports, module) {
      *
      * var mainContext = Engine.createContext();
      * ...
-     * '''
+     * ```
      */
     MapView.installSelectiveTouchMoveHandler = function() {
         window.addEventListener('touchmove', function(event) {
