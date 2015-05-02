@@ -95,16 +95,6 @@ define(function(require, exports, module) {
             });
             this.add(surface);
             this._surface = surface;
-
-            // When famo.us removes the OpenLayers div from the DOM, the canvas gets
-            // hidden and is not restored to its visible state when shown again.
-            // The following code, calls 'updateSize' whenever famo.us re-deploys
-            // the surface to the DOM.
-            surface.on('deploy', function() {
-                if (this._initComplete && (this.mapType === MapType.OPENLAYERS3)) {
-                    this.map.updateSize();
-                }
-            }.bind(this));
         }
     }
     MapView.prototype = Object.create(View.prototype);
@@ -179,6 +169,15 @@ define(function(require, exports, module) {
             this._surface.on('resize', function() {
                 this.map.updateSize();
             }.bind(this));
+            // When famo.us removes the OpenLayers div from the DOM, the canvas gets
+            // hidden and is not restored to its visible state when shown again.
+            // The following code, calls 'updateSize' whenever famo.us re-deploys
+            // the surface to the DOM, fixing this issue.
+            this._surface.on('deploy', function() {
+                if (this._initComplete) {
+                    this.map.updateSize();
+                }
+            }.bind(this));
             this.map.once('postrender', function() {
                 this._initComplete = true;
                 this._eventOutput.emit('load', this);
@@ -195,6 +194,15 @@ define(function(require, exports, module) {
      */
     MapView.prototype.getMap = function() {
         return this.map;
+    };
+
+    /**
+     * Get the initialisation state of the map-view.
+     *
+     * @return {Bool} true/false.
+     */
+    MapView.prototype.isInitialized = function() {
+        return this._initComplete;
     };
 
     /**
