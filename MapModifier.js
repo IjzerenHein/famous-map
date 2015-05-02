@@ -231,7 +231,8 @@ define(function(require, exports, module) {
                 this._cache.scale = Transform.scale(scaling, scaling, 1.0);
                 cacheInvalidated = true;
             }
-        } else if (this._cache.scale) {
+        }
+        else if (this._cache.scale) {
             this._cache.scale = null;
             this._cache.scaling = null;
             cacheInvalidated = true;
@@ -259,7 +260,8 @@ define(function(require, exports, module) {
                     this._cache.rotate = Transform.rotateZ(rotation);
                     cacheInvalidated = true;
                 }
-            } else if (this._cache.rotate) {
+            }
+            else if (this._cache.rotate) {
                 this._cache.rotate = null;
                 this._cache.rotation = null;
                 cacheInvalidated = true;
@@ -272,7 +274,8 @@ define(function(require, exports, module) {
                 this._cache.translate = Transform.translate(point.x, point.y, 0);
                 cacheInvalidated = true;
             }
-        } else if (this._cache.translate) {
+        }
+        else if (this._cache.translate) {
             this._cache.point = null;
             this._cache.translate = null;
             cacheInvalidated = true;
