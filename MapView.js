@@ -89,7 +89,7 @@ define(function(require, exports, module) {
 
             // Insert div into the DOM
             var surface = new Surface({
-                classes: ['mapview'],
+                classes: ['mapview', 'fm-mapview'], // mapview is included for backwards compat
                 content: '<div id="' + this.mapId + '" style="width: 100%; height: 100%;"></div>',
                 size: [undefined, undefined]
             });
@@ -555,6 +555,44 @@ define(function(require, exports, module) {
 
         // Call super
         return this._node.render();
+    };
+
+    /**
+     * Helper function that checks whether the given DOM element
+     * is a child of a MapView.
+     */
+    function _elementIsChildOfMapView(element) {
+        if (element.className.indexOf('fm-mapview') >= 0) {
+            return true;
+        }
+        return element.parentElement ? _elementIsChildOfMapView(element.parentElement) : false;
+    }
+
+    /**
+     * Installs the selective touch-move handler so that Google Maps
+     * can be correctly used with touch events (mobile).
+     *
+     * Install this handler before creating the main Context:
+     * '''javascript
+     * var Engine = require('famous/core/Engine');
+     * var MapView = require('famous-map/MapView');
+     * var isMobile = require('ismobilejs');
+     *
+     * if (isMobile.any) {
+     *   Engine.setOptions({appMode: false});
+     *   MapView.installSelectiveTouchMoveHandler();
+     * }
+     *
+     * var mainContext = Engine.createContext();
+     * ...
+     * '''
+     */
+    MapView.installSelectiveTouchMoveHandler = function() {
+        window.addEventListener('touchmove', function(event) {
+            if (!_elementIsChildOfMapView(event.target)) {
+                event.preventDefault();
+            }
+        });
     };
 
     module.exports = MapView;

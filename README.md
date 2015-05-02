@@ -66,6 +66,8 @@ mapView.on('load', function () {
 }.bind(this));
 ```
 
+**IMPORTANT**: Don't forget to read [this instruction](#google-maps-and-drag-pinch-on-mobile-devices) on google maps running on mobile devices.
+
 ### Leaflet
 
 Include leaflet in the html file:
@@ -283,11 +285,22 @@ var mapModifier = new MapModifier({
 
 ##### Google-Maps and Drag/Pinch on mobile devices
 
-Famo.us prevents 'touchmove' events on mobile devices, which causes drag-to-move and pinch-to-zoom to break in Google Maps. The solution for this known issue is to add the following snippet:
+Famo.us prevents 'touchmove' events on mobile devices, which causes drag-to-move and pinch-to-zoom to break in Google Maps. To workaround this problem, disable 'app-mode' on mobile devices and instead install the custom MapView touch-handler before the main-context is created:
 
 ```javascript
-\\ Engine = require('famous/core/Engine')
-\\ Engine.setOptions({appMode: false})
+var Engine = require('famous/core/Engine');
+var MapView = require('famous-map/MapView');
+var isMobile = require('ismobilejs'); // https://github.com/kaimallea/isMobile
+
+// On mobile, disable app-mode and install the custom MapView
+// touch-handler so that Google Maps works.
+if (isMobile.any) {
+    Engine.setOptions({appMode: false});
+    MapView.installSelectiveTouchMoveHandler();
+}
+
+var mainContext = Engine.createContext();
+...
 ```
 
 *Resources:*
@@ -314,6 +327,6 @@ Feel free to contribute to this project in any way. The easiest way to support t
 ## Contact
 - 	@IjzerenHein
 - 	http://www.gloey.nl
-- 	hrutjes@gmail.com
+- 	hrutjes@gmail.com (for hire)
 
-© 2014 - Hein Rutjes
+© 2014 / 2015 - Hein Rutjes
