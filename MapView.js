@@ -162,7 +162,7 @@ define(function(require, exports, module) {
                 target: elm,
                 controls: ol.control.defaults({attributionOptions: {collapsible: false}}),
                 view: new ol.View({
-                    center: ol.proj.transform([center.lng, center.lat], 'EPSG:4326', 'EPSG:3857'),
+                    center: ol.proj.transform([MapUtility.lng(center), MapUtility.lat(center)], 'EPSG:4326', 'EPSG:3857'),
                     zoom: options.zoom
                 })
             });
@@ -267,7 +267,7 @@ define(function(require, exports, module) {
             return pnt;
         case MapType.OPENLAYERS3:
             // Note: updates during map interaction are not yet supported
-            pnt = this.map.getPixelFromCoordinate(ol.proj.transform([position.lng, position.lat], 'EPSG:4326', 'EPSG:3857'));
+            pnt = this.map.getPixelFromCoordinate(ol.proj.transform([MapUtility.lng(position), MapUtility.lat(position)], 'EPSG:4326', 'EPSG:3857'));
             return {x: pnt[0], y: pnt[1]};
         }
     };
@@ -530,7 +530,7 @@ define(function(require, exports, module) {
                     this.map.panTo(options.center, {animate: false});
                     break;
                 case MapType.OPENLAYERS3:
-                    this.map.getView().setCenter(ol.proj.transform([options.center.lng, options.center.lat], 'EPSG:4326', 'EPSG:3857'));
+                    this.map.getView().setCenter(ol.proj.transform([MapUtility.lng(options.center), MapUtility.lat(options.center)], 'EPSG:4326', 'EPSG:3857'));
                     break;
                 }
             }
