@@ -112,7 +112,7 @@ Include OpenLayers in the html file:
 </head>
 ```
 
-Create a leaflet map:
+Create an open-layers map:
 
 ```javascript
 var MapView = require('famous-map/MapView');
@@ -130,10 +130,9 @@ this.add(mapView);
 mapView.on('load', function () {
 
     // Add tile-layer (OSM is just one of many options)
-		mapView.getMap().addLayer(new ol.layer.Tile({
-			source: new ol.source.OSM()
-		}));
-
+	mapView.getMap().addLayer(new ol.layer.Tile({
+		source: new ol.source.OSM()
+	}));
 }.bind(this));
 ```
 
