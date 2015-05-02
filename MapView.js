@@ -140,10 +140,7 @@ define(function(require, exports, module) {
             // initialized.
             var func = this.map.addListener('projection_changed', function() {
                 google.maps.event.removeListener(func);
-
-                // Finalize initialisation
                 this._initComplete = true;
-                this._eventOutput.emit('load', this);
             }.bind(this));
             break;
 
@@ -151,7 +148,6 @@ define(function(require, exports, module) {
         case MapType.LEAFLET:
             this.map = L.map(elm, this.options.mapOptions);
             this._initComplete = true;
-            this._eventOutput.emit('load', this);
             break;
 
         // Create ol3 Map
@@ -180,7 +176,6 @@ define(function(require, exports, module) {
             }.bind(this));
             this.map.once('postrender', function() {
                 this._initComplete = true;
-                this._eventOutput.emit('load', this);
             }.bind(this));
             break;
         }
@@ -202,7 +197,7 @@ define(function(require, exports, module) {
      * @return {Bool} true/false.
      */
     MapView.prototype.isInitialized = function() {
-        return this._initComplete;
+        return this._initComplete && this._loadEventEmitted;
     };
 
     /**
@@ -551,6 +546,10 @@ define(function(require, exports, module) {
                     this.map.getView().setCenter(ol.proj.transform([MapUtility.lng(options.center), MapUtility.lat(options.center)], 'EPSG:4326', 'EPSG:3857'));
                     break;
                 }
+            }
+            if (!this._loadEventEmitted) {
+                this._loadEventEmitted = true;
+                this._eventOutput.emit('load', this);
             }
         }
 
