@@ -204,6 +204,10 @@ define(function(require, exports, module) {
      *    provided target
      */
     MapModifier.prototype.modify = function modify(target) {
+        if (!this.mapView.isInitialized()) {
+            this._output.target = target;
+            return this._output;
+        }
         var cacheInvalidated = false;
 
         // Calculate scale transform
