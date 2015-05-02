@@ -8,7 +8,7 @@
  * @copyright Gloey Apps, 2014
  */
 
-/*global google, L*/
+/*global google, L, ol*/
 
 /**
  * MapView encapsulates a Google maps view so it can be used with famo.us.
@@ -22,6 +22,7 @@
  * |---|---|
  * |MapType.GOOGLEMAPS (default)|Google-maps.|
  * |MapType.LEAFLET|Leaflet.js.|
+ * |MapType.OPENLAYERS3|OpenLayers.|
  * @module
  */
 define(function(require, exports, module) {
@@ -44,13 +45,14 @@ define(function(require, exports, module) {
      */
     var MapType = {
         GOOGLEMAPS: 1,
-        LEAFLET: 2
+        LEAFLET: 2,
+        OPENLAYERS3: 3
     };
 
     /**
      * @class
      * @param {Object} options Options.
-     * @param {MapType} options.type Map-type (e.g. MapView.MapType.GOOGLEMAPS, MapView.MapType.LEAFLET).
+     * @param {MapType} options.type Map-type (e.g. MapView.MapType.GOOGLEMAPS, MapView.MapType.LEAFLET, MapView.MapType.OPENLAYERS3).
      * @param {Object} options.mapOptions Options that are passed directly to the Map object. The options should include the 'center' and 'zoom'.
      * @param {String} [options.id] Id of the DOM-element to use. When ommitted, a DOM-element is created using a surface.
      * @param {Transition} [options.zoomTransition] Transition to use for smoothly zooming renderables (by default a transition of 120 ms is used).
@@ -92,6 +94,7 @@ define(function(require, exports, module) {
                 size: [undefined, undefined]
             });
             this.add(surface);
+            this._surface = surface;
         }
     }
     MapView.prototype = Object.create(View.prototype);
@@ -150,6 +153,27 @@ define(function(require, exports, module) {
             this._initComplete = true;
             this._eventOutput.emit('load', this);
             break;
+
+        // Create ol3 Map
+        case MapType.OPENLAYERS3:
+            var options = this.options.mapOptions;
+            var center = options.center;
+            this.map = new ol.Map({
+                target: elm,
+                controls: ol.control.defaults({attributionOptions: {collapsible: false}}),
+                view: new ol.View({
+                    center: ol.proj.transform([center.lng, center.lat], 'EPSG:4326', 'EPSG:3857'),
+                    zoom: options.zoom
+                })
+            });
+            this._surface.on('resize', function() {
+                this.map.updateSize();
+            }.bind(this));
+            this.map.once('postrender', function() {
+                this._initComplete = true;
+                this._eventOutput.emit('load', this);
+            }.bind(this));
+            break;
         }
     };
 
@@ -206,12 +230,27 @@ define(function(require, exports, module) {
     };
 
     /**
+     * Get the rotation of the map. 0 means north-up.
+     * @return {Number} Rotation in radians.
+     */
+    MapView.prototype.getRotation = function() {
+        switch (this.mapType) {
+        case MapType.GOOGLEMAPS:
+        case MapType.LEAFLET:
+            return 0;
+        case MapType.OPENLAYERS3:
+            return this.map.getView().getRotation();
+        }
+    };
+
+    /**
      * Get the position in pixels (relative to the left-top of the container) for the given geographical position.
      *
      * @param {LatLng} position in geographical coordinates.
      * @return {Point} Position in pixels, relative to the left-top of the mapView.
      */
     MapView.prototype.pointFromPosition = function(position) {
+        var pnt;
         switch (this.mapType) {
         case MapType.GOOGLEMAPS:
             if (!(position instanceof google.maps.LatLng)) {
@@ -224,8 +263,12 @@ define(function(require, exports, module) {
             };
         case MapType.LEAFLET:
             // Note: smooth zooming is not yet supported for leaflet
-            var pnt = this.map.latLngToContainerPoint(position);
+            pnt = this.map.latLngToContainerPoint(position);
             return pnt;
+        case MapType.OPENLAYERS3:
+            // Note: updates during map interaction are not yet supported
+            pnt = this.map.getPixelFromCoordinate(ol.proj.transform([position.lng, position.lat], 'EPSG:4326', 'EPSG:3857'));
+            return {x: pnt[0], y: pnt[1]};
         }
     };
 
@@ -246,6 +289,10 @@ define(function(require, exports, module) {
         case MapType.LEAFLET:
             // Note: smooth zooming is not yet supported for leaflet
             return this.map.containerPointToLatLng(point);
+        case MapType.OPENLAYERS3:
+            // Note: updates during map interaction are not yet supported
+            var lonLat = ol.proj.transform(this.map.getCoordinateFromPixel([point.x, point.y]), 'EPSG:3857', 'EPSG:4326');
+            return {lat: lonLat[1], lng: lonLat[0]};
         }
     };
 
@@ -309,6 +356,9 @@ define(function(require, exports, module) {
             var point = this.map.getSize();
             this._cache.size = [point.x, point.y];
             break;
+        case MapType.OPENLAYERS3:
+            this._cache.size = this.map.getSize();
+            break;
         }
 
         // Calculate current world point edges and scale
@@ -330,8 +380,10 @@ define(function(require, exports, module) {
             this._cache.zoom = Math.log(this._cache.scale) / Math.log(2);
             break;
         case MapType.LEAFLET:
+        case MapType.OPENLAYERS3:
 
-            // Note: smooth zooming is not yet supported for leaflet
+            // Note: smooth zooming is not yet supported for leaflet, and
+            // updates during map interaction are not yet supported for ol3
             this._cache.zoom = zoom;
             break;
         }
@@ -397,6 +449,18 @@ define(function(require, exports, module) {
                 center: {lat: center.lat, lng: center.lng},
                 southWest: {lat: southWest.lat, lng: southWest.lng},
                 northEast: {lat: northEast.lat, lng: northEast.lng}
+            };
+        case MapType.OPENLAYERS3:
+            var view = this.map.getView();
+            bounds = ol.proj.transformExtent(view.calculateExtent(this.map.getSize()), 'EPSG:3857', 'EPSG:4326');
+            center = ol.proj.transform(view.getCenter(), 'EPSG:3857', 'EPSG:4326');
+            zoom = view.getZoom();
+            return {
+                zoom: zoom,
+                center: {lat: center[1], lng: center[0]},
+                southWest: {lat: bounds[1], lng: bounds[0]},
+                northEast: {lat: bounds[3], lng: bounds[2]},
+                rotation: view.getRotation()
             };
         }
     };
@@ -464,6 +528,9 @@ define(function(require, exports, module) {
                     break;
                 case MapType.LEAFLET:
                     this.map.panTo(options.center, {animate: false});
+                    break;
+                case MapType.OPENLAYERS3:
+                    this.map.getView().setCenter(ol.proj.transform([options.center.lng, options.center.lat], 'EPSG:4326', 'EPSG:3857'));
                     break;
                 }
             }

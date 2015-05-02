@@ -253,6 +253,7 @@ define(function(require, exports, module) {
             var rotateTowards = this._rotateTowardsGetter ? this._rotateTowardsGetter() : this._rotateTowards;
             if (rotateTowards) {
                 var rotation = MapUtility.rotationFromPositions(position, rotateTowards);
+                rotation += this.mapView.getRotation();
                 if (this._cache.rotation !== rotation) {
                     this._cache.rotation = rotation;
                     this._cache.rotate = Transform.rotateZ(rotation);

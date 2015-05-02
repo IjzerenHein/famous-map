@@ -19,6 +19,7 @@
     "maps",
     "leaflet",
     "leafletjs",
+    "openlayers",
     "openstreetmap",
     "mapbox"
   ],
