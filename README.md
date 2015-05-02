@@ -66,7 +66,7 @@ mapView.on('load', function () {
 }.bind(this));
 ```
 
-**IMPORTANT**: Don't forget to read [this instruction](#google-maps-and-drag-pinch-on-mobile-devices) on google maps running on mobile devices.
+**IMPORTANT**: Don't forget to read [this instruction](#google-maps-and-dragpinch-on-mobile-devices) on google maps running on mobile devices.
 
 ### Leaflet
 
