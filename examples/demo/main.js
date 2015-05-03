@@ -1,51 +1,40 @@
-/*
- * Copyright (c) 2014 Gloey Apps
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+/**
+ * This Source Code is licensed under the MIT license. If a copy of the
+ * MIT-license was not distributed with this file, You can obtain one at:
+ * http://opensource.org/licenses/mit-license.html.
  *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
- * @copyright Gloey Apps, 2014
+ * @copyright Gloey Apps, 2014/2015
  */
 
-/*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google, L*/
-
-define(function (require) {
+/*global define, google, L, ol*/
+define(function(require) {
     'use strict';
 
     // import dependencies
     var Engine = require('famous/core/Engine');
-    var FastClick = require('famous/inputs/FastClick');
     var Modifier = require('famous/core/Modifier');
     var Surface = require('famous/core/Surface');
     var ImageSurface = require('famous/surfaces/ImageSurface');
     var Transform = require('famous/core/Transform');
     var Easing = require('famous/transitions/Easing');
-
     var MapView = require('famous-map/MapView');
     var MapModifier = require('famous-map/MapModifier');
     var MapStateModifier = require('famous-map/MapStateModifier');
     var MapUtility = require('famous-map/MapUtility');
-    var MapPositionTransitionable = require('famous-map/MapPositionTransitionable');
-    var MapTransition = require('famous-map/MapTransition');
 
+    // Enable these in order to test famous-map-global.js
+    /*var Engine = window.famous.core.Engine;
+    var Modifier = window.famous.core.Modifier;
+    var Surface = window.famous.core.Surface;
+    var ImageSurface = window.famous.surfaces.ImageSurface;
+    var Transform = window.famous.core.Transform;
+    var Easing = window.famous.transitions.Easing;
+    var MapView = window.famousmap.MapView;
+    var MapModifier = window.famousmap.MapModifier;
+    var MapStateModifier = window.famousmap.MapStateModifier;
+    var MapUtility = window.famousmap.MapUtility;*/
 
     // create the main context
     var mainContext = Engine.createContext();
@@ -53,11 +42,12 @@ define(function (require) {
     // Determine map-type
     var mapType;
     if ('L' in window && typeof L.Map == 'function') {
-        var l = L;
         mapType = MapView.MapType.LEAFLET;
-    } else if ('ol' in window && typeof ol.Map == 'function') {
+    }
+    else if ('ol' in window && typeof ol.Map == 'function') {
         mapType = MapView.MapType.OPENLAYERS3;
-    } else {
+    }
+    else {
         mapType = MapView.MapType.GOOGLEMAPS;
     }
 
@@ -113,8 +103,6 @@ define(function (require) {
     });
     mainContext.add(titleModifier).add(title);
 
-
-
     //
     // Create instructions
     //
@@ -130,11 +118,10 @@ define(function (require) {
     });
     mainContext.add(instructionsModifier).add(instructions);
 
-
     //
     // Wait for the map to load and initialize
     //
-    mapView.on('load', function () {
+    mapView.on('load', function() {
 
         // Add Leaflet tile-layer
         if (mapType === MapView.MapType.LEAFLET) {
@@ -142,7 +129,8 @@ define(function (require) {
                 attribution: 'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
                 //maxZoom: 18
             }).addTo(mapView.getMap());
-        } else if (mapType === MapView.MapType.OPENLAYERS3) {
+        }
+        else if (mapType === MapView.MapType.OPENLAYERS3) {
             mapView.getMap().addLayer(new ol.layer.Tile({source: new ol.source.OSM()}));
         }
 
@@ -160,11 +148,10 @@ define(function (require) {
         });
         var compassMapModifier = new MapModifier({
             mapView: mapView,
-            position: mapView,
+            position: mapView
             //zoomBase: 14
         });
         mainContext.add(compassModifier).add(compassMapModifier).add(compass);
-
 
         //
         // Define landmarks
@@ -192,10 +179,10 @@ define(function (require) {
         function _panToLandmark(e) {
 
             // Move the center of the map to the landmark
-            var center = this.getPosition();
+            var center2 = this.getPosition();
             mapView.halt();
             mapView.setPosition(
-                {lat: MapUtility.lat(center) - 0.006, lng: MapUtility.lng(center)},
+                {lat: MapUtility.lat(center2) - 0.006, lng: MapUtility.lng(center2)},
                 { duration: 1000, curve: Easing.outBack }
             );
 
@@ -204,7 +191,6 @@ define(function (require) {
         }
         for (i = 0; i < landmarks.length; i++) {
             var landmark = landmarks[i];
-
 
             //
             // Create landmark
@@ -224,7 +210,6 @@ define(function (require) {
             });
             image.on('click', _panToLandmark.bind(mapModifier));
             mainContext.add(mapModifier).add(modifier).add(image);
-
 
             //
             // Create info-box for the landmark
@@ -247,7 +232,6 @@ define(function (require) {
             info.on('click', _panToLandmark.bind(mapModifier));
             mainContext.add(infoMapModifier).add(infoModifier).add(info);
         }
-
 
         //
         // Create a traveller which drives around
@@ -282,14 +266,12 @@ define(function (require) {
         });
         mainContext.add(travellerMapModifier).add(travellerModifier).add(traveller);
 
-
         //
         // Let the traveller drive around the roundabout
         //
         var roundaboutIndex = 0;
         function _driveRoundabout() {
             roundaboutIndex = (roundaboutIndex + 1) % roundabout.length;
-            var oldPosition = travellerMapModifier.getPosition();
             var position = roundabout[roundaboutIndex];
             travellerMapModifier.setPosition(
                 position,
