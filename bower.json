@@ -9,7 +9,7 @@
   "authors": [
     "Hein Rutjes <hrutjes@gmail.com>"
   ],
-  "description": "Map integration for Famo.us (google-maps & leaflet)",
+  "description": "Map integration for Famo.us (google-maps, leaflet & open-layers)",
   "keywords": [
     "famo.us",
     "famous",
@@ -19,6 +19,7 @@
     "maps",
     "leaflet",
     "leafletjs",
+    "openlayers",
     "openstreetmap",
     "mapbox"
   ],
