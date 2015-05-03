@@ -1,6 +1,6 @@
 {
   "name": "famous-map",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/IjzerenHein/famous-map",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "author": {
     "name": "Hein Rutjes <hrutjes@gmail.com>"
   },
-  "description": "Map integration for Famo.us (google-maps & leaflet)",
+  "description": "Map integration for Famo.us (google-maps, leaflet & open-layers)",
   "keywords": [
     "famo.us",
     "famous",
@@ -49,13 +49,17 @@
     "grunt-jsdoc-to-markdown": "latest"
   },
   "files": [
+    "LICENSE",
     "MapModifier.js",
     "MapStateModifier.js",
     "MapPositionTransitionable.js",
     "MapTransition.js",
     "MapUtility.js",
     "MapView.js",
-    "LICENSE"
+    "dist/famous-map-global.js",
+    "dist/famous-map-global.min.js",
+    "dist/famous-map.js",
+    "dist/famous-map.min.js"
   ],
   "browserify": {
     "transform": [

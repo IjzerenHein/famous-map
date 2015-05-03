@@ -1,6 +1,6 @@
 {
   "name": "famous-map",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "homepage": "https://github.com/IjzerenHein/famous-map",
   "repository": {
     "type": "git",
@@ -30,9 +30,10 @@
     "tests",
     "examples",
     "docs",
-    "dist",
     "Gruntfile.js",
     "CONTRIBUTORS.md",
-    "package.json"
+    "package.json",
+    "template-global.js",
+    "template.js"
   ]
 }
