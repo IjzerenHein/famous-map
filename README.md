@@ -1,14 +1,16 @@
 famous-map
 ==========
 
-Map component for Famo.us, supporting the following map-providers:
+Map integration for Famo.us, supporting the following map-providers:
 
 - [Google Maps](https://developers.google.com/maps/documentation)
 - [Leaflet.js](http://leafletjs.com) (OpenStreetMap)
 - [OpenLayers 3](http://openlayers.org) (any base map)
 - [Mapbox GL](https://www.mapbox.com/mapbox-gl/)
 
-Famous-map makes it possible for adding a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
+![Screenshot](screenshot.gif)
+
+Famous-map makes it possible to add a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
 
 ### Demos
 
