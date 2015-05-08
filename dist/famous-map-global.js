@@ -8,8 +8,8 @@
 * @copyright Gloey Apps, 2014/2015
 *
 * @library famous-map
-* @version 0.3.0
-* @generated 03-05-2015
+* @version 0.3.2
+* @generated 08-05-2015
 */
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 (function (global){
@@ -452,7 +452,7 @@ module.exports = MapUtility;
 (function (global){
 'use strict';
 var Surface = typeof window !== 'undefined' ? window.famous.core.Surface : typeof global !== 'undefined' ? global.famous.core.Surface : null;
-var View = typeof window !== 'undefined' ? window.famous.core.View : typeof global !== 'undefined' ? global.famous.core.View : null;
+var SizeAwareView = typeof window !== 'undefined' ? window.famous.views.SizeAwareView : typeof global !== 'undefined' ? global.famous.views.SizeAwareView : null;
 var Transitionable = typeof window !== 'undefined' ? window.famous.transitions.Transitionable : typeof global !== 'undefined' ? global.famous.transitions.Transitionable : null;
 var MapUtility = require('./MapUtility');
 var MapPositionTransitionable = require('./MapPositionTransitionable');
@@ -462,10 +462,11 @@ var globalMapViewId = 1;
 var MapType = {
         GOOGLEMAPS: 1,
         LEAFLET: 2,
-        OPENLAYERS3: 3
+        OPENLAYERS3: 3,
+        MAPBOXGL: 4
     };
 function MapView() {
-    View.apply(this, arguments);
+    SizeAwareView.apply(this, arguments);
     this.map = null;
     this.mapType = this.options.type;
     this._position = new MapPositionTransitionable(this.options.mapOptions.center);
@@ -498,7 +499,7 @@ function MapView() {
         this._surface = surface;
     }
 }
-MapView.prototype = Object.create(View.prototype);
+MapView.prototype = Object.create(SizeAwareView.prototype);
 MapView.prototype.constructor = MapView;
 MapView.MapType = MapType;
 MapView.DEFAULT_OPTIONS = {
@@ -518,6 +519,7 @@ MapView.prototype._initMap = function () {
     if (!elm) {
         return;
     }
+    var options;
     switch (this.mapType) {
     case MapType.GOOGLEMAPS:
         this.map = new google.maps.Map(elm, this.options.mapOptions);
@@ -531,7 +533,7 @@ MapView.prototype._initMap = function () {
         this._initComplete = true;
         break;
     case MapType.OPENLAYERS3:
-        var options = this.options.mapOptions;
+        options = this.options.mapOptions;
         var center = options.center;
         this.map = new ol.Map({
             target: elm,
@@ -555,6 +557,15 @@ MapView.prototype._initMap = function () {
         this.map.once('postrender', function () {
             this._initComplete = true;
         }.bind(this));
+        break;
+    case MapType.MAPBOXGL:
+        options = {};
+        for (var key in this.options.mapOptions) {
+            options[key] = this.options.mapOptions[key];
+        }
+        options.container = elm;
+        this.map = new mapboxgl.Map(options);
+        this._initComplete = true;
         break;
     }
 };
@@ -585,6 +596,8 @@ MapView.prototype.getRotation = function () {
         return 0;
     case MapType.OPENLAYERS3:
         return this.map.getView().getRotation();
+    case MapType.MAPBOXGL:
+        return this.map.getBearing() * Math.PI / -180;
     }
 };
 MapView.prototype.pointFromPosition = function (position) {
@@ -611,6 +624,11 @@ MapView.prototype.pointFromPosition = function (position) {
             x: pnt[0],
             y: pnt[1]
         };
+    case MapType.MAPBOXGL:
+        return this.map.project([
+            MapUtility.lat(position),
+            MapUtility.lng(position)
+        ]);
     }
 };
 MapView.prototype.positionFromPoint = function (point) {
@@ -629,6 +647,8 @@ MapView.prototype.positionFromPoint = function (point) {
             lat: lonLat[1],
             lng: lonLat[0]
         };
+    case MapType.MAPBOXGL:
+        return this.map.unproject(point);
     }
 };
 MapView.prototype.getSize = function () {
@@ -671,6 +691,9 @@ MapView.prototype._updateCache = function (zoom, northEast, southWest) {
     case MapType.OPENLAYERS3:
         this._cache.size = this.map.getSize();
         break;
+    case MapType.MAPBOXGL:
+        this._cache.size = this.getParentSize();
+        break;
     }
     switch (this.mapType) {
     case MapType.GOOGLEMAPS:
@@ -689,6 +712,7 @@ MapView.prototype._updateCache = function (zoom, northEast, southWest) {
         break;
     case MapType.LEAFLET:
     case MapType.OPENLAYERS3:
+    case MapType.MAPBOXGL:
         this._cache.zoom = zoom;
         break;
     }
@@ -778,6 +802,15 @@ MapView.prototype._getMapInfo = function () {
             },
             rotation: view.getRotation()
         };
+    case MapType.MAPBOXGL:
+        bounds = this.map.getBounds();
+        return {
+            zoom: this.map.getZoom(),
+            center: this.map.getCenter(),
+            southWest: bounds.getSouthWest(),
+            northEast: bounds.getNorthEast(),
+            rotation: this.map.getBearing() * Math.PI / -180
+        };
     }
 };
 MapView.prototype.render = function render() {
@@ -826,6 +859,12 @@ MapView.prototype.render = function render() {
                     MapUtility.lng(options.center),
                     MapUtility.lat(options.center)
                 ], 'EPSG:4326', 'EPSG:3857'));
+                break;
+            case MapType.MAPBOXGL:
+                this.map.setCenter([
+                    MapUtility.lat(options.center),
+                    MapUtility.lng(options.center)
+                ]);
                 break;
             }
         }

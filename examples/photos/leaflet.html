@@ -1,21 +1,21 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>famous-map photos demo</title>
+        <title>famous-map photos - Leaflet</title>
         <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-        
+
         <!-- shims for backwards compatibility -->
         <script type="text/javascript" src="https://code.famo.us/lib/functionPrototypeBind.js"></script>
         <script type="text/javascript" src="https://code.famo.us/lib/classList.js"></script>
         <script type="text/javascript" src="https://code.famo.us/lib/requestAnimationFrame.js"></script>
-        
+
         <!-- leaflet / open street maps -->
         <link rel="stylesheet" href="https://rawgit.com/IjzerenHein/leaflet-dist/master/leaflet.css" />
         <script src="https://rawgit.com/IjzerenHein/leaflet-dist/master/leaflet.js"></script>
-        
+
         <!-- module loader -->
         <script type="text/javascript" src="https://code.famo.us/lib/require.js"></script>
 
@@ -34,6 +34,14 @@
 
     </head>
     <body>
-        <a class='provider' href='index.html'>Switch to Google Maps</a>
+        <div class='provider'>
+            <span>Map-types:</span>
+            <ul>
+            <li><a href='index.html'>Google Maps</a></li>
+            <li><a href='leaflet.html'>Leaflet</a></li>
+            <li><a href='openlayers3.html'>OpenLayers 3</a></li>
+            <li><a href='mapboxgl.html'>MapBox GL</a></li>
+            </ul>
+        </div>
     </body>
 </html>

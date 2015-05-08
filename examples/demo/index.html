@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <title>famous-map demo</title>
+        <title>famous-map - Google Maps</title>
         <meta name="viewport" content="width=device-width, maximum-scale=1, user-scalable=no" />
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -23,16 +23,27 @@
         <script type="text/javascript" src="https://code.famo.us/famous/0.3/famous.min.js"></script>
 
         <!-- famous-map -->
+        <!-- Comment this line, and uncomment the one below to debug the sources directly -->
         <script type="text/javascript" src="../../dist/famous-map.min.js"></script>
 
         <!-- app code -->
         <link rel="stylesheet" type="text/css" href="styles.css" />
         <script type="text/javascript">
+            // Uncomment this line and comment the one above to debug the sources directly
+            /*require.config({ paths: { 'famous-map': '../..' }});*/
             require(['main']);
         </script>
 
     </head>
     <body>
-        <span class='provider'>Switch to <a href='openlayers3.html'>ol3</a> / <a href='leaflet.html'>Leaflet</a></span
+        <div class='provider'>
+            <span>Map-types:</span>
+            <ul>
+            <li><a href='index.html'>Google Maps</a></li>
+            <li><a href='leaflet.html'>Leaflet</a></li>
+            <li><a href='openlayers3.html'>OpenLayers 3</a></li>
+            <li><a href='mapboxgl.html'>MapBox GL</a></li>
+            </ul>
+        </div>
     </body>
 </html>

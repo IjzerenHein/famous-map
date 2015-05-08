@@ -8,7 +8,7 @@
  * @copyright Gloey Apps, 2014/2015
  */
 
-/*global define, google, L, ol*/
+/*global define, google, L, ol, mapboxgl*/
 define(function(require) {
     'use strict';
 
@@ -24,21 +24,6 @@ define(function(require) {
     var MapStateModifier = require('famous-map/MapStateModifier');
     var MapUtility = require('famous-map/MapUtility');
 
-    // Enable these in order to test famous-map-global.js
-    /*var Engine = window.famous.core.Engine;
-    var Modifier = window.famous.core.Modifier;
-    var Surface = window.famous.core.Surface;
-    var ImageSurface = window.famous.surfaces.ImageSurface;
-    var Transform = window.famous.core.Transform;
-    var Easing = window.famous.transitions.Easing;
-    var MapView = window.famousmap.MapView;
-    var MapModifier = window.famousmap.MapModifier;
-    var MapStateModifier = window.famousmap.MapStateModifier;
-    var MapUtility = window.famousmap.MapUtility;*/
-
-    // create the main context
-    var mainContext = Engine.createContext();
-
     // Determine map-type
     var mapType;
     if ('L' in window && typeof L.Map == 'function') {
@@ -47,9 +32,21 @@ define(function(require) {
     else if ('ol' in window && typeof ol.Map == 'function') {
         mapType = MapView.MapType.OPENLAYERS3;
     }
+    else if ('mapboxgl' in window && typeof mapboxgl.Map == 'function') {
+        mapType = MapView.MapType.MAPBOXGL;
+    }
     else {
         mapType = MapView.MapType.GOOGLEMAPS;
     }
+
+    // create the main context
+    switch (mapType) {
+        case MapView.MapType.GOOGLEMAPS:
+            Engine.setOptions({appMode: false});
+            MapView.installSelectiveTouchMoveHandler();
+            break;
+    }
+    var mainContext = Engine.createContext();
 
     //
     // Create map-view
@@ -85,6 +82,19 @@ define(function(require) {
             }
         });
         break;
+    case MapView.MapType.MAPBOXGL:
+
+        // Create mapbox-gl map-view
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaWp6ZXJlbmhlaW4iLCJhIjoiVFh2bFZRQSJ9.hfo54hMcdhbsChqF7Qtq_g';
+        mapView = new MapView({
+            type: mapType,
+            mapOptions: {
+                zoom: zoom - 1,
+                center: [center.lat, center.lng],
+                style: 'https://www.mapbox.com/mapbox-gl-styles/styles/outdoors-v7.json' //stylesheet location
+            }
+        });
+        break;
     }
     mainContext.add(mapView);
 
@@ -93,7 +103,7 @@ define(function(require) {
     //
     var title = new Surface({
         size: [true, true],
-        content: 'famous-map demo',
+        content: document.title,
         classes: ['title']
     });
     var titleModifier = new Modifier({
@@ -106,10 +116,10 @@ define(function(require) {
     //
     // Create instructions
     //
+    var rotate = (mapType === MapView.MapType.OPENLAYERS3) ? '<li>Rotate the map (Alt+Shift+Drag)</li>' : ((mapType === MapView.MapType.MAPBOXGL) ? '<li>Rotate the map (Ctrl+Drag)</li>' : '');
     var instructions = new Surface({
-        size: [400, 140],
-        content: 'Things to try out:<li>Move the map</li><li>Zoom the map</li><li>Click on a landmark</li>' +
-            (mapType === MapView.MapType.OPENLAYERS3 ? '<li>Rotate the map (Alt+Shift+Drag)</li>' : ''),
+        size: [400, 140 + ((rotate === '') ? 0 : 20)],
+        content: 'Things to try out:<li>Move the map</li><li>Zoom the map</li><li>Click on a landmark</li>' + rotate,
         classes: ['instruction']
     });
     var instructionsModifier = new Modifier({

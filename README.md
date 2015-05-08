@@ -6,10 +6,11 @@ Map component for Famo.us, supporting the following map-providers:
 - [Google Maps](https://developers.google.com/maps/documentation)
 - [Leaflet.js](http://leafletjs.com) (OpenStreetMap)
 - [OpenLayers 3](http://openlayers.org) (any base map)
+- [Mapbox GL](https://www.mapbox.com/mapbox-gl/)
 
 Famous-map makes it possible for adding a map-component to the famo.us render-tree. Additionally, famous transitions can be used to pan the map and modifiers can be used to sync the position of renderables with a geographical position.
 
-## Demos
+### Demos
 
 - [photo animation demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/photos/index.html)
 - [eindhoven demo](https://rawgit.com/IjzerenHein/famous-map/master/examples/demo/index.html)
@@ -137,6 +138,37 @@ mapView.on('load', function () {
 	}));
 }.bind(this));
 ```
+
+### Mapbox GL
+
+Include Mapbox GL in the html file:
+
+```html
+<head>
+  <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.7.0/mapbox-gl.css' rel='stylesheet' />
+  <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.7.0/mapbox-gl.js'></script>
+</head>
+```
+
+Create an mapbox GL map:
+
+```javascript
+var MapView = require('famous-map/MapView');
+
+var mapView = new MapView({
+    type: MapView.MapType.MAPBOXGL,
+    mapOptions: {
+        zoom: 3,
+        center: {lat: 51.4484855, lng: 5.451478}
+    }
+});
+this.add(mapView);
+```
+
+**IMPORTANT:** Touch events are not yet supported by mapbox-gl-js on mobile, so swiping, pinching, etc.. does not work on
+your phone or tablet: https://github.com/mapbox/mapbox-gl-js/pull/949
+
+
 
 ## Documentation
 

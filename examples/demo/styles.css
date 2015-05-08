@@ -4,21 +4,29 @@ body, div, a {
 
 .provider {
     z-index: 10000;
-    text-align: center;
-    font-size: 20pt;
-    padding: 10px;
-    position: absolute;
+    background-color: rgba(0, 128, 0, 0.5);
+    border-radius: 5px;
+    font-size: 10pt;
+    color: white;
     width: 120px;
     height: auto;
+    position: absolute;
     right: 20px;
     bottom: 20px;
-    background: green;
-    color: white;
-    border-radius: 5px;
+    padding-top: 5px;
+}
+
+.provider span {
+  margin: 10px;
+}
+
+.provider ul {
+  margin: 5px;
+  padding-left: 20px;
 }
 
 .provider a {
-    color: white;
+  color: white;
 }
 
 .title {

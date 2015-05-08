@@ -1,6 +1,6 @@
 {
   "name": "famous-map",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "homepage": "https://github.com/IjzerenHein/famous-map",
   "repository": {
     "type": "git",
@@ -9,7 +9,7 @@
   "authors": [
     "Hein Rutjes <hrutjes@gmail.com>"
   ],
-  "description": "Map integration for Famo.us (google-maps, leaflet & open-layers)",
+  "description": "Map integration for Famo.us (google-maps, leaflet, open-layers & mapboxgl)",
   "keywords": [
     "famo.us",
     "famous",
@@ -21,7 +21,8 @@
     "leafletjs",
     "openlayers",
     "openstreetmap",
-    "mapbox"
+    "mapbox",
+    "mapboxgl"
   ],
   "license": "MIT",
   "ignore": [

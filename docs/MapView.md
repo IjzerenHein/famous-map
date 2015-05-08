@@ -12,6 +12,7 @@ Use `MapModifier` and `MapStateModifier` to place famo.us renderables on the map
 |MapType.GOOGLEMAPS (default)|Google-maps|
 |MapType.LEAFLET|Leaflet.js|
 |MapType.OPENLAYERS3|Open layers 3|
+|MapType.MAPBOXGL|Mapbox GL|
 
 
 * [MapView](#module_MapView)

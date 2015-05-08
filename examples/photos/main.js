@@ -1,33 +1,15 @@
-/*
- * Copyright (c) 2014 Gloey Apps
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
+/**
+ * This Source Code is licensed under the MIT license. If a copy of the
+ * MIT-license was not distributed with this file, You can obtain one at:
+ * http://opensource.org/licenses/mit-license.html.
  *
  * @author: Hein Rutjes (IjzerenHein)
  * @license MIT
- * @copyright Gloey Apps, 2014
+ * @copyright Gloey Apps, 2014/2015
  */
 
-/*jslint browser:true, nomen:true, vars:true, plusplus:true*/
-/*global define, google, L*/
-
-define(function (require) {
+/*global define, google, L, ol, mapboxgl*/
+define(function(require) {
     'use strict';
 
     // import dependencies
@@ -40,52 +22,59 @@ define(function (require) {
     var StateModifier = require('famous/modifiers/StateModifier');
     var Easing = require('famous/transitions/Easing');
     var Timer = require('famous/utilities/Timer');
-
     var MapView = require('famous-map/MapView');
     var MapModifier = require('famous-map/MapModifier');
-    var MapStateModifier = require('famous-map/MapStateModifier');
-    var MapUtility = require('famous-map/MapUtility');
-    var MapPositionTransitionable = require('famous-map/MapPositionTransitionable');
-    var MapTransition = require('famous-map/MapTransition');
 
     // Sample photo set
     var photos = [
-        {loc: [-33.0752656, -71.5306995], img: "http://hispaniclondon.files.wordpress.com/2011/10/valparaiso.jpg"},
-        {loc: [-19.9996424, -67], img: "http://i1-news.softpedia-static.com/images/news2/How-the-Andes-Mountains-Were-Generated-2.jpg"},
-        {loc: [-24.7913296, -65.4268636], img: "http://www.fsdinternational.org/sites/default/files/public/salta20y.jpg"},
-        {loc: [-24.7994937, -65.3327128], img: "http://www.agefotostock.com/previewimage/bajaage/a2cf1571e858f9ca288ce9c12cfc0d9c/IBR-2117612.jpg"},
+        {loc: [-33.0752656, -71.5306995], img: 'http://hispaniclondon.files.wordpress.com/2011/10/valparaiso.jpg'},
+        {loc: [-19.9996424, -67], img: 'http://i1-news.softpedia-static.com/images/news2/How-the-Andes-Mountains-Were-Generated-2.jpg'},
+        {loc: [-24.7913296, -65.4268636], img: 'http://www.fsdinternational.org/sites/default/files/public/salta20y.jpg'},
+        {loc: [-24.7994937, -65.3327128], img: 'http://www.agefotostock.com/previewimage/bajaage/a2cf1571e858f9ca288ce9c12cfc0d9c/IBR-2117612.jpg'},
 
-        {loc: [-24.7631775, -65.4249721], img: "http://www.argentinaindependent.com/images/edition059/salta/salta04.jpg"},
-        {loc: [-21.6629918, -64.4502754], img: "http://graphics8.nytimes.com/images/2013/05/14/world/BOLIVIA-1/BOLIVIA-1-articleLarge.jpg"},
-        {loc: [-17.7125307, -64.7139473], img: "http://santafeselection.com/blog/wp-content/uploads/2014/01/Bolivia-woven-clothing-accessories.jpg"},
-        {loc: [-13.822557, -66.8452949], img: "http://news.bbc.co.uk/media/images/46072000/jpg/_46072066_flags_afp.jpg"},
-        {loc: [-12.976582, -71.426411], img: "http://static.guim.co.uk/sys-images/Travel/Pix/pictures/2008/11/14/JunglePaulASoudersCOrb4.jpg"},
-        {loc: [-12.8587908, -73.535786], img: "http://blog.iamnikon.com/en_GB/wp-content/uploads/viapanam_peru_goldmining1600.jpg"},
-        {loc: [-12.0553442, -77.0451853], img: "http://erikaearl.files.wordpress.com/2010/05/fukada_bangladesh.jpg"},
-        {loc: [-3.3981796, -79.9538157], img: "http://www1.folha.uol.com.br/folha/turismo/images/20050421-equador470.jpg"},
-        {loc: [4.6367492, -74.4826243], img: "http://www.eslfocus.com/newscontent/photos/article-lb-505.jpg"},
+        {loc: [-24.7631775, -65.4249721], img: 'http://www.argentinaindependent.com/images/edition059/salta/salta04.jpg'},
+        {loc: [-21.6629918, -64.4502754], img: 'http://graphics8.nytimes.com/images/2013/05/14/world/BOLIVIA-1/BOLIVIA-1-articleLarge.jpg'},
+        {loc: [-17.7125307, -64.7139473], img: 'http://santafeselection.com/blog/wp-content/uploads/2014/01/Bolivia-woven-clothing-accessories.jpg'},
+        {loc: [-13.822557, -66.8452949], img: 'http://news.bbc.co.uk/media/images/46072000/jpg/_46072066_flags_afp.jpg'},
+        {loc: [-12.976582, -71.426411], img: 'http://static.guim.co.uk/sys-images/Travel/Pix/pictures/2008/11/14/JunglePaulASoudersCOrb4.jpg'},
+        {loc: [-12.8587908, -73.535786], img: 'http://blog.iamnikon.com/en_GB/wp-content/uploads/viapanam_peru_goldmining1600.jpg'},
+        {loc: [-12.0553442, -77.0451853], img: 'http://erikaearl.files.wordpress.com/2010/05/fukada_bangladesh.jpg'},
+        {loc: [-3.3981796, -79.9538157], img: 'http://www1.folha.uol.com.br/folha/turismo/images/20050421-equador470.jpg'},
+        {loc: [4.6367492, -74.4826243], img: 'http://www.eslfocus.com/newscontent/photos/article-lb-505.jpg'},
 
-        {loc: [6.3426914, -67.4623606], img: "http://i1.ytimg.com/vi/TTe8XIyfpdc/0.jpg"},
-        {loc: [5.2168707, -55.7948801], img: "http://upload.wikimedia.org/wikipedia/commons/5/5b/Bridge_over_Suriname_river_at_Afobaka_dam.JPG"},
-        {loc: [3.8917523, -53.9381907], img: "http://media1.s-nbcnews.com/j/msnbc/Components/Photos/050909/050909_katrina_vmed_4p.grid-4x2.jpg"},
-        {loc: [1.3457964, -50.7246896], img: "http://www.jetlinecruise.com/images/small-banner/Amazon-River-Aerial-View.jpg"},
-        {loc: [-4.1326695, -50.3511544], img: "http://www.timeforkids.com/files/styles/tfk_rect_large/public/BRAZIL_SS4.jpg?itok=3Oi3PU3h"},
-        {loc: [-4.7898483, -36.4204904], img: "http://allengeorgina.files.wordpress.com/2013/06/nature-of-brazil.jpg"},
-        {loc: [-22.9156911, -43.449703], img: "http://blogimgs.only-apartments.com/images/only-apartments/6418/visit-rio-de-janeiro.jpg"},
-        {loc: [-34.6158526, -58.4332985], img: "http://www.travel.com.au/dms/images/destination_images/buenosaires/buenosaires_1.jpg"}
+        {loc: [6.3426914, -67.4623606], img: 'http://i1.ytimg.com/vi/TTe8XIyfpdc/0.jpg'},
+        {loc: [5.2168707, -55.7948801], img: 'http://upload.wikimedia.org/wikipedia/commons/5/5b/Bridge_over_Suriname_river_at_Afobaka_dam.JPG'},
+        {loc: [3.8917523, -53.9381907], img: 'http://media1.s-nbcnews.com/j/msnbc/Components/Photos/050909/050909_katrina_vmed_4p.grid-4x2.jpg'},
+        {loc: [1.3457964, -50.7246896], img: 'http://www.jetlinecruise.com/images/small-banner/Amazon-River-Aerial-View.jpg'},
+        {loc: [-4.1326695, -50.3511544], img: 'http://vmulher5.vila.to/interacao/9529731/belo-monte-ativismo-ambiental-liberdade-de-imprensa-327389-1.gif'},
+        {loc: [-4.7898483, -36.4204904], img: 'http://allengeorgina.files.wordpress.com/2013/06/nature-of-brazil.jpg'},
+        {loc: [-22.9156911, -43.449703], img: 'https://eiram0406.files.wordpress.com/2012/03/rio.jpg?w=570'},
+        {loc: [-34.6158526, -58.4332985], img: 'http://www.travel.com.au/dms/images/destination_images/buenosaires/buenosaires_1.jpg'}
     ];
-
-    // create the main context
-    var mainContext = Engine.createContext();
 
     // Determine map-type
     var mapType;
-    try {
-        var l = L;
+    if ('L' in window && typeof L.Map == 'function') {
         mapType = MapView.MapType.LEAFLET;
-    } catch (err) {
+    }
+    else if ('ol' in window && typeof ol.Map == 'function') {
+        mapType = MapView.MapType.OPENLAYERS3;
+    }
+    else if ('mapboxgl' in window && typeof mapboxgl.Map == 'function') {
+        mapType = MapView.MapType.MAPBOXGL;
+    }
+    else {
         mapType = MapView.MapType.GOOGLEMAPS;
     }
+
+    // create the main context
+    switch (mapType) {
+        case MapView.MapType.GOOGLEMAPS:
+            Engine.setOptions({appMode: false});
+            MapView.installSelectiveTouchMoveHandler();
+            break;
+    }
+    var mainContext = Engine.createContext();
 
     //
     // Create map-view
@@ -95,6 +84,7 @@ define(function (require) {
     var mapView;
     switch (mapType) {
     case MapView.MapType.LEAFLET:
+    case MapView.MapType.OPENLAYERS3:
 
         // Create leaflet map-view
         mapView = new MapView({
@@ -117,6 +107,19 @@ define(function (require) {
                 disableDoubleClickZoom: true,
                 mapTypeId: google.maps.MapTypeId.TERRAIN,
                 minZoom: 3
+            }
+        });
+        break;
+     case MapView.MapType.MAPBOXGL:
+
+        // Create mapbox-gl map-view
+        mapboxgl.accessToken = 'pk.eyJ1IjoiaWp6ZXJlbmhlaW4iLCJhIjoiVFh2bFZRQSJ9.hfo54hMcdhbsChqF7Qtq_g';
+        mapView = new MapView({
+            type: mapType,
+            mapOptions: {
+                zoom: zoom - 1,
+                center: [center.lat, center.lng],
+                style: 'https://www.mapbox.com/mapbox-gl-styles/styles/outdoors-v7.json' //stylesheet location
             }
         });
         break;
@@ -180,7 +183,7 @@ define(function (require) {
     //
     // Wait for the map to load and initialize
     //
-    mapView.on('load', function () {
+    mapView.on('load', function() {
 
         // Add Leaflet tile-layer
         if (mapType === MapView.MapType.LEAFLET) {
@@ -189,16 +192,22 @@ define(function (require) {
                 //maxZoom: 18
             }).addTo(mapView.getMap());
         }
+        else if (mapType === MapView.MapType.OPENLAYERS3) {
+            mapView.getMap().addLayer(new ol.layer.Tile({source: new ol.source.OSM()}));
+        }
 
         // Wait a little bit and let the map load some tiles, before doing the photo animation
-        Timer.setTimeout(function () {
+        Timer.setTimeout(function() {
 
             // Create (almost) transparent markers.
             // The markers are created with correct dimensions but transparent,
             // so that they are correctly displayed on Android devices.
-            var i, j, markers = [];
+            var i;
+            var j;
+            var markers = [];
+            var marker;
             for (i = 0; i < photos.length; i++) {
-                var marker = _createPhotoMarker(photos[i]);
+                marker = _createPhotoMarker(photos[i]);
                 markers.push(marker);
                 marker.modifier.setOpacity(0.01);
                 mainContext.add(marker.renderable);
@@ -208,10 +217,9 @@ define(function (require) {
             // If we don't then we trigger the eager optimisation bug on Android.
             var interPhotoDelay = 50;
             var photoZoomDuration = 500;
-            Timer.after(function () {
-                var j;
+            Timer.after(function() {
                 for (j = 0; j < markers.length; j++) {
-                    var marker = markers[j];
+                    marker = markers[j];
                     marker.modifier.setTransform(Transform.scale(0, 0, 1));
                     marker.modifier.setOpacity(1);
                     marker.modifier.setTransform(
@@ -228,13 +236,12 @@ define(function (require) {
             // Wait for all animations to complete before loading the images.
             // Loading the images is done is the same thread by the browser and therefore greatly affects
             // javascript execution and rending.
-            Timer.setTimeout(function () {
-                var j;
+            Timer.setTimeout(function() {
                 for (j = 0; j < markers.length; j++) {
-                    var marker = markers[j];
+                    marker = markers[j];
                     marker.content.photo.setContent(photos[j].img);
                 }
-            }.bind(this), (markers.length * interPhotoDelay) + photoZoomDuration);
+            }, (markers.length * interPhotoDelay) + photoZoomDuration);
         }, 200);
     });
 });

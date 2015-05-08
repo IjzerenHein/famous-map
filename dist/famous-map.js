@@ -8,8 +8,8 @@
 * @copyright Gloey Apps, 2014/2015
 *
 * @library famous-map
-* @version 0.3.0
-* @generated 03-05-2015
+* @version 0.3.2
+* @generated 08-05-2015
 */
 /**
  * This Source Code is licensed under the MIT license. If a copy of the
@@ -27,7 +27,7 @@
  * @module
  */
 define('famous-map/MapUtility',['require','exports','module'],function(require, exports, module) {
-    'use strict';
+    
 
     /**
      * @class
@@ -152,7 +152,7 @@ define('famous-map/MapUtility',['require','exports','module'],function(require, 
  * @module
  */
 define('famous-map/MapPositionTransitionable',['require','exports','module','famous/transitions/Transitionable','./MapUtility'],function(require, exports, module) {
-    'use strict';
+    
 
     // import dependencies
     var Transitionable = require('famous/transitions/Transitionable');
@@ -267,7 +267,7 @@ define('famous-map/MapPositionTransitionable',['require','exports','module','fam
  * @module
  */
 define('famous-map/MapTransition',['require','exports','module','./MapUtility'],function(require, exports, module) {
-    'use strict';
+    
 
     // import dependencies
     var MapUtility = require('./MapUtility');
@@ -438,7 +438,7 @@ define('famous-map/MapTransition',['require','exports','module','./MapUtility'],
  * @copyright Gloey Apps, 2014/2015
  */
 
-/*global google, L, ol*/
+/*global google, L, ol, mapboxgl*/
 
 /**
  * MapView encapsulates a Google maps view so it can be used with famo.us.
@@ -453,14 +453,15 @@ define('famous-map/MapTransition',['require','exports','module','./MapUtility'],
  * |MapType.GOOGLEMAPS (default)|Google-maps|
  * |MapType.LEAFLET|Leaflet.js|
  * |MapType.OPENLAYERS3|Open layers 3|
+ * |MapType.MAPBOXGL|Mapbox GL|
  * @module
  */
-define('famous-map/MapView',['require','exports','module','famous/core/Surface','famous/core/View','famous/transitions/Transitionable','./MapUtility','./MapPositionTransitionable','./MapTransition'],function(require, exports, module) {
-    'use strict';
+define('famous-map/MapView',['require','exports','module','famous/core/Surface','famous/views/SizeAwareView','famous/transitions/Transitionable','./MapUtility','./MapPositionTransitionable','./MapTransition'],function(require, exports, module) {
+    
 
     // import dependencies
     var Surface = require('famous/core/Surface');
-    var View = require('famous/core/View');
+    var SizeAwareView = require('famous/views/SizeAwareView');
     var Transitionable = require('famous/transitions/Transitionable');
     var MapUtility = require('./MapUtility');
     var MapPositionTransitionable = require('./MapPositionTransitionable');
@@ -476,7 +477,8 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
     var MapType = {
         GOOGLEMAPS: 1,
         LEAFLET: 2,
-        OPENLAYERS3: 3
+        OPENLAYERS3: 3,
+        MAPBOXGL: 4
     };
 
     /**
@@ -489,7 +491,7 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
      * @alias module:MapView
      */
     function MapView() {
-        View.apply(this, arguments);
+        SizeAwareView.apply(this, arguments);
 
         // Initialize
         this.map = null;
@@ -527,7 +529,7 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             this._surface = surface;
         }
     }
-    MapView.prototype = Object.create(View.prototype);
+    MapView.prototype = Object.create(SizeAwareView.prototype);
     MapView.prototype.constructor = MapView;
     MapView.MapType = MapType;
 
@@ -556,6 +558,7 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
         }
 
         // Supported map-types
+        var options;
         switch (this.mapType) {
 
         // Create google.maps.Map
@@ -576,9 +579,9 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             this._initComplete = true;
             break;
 
-        // Create ol3 Map
+        // Create open layers 3 Map
         case MapType.OPENLAYERS3:
-            var options = this.options.mapOptions;
+            options = this.options.mapOptions;
             var center = options.center;
             this.map = new ol.Map({
                 target: elm,
@@ -603,6 +606,17 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             this.map.once('postrender', function() {
                 this._initComplete = true;
             }.bind(this));
+            break;
+
+        // Create mapbox GL Map
+        case MapType.MAPBOXGL:
+            options = {};
+            for (var key in this.options.mapOptions) {
+                options[key] = this.options.mapOptions[key];
+            }
+            options.container = elm;
+            this.map = new mapboxgl.Map(options);
+            this._initComplete = true;
             break;
         }
     };
@@ -679,6 +693,8 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             return 0;
         case MapType.OPENLAYERS3:
             return this.map.getView().getRotation();
+        case MapType.MAPBOXGL:
+            return (this.map.getBearing() * Math.PI) / -180;
         }
     };
 
@@ -708,6 +724,8 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             // Note: updates during map interaction are not yet supported
             pnt = this.map.getPixelFromCoordinate(ol.proj.transform([MapUtility.lng(position), MapUtility.lat(position)], 'EPSG:4326', 'EPSG:3857'));
             return {x: pnt[0], y: pnt[1]};
+        case MapType.MAPBOXGL:
+            return this.map.project([MapUtility.lat(position), MapUtility.lng(position)]);
         }
     };
 
@@ -732,6 +750,8 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             // Note: updates during map interaction are not yet supported
             var lonLat = ol.proj.transform(this.map.getCoordinateFromPixel([point.x, point.y]), 'EPSG:3857', 'EPSG:4326');
             return {lat: lonLat[1], lng: lonLat[0]};
+        case MapType.MAPBOXGL:
+            return this.map.unproject(point);
         }
     };
 
@@ -798,6 +818,9 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
         case MapType.OPENLAYERS3:
             this._cache.size = this.map.getSize();
             break;
+        case MapType.MAPBOXGL:
+            this._cache.size = this.getParentSize();
+            break;
         }
 
         // Calculate current world point edges and scale
@@ -820,6 +843,7 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
             break;
         case MapType.LEAFLET:
         case MapType.OPENLAYERS3:
+        case MapType.MAPBOXGL:
 
             // Note: smooth zooming is not yet supported for leaflet, and
             // updates during map interaction are not yet supported for ol3
@@ -901,6 +925,15 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
                 northEast: {lat: bounds[3], lng: bounds[2]},
                 rotation: view.getRotation()
             };
+        case MapType.MAPBOXGL:
+            bounds = this.map.getBounds();
+            return {
+                zoom: this.map.getZoom(),
+                center: this.map.getCenter(),
+                southWest: bounds.getSouthWest(),
+                northEast: bounds.getNorthEast(),
+                rotation: (this.map.getBearing() * Math.PI) / -180
+            };
         }
     };
 
@@ -970,6 +1003,9 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
                     break;
                 case MapType.OPENLAYERS3:
                     this.map.getView().setCenter(ol.proj.transform([MapUtility.lng(options.center), MapUtility.lat(options.center)], 'EPSG:4326', 'EPSG:3857'));
+                    break;
+                case MapType.MAPBOXGL:
+                    this.map.setCenter([MapUtility.lat(options.center), MapUtility.lng(options.center)]);
                     break;
                 }
             }
@@ -1042,7 +1078,7 @@ define('famous-map/MapView',['require','exports','module','famous/core/Surface',
  * @module
  */
 define('famous-map/MapModifier',['require','exports','module','famous/core/Transform','./MapUtility'],function(require, exports, module) {
-    'use strict';
+    
 
     // import dependencies
     var Transform = require('famous/core/Transform');
@@ -1348,7 +1384,7 @@ define('famous-map/MapModifier',['require','exports','module','famous/core/Trans
  * @module
 */
 define('famous-map/MapStateModifier',['require','exports','module','./MapModifier','./MapPositionTransitionable'],function(require, exports, module) {
-    'use strict';
+    
 
     // import dependencies
     var MapModifier = require('./MapModifier');
