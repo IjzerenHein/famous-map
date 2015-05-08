@@ -131,7 +131,7 @@ define(function(require) {
     //
     var title = new Surface({
         size: [true, true],
-        content: 'famous-map photos',
+        content: document.title,
         classes: ['title']
     });
     var titleModifier = new Modifier({
