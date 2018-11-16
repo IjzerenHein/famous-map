@@ -358,9 +358,4 @@ The leaflet-API returns the position and zoom-level **after** animations have oc
 
 Feel free to contribute to this project in any way. The easiest way to support this project is by giving it a star.
 
-## Contact
-- 	@IjzerenHein
-- 	http://www.gloey.nl
-- 	hrutjes@gmail.com (for hire)
-
 © 2014 / 2015 - Hein Rutjes
